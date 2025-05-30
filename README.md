@@ -35,7 +35,7 @@ powerautomation/
 │   ├── code_agent_test_plan.md  # 代码智能体测试方案
 │   ├── web_agent_test_plan.md   # 网页智能体测试方案
 │   ├── general_agent_test_plan.md # 通用智能体测试方案
-│   └── TEST_REPORT.md           # 测试报告
+│   └── TEST_RESULTS.md          # 测试结果报告
 └── README.md                    # 项目说明文档
 ```
 
@@ -85,16 +85,56 @@ powerautomation/
 - 将问题信息结构化存储
 - 更新文档，添加测试发现的问题
 
-## MCP优化模块
+## MCP架构
+
+每个智能体都有自己的特性和用户旅程，这些由各自的MCP模块掌握，最终通过MCPPlanner和MCPBrainstorm来调用开发工具模块和已有工具。
+
+### MCP核心组件
+
+1. **MCP中央协调器 (MCPCentralCoordinator)**：
+   - 负责协调MCPPlanner和MCPBrainstorm
+   - 确保所有工具通过统一接口调用
+   - 处理与GitHub的同步操作
+
+2. **MCP规划器 (MCPPlanner)**：
+   - 集成mcp.so动态库
+   - 负责规划和协调MCP模块的工作
+   - 调用已注册的工具
+   - 执行端到端测试
+
+3. **MCP头脑风暴器 (MCPBrainstorm)**：
+   - 处理MCPPlanner没有的工具类型
+   - 自进化产生新工具
+   - 对新工具进行端到端测试
+   - 增强工具能力
+
+### MCP优化模块
 
 每个智能体都集成了以下MCP优化模块：
 
-1. **上下文匹配优化MCP (ContextMatchingOptimizationMCP)**：优化智能体对用户需求的理解和匹配
-2. **内容模板优化MCP (ContentTemplateOptimizationMCP)**：优化内容生成的模板和结构
-3. **特性优化MCP (FeatureOptimizationMCP)**：优化智能体功能特性的使用和组合
-4. **UI旅程优化MCP (UIJourneyOptimizationMCP)**：优化用户界面交互流程
-5. **项目记忆优化MCP (ProjectMemoryOptimizationMCP)**：优化项目相关的记忆和知识管理
-6. **提示词优化MCP (PromptOptimizationMCP)**：优化智能体的提示词生成和使用
+1. **上下文匹配优化MCP (ContextMatchingOptimizationMCP)**：
+   - 优化智能体对用户需求的理解和匹配
+   - 分析用户输入，提取关键信息
+
+2. **内容模板优化MCP (ContentTemplateOptimizationMCP)**：
+   - 优化内容生成的模板和结构
+   - 确保生成内容的一致性和质量
+
+3. **特性优化MCP (FeatureOptimizationMCP)**：
+   - 优化智能体功能特性的使用和组合
+   - 根据用户需求调整功能组合
+
+4. **UI旅程优化MCP (UIJourneyOptimizationMCP)**：
+   - 优化用户界面交互流程
+   - 提升用户体验和操作效率
+
+5. **项目记忆优化MCP (ProjectMemoryOptimizationMCP)**：
+   - 优化项目相关的记忆和知识管理
+   - 提供上下文感知的项目信息
+
+6. **提示词优化MCP (PromptOptimizationMCP)**：
+   - 优化智能体的提示词生成和使用
+   - 提高与用户交互的效率和准确性
 
 ## 端到端测试
 
@@ -104,6 +144,8 @@ powerautomation/
 - 代码智能体测试方案
 - 网页智能体测试方案
 - 通用智能体测试方案
+
+所有测试均通过MCPPlanner和MCPBrainstorm执行，确保端到端流程的完整性和一致性。
 
 ## 安装与使用
 
@@ -125,3 +167,25 @@ powerautomation/
 ## 许可证
 
 本项目采用 MIT 许可证。详情请参阅 LICENSE 文件。
+
+## PowerAutomation MCP 系统架构图
+
+![PowerAutomation MCP 系统架构图](https://raw.githubusercontent.com/alexchuang650730/powerautomation/main/docs/architecture.png)
+
+### 架构说明
+
+1. **mcp.so**：核心动态库，集成到MCPPlanner中，提供基础功能
+2. **MCP中央协调器**：整个系统的核心，协调MCPPlanner和MCPBrainstorm
+3. **MCP规划器**：负责规划任务和调用已有工具
+4. **MCP头脑风暴器**：处理新工具类型，自进化产生新工具
+5. **开发工具模块**：
+   - 思考与操作记录器：记录智能体的思考和操作
+   - Release管理器：处理代码发布和同步
+   - 测试与问题收集器：执行测试和收集问题
+   - 问题解决驱动器：分析和解决问题
+6. **智能体特性与用户旅程**：
+   - 每个智能体都有自己的特性和用户旅程
+   - 由各自的MCP模块掌握
+   - 最终通过MCPPlanner和MCPBrainstorm调用开发工具和已有工具
+
+所有工具都通过MCPPlanner和MCPBrainstorm统一调用，确保系统的一致性和可扩展性。
