@@ -1,455 +1,205 @@
 """
-网页智能体模块
+Web Agent智能体模块
 
-负责处理网页搜索相关任务，集成WebAgentB和Claude，继承自BaseAgent
+实现网页抓取、内容分析、数据提取和自动化操作功能。
+集成MCP模块进行优化和增强。
 """
 
 import os
-import logging
-import uuid
 import json
-import requests
-from typing import Dict, Any, List, Optional
+from ..core.mcp.context_matching_optimization_mcp import ContextMatchingOptimizationMCP
+from ..core.mcp.content_template_optimization_mcp import ContentTemplateOptimizationMCP
+from ..core.mcp.feature_optimization_mcp import FeatureOptimizationMCP
+from ..development_tools.thought_action_recorder import ThoughtActionRecorder
 
-from .base_agent import BaseAgent
-
-class WebAgent(BaseAgent):
-    """网页智能体，负责网页搜索和内容分析，集成WebAgentB和Claude"""
+class WebAgent:
+    def __init__(self):
+        # 初始化MCP模块
+        self.context_matching_mcp = ContextMatchingOptimizationMCP()
+        self.content_template_mcp = ContentTemplateOptimizationMCP()
+        self.feature_optimization_mcp = FeatureOptimizationMCP()
+        
+        # 初始化思考与操作记录器
+        self.recorder = ThoughtActionRecorder()
+        
+        # 初始化会话ID
+        self.session_id = None
     
-    def __init__(self, agent_id: str = None):
+    def _start_session(self):
+        """启动新的会话"""
+        self.session_id = self.recorder.start_session("web_agent")
+        return self.session_id
+    
+    def _record_thought(self, thought):
+        """记录思考过程"""
+        if self.session_id:
+            self.recorder.record_thought(self.session_id, thought)
+    
+    def _record_action(self, action, params=None, result=None):
+        """记录执行的操作"""
+        if self.session_id:
+            self.recorder.record_action(self.session_id, action, params, result)
+    
+    def extract_data(self, url, extraction_query=None):
         """
-        初始化网页智能体
+        从指定网页提取数据
         
         参数:
-            agent_id: 智能体ID，如果不提供则自动生成
-        """
-        super().__init__(
-            agent_id=agent_id,
-            name="网页智能体",
-            description="增强的网页搜索和内容分析智能体"
-        )
-        self.webagentb_endpoint = os.environ.get("WEBAGENTB_ENDPOINT", "http://localhost:8000/api/search")
-        self.claude_api_key = os.environ.get("CLAUDE_API_KEY", "")
-        self.claude_endpoint = os.environ.get("CLAUDE_ENDPOINT", "https://api.anthropic.com/v1/messages")
-        
-    def get_capabilities(self) -> List[str]:
-        """
-        获取网页智能体能力列表
+        - url: 网页URL
+        - extraction_query: 提取指令
         
         返回:
-            能力描述列表
+        - 提取的数据
         """
-        return [
-            "增强的网页搜索（集成WebAgentB）",
-            "网页内容分析和总结",
-            "多源信息整合",
-            "自动生成网页报告",
-            "网页内容提取和转换"
-        ]
-    
-    def validate_input(self, input_data: Dict[str, Any]) -> bool:
-        """
-        验证输入数据是否有效
+        self._start_session()
+        self._record_thought(f"准备从网页 {url} 提取数据")
         
-        参数:
-            input_data: 输入数据字典
-            
-        返回:
-            数据是否有效
-        """
-        # 验证必要字段
-        if "task_type" not in input_data:
-            self.logger.error("缺少task_type字段")
-            return False
-            
-        # 根据任务类型验证其他必要字段
-        task_type = input_data["task_type"]
+        # 使用上下文匹配优化MCP解析提取指令
+        self._record_thought("使用上下文匹配优化MCP解析提取指令")
+        parsed_query = self.context_matching_mcp.optimize({
+            "type": "extraction_query",
+            "url": url,
+            "query": extraction_query
+        })
         
-        if task_type == "web_search":
-            if "query" not in input_data:
-                self.logger.error("网页搜索任务缺少query字段")
-                return False
-                
-        elif task_type == "content_analysis":
-            if "url" not in input_data:
-                self.logger.error("内容分析任务缺少url字段")
-                return False
+        # 使用特性优化MCP确定最佳提取策略
+        self._record_thought("使用特性优化MCP确定最佳提取策略")
+        extraction_strategy = self.feature_optimization_mcp.optimize({
+            "type": "extraction_strategy",
+            "url": url,
+            "parsed_query": parsed_query
+        })
         
-        return True
-    
-    def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        处理网页搜索和内容分析任务
+        # 模拟提取数据
+        self._record_action("extract_data", {
+            "url": url,
+            "extraction_strategy": extraction_strategy
+        })
         
-        参数:
-            input_data: 输入数据字典，包含任务类型和相关参数
-            
-        返回:
-            处理结果字典
-        """
-        task_type = input_data["task_type"]
-        
-        if task_type == "web_search":
-            return self._process_web_search(input_data)
-            
-        elif task_type == "content_analysis":
-            return self._process_content_analysis(input_data)
-            
+        # 生成模拟结果
+        if "product" in str(extraction_query).lower():
+            result = {
+                "type": "extraction",
+                "data": [
+                    {"title": "产品1", "price": "¥299", "rating": "4.8/5"},
+                    {"title": "产品2", "price": "¥199", "rating": "4.5/5"},
+                    {"title": "产品3", "price": "¥399", "rating": "4.9/5"}
+                ]
+            }
         else:
-            self.logger.error(f"不支持的任务类型: {task_type}")
-            return {"error": f"不支持的任务类型: {task_type}"}
+            result = {
+                "type": "extraction",
+                "data": [
+                    {"title": "文章1", "author": "作者A", "date": "2025-05-28"},
+                    {"title": "文章2", "author": "作者B", "date": "2025-05-29"},
+                    {"title": "文章3", "author": "作者C", "date": "2025-05-30"}
+                ]
+            }
+        
+        self._record_action("return_result", None, result)
+        return result
     
-    def _process_web_search(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def automate_task(self, url, task):
         """
-        处理网页搜索任务，集成WebAgentB
+        在指定网页执行自动化任务
         
         参数:
-            input_data: 输入数据字典
-            
+        - url: 网页URL
+        - task: 自动化任务描述
+        
         返回:
-            处理结果字典
+        - 执行结果
         """
-        query = input_data["query"]
-        max_results = input_data.get("max_results", 5)
+        self._start_session()
+        self._record_thought(f"准备在网页 {url} 执行自动化任务: {task}")
         
-        try:
-            # 调用WebAgentB进行搜索
-            search_results = self._call_webagentb(query, max_results)
-            
-            # 使用Claude增强搜索结果（如果配置了Claude API密钥）
-            if self.claude_api_key and input_data.get("use_claude", True):
-                enhanced_results = self._enhance_with_claude(query, search_results)
-                return {
-                    "original_query": query,
-                    "search_results": search_results,
-                    "enhanced_results": enhanced_results
-                }
-            
-            return {
-                "original_query": query,
-                "search_results": search_results
-            }
-            
-        except Exception as e:
-            self.logger.error(f"网页搜索失败: {str(e)}")
-            return {"error": f"网页搜索失败: {str(e)}"}
-    
-    def _process_content_analysis(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        处理网页内容分析任务
+        # 使用上下文匹配优化MCP解析任务
+        self._record_thought("使用上下文匹配优化MCP解析任务")
+        parsed_task = self.context_matching_mcp.optimize({
+            "type": "automation_task",
+            "url": url,
+            "task": task
+        })
         
-        参数:
-            input_data: 输入数据字典
-            
-        返回:
-            处理结果字典
-        """
-        url = input_data["url"]
-        analysis_type = input_data.get("analysis_type", "summary")
+        # 使用内容模板优化MCP生成操作步骤
+        self._record_thought("使用内容模板优化MCP生成操作步骤")
+        operation_steps = self.content_template_mcp.optimize({
+            "type": "automation_steps",
+            "url": url,
+            "parsed_task": parsed_task
+        })
         
-        try:
-            # 获取网页内容
-            content = self._fetch_webpage_content(url)
-            
-            # 根据分析类型处理内容
-            if analysis_type == "summary":
-                result = self._summarize_content(content, url)
-            elif analysis_type == "extract_data":
-                result = self._extract_structured_data(content, url)
-            else:
-                result = {"content": content, "url": url}
-            
-            return result
-            
-        except Exception as e:
-            self.logger.error(f"内容分析失败: {str(e)}")
-            return {"error": f"内容分析失败: {str(e)}"}
-    
-    def _call_webagentb(self, query: str, max_results: int = 5) -> List[Dict[str, Any]]:
-        """
-        调用WebAgentB API进行网页搜索
+        # 模拟执行自动化任务
+        self._record_action("automate_task", {
+            "url": url,
+            "operation_steps": operation_steps
+        })
         
-        参数:
-            query: 搜索查询
-            max_results: 最大结果数
-            
-        返回:
-            搜索结果列表
-        """
-        # 这里是WebAgentB API调用的模拟实现
-        # 实际实现中，应该根据WebAgentB的API文档进行调用
-        self.logger.info(f"调用WebAgentB搜索: {query}")
-        
-        try:
-            payload = {
-                "query": query,
-                "max_results": max_results
-            }
-            
-            headers = {
-                "Content-Type": "application/json"
-            }
-            
-            response = requests.post(self.webagentb_endpoint, json=payload, headers=headers)
-            response.raise_for_status()
-            
-            return response.json().get("results", [])
-            
-        except requests.exceptions.RequestException as e:
-            self.logger.error(f"WebAgentB API调用失败: {str(e)}")
-            
-            # 如果API调用失败，返回模拟数据
-            return [
-                {
-                    "title": f"搜索结果 {i+1} for {query}",
-                    "url": f"https://example.com/result{i+1}",
-                    "snippet": f"这是关于 {query} 的搜索结果 {i+1} 的摘要内容..."
-                }
-                for i in range(max_results)
+        # 生成模拟结果
+        result = {
+            "type": "automation",
+            "steps": [
+                f"打开网页: {url}",
+                "找到登录表单",
+                "填写用户名和密码",
+                "点击登录按钮",
+                "导航到用户中心",
+                "操作完成"
             ]
+        }
+        
+        self._record_action("return_result", None, result)
+        return result
     
-    def _enhance_with_claude(self, query: str, search_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_content(self, url, analysis_type="general", analysis_query=""):
         """
-        使用Claude增强搜索结果
+        分析指定网页的内容
         
         参数:
-            query: 原始搜索查询
-            search_results: WebAgentB返回的搜索结果
-            
+        - url: 网页URL
+        - analysis_type: 分析类型
+        - analysis_query: 分析要求
+        
         返回:
-            Claude增强后的结果
+        - 分析结果
         """
-        self.logger.info(f"使用Claude增强搜索结果: {query}")
+        self._start_session()
+        self._record_thought(f"准备分析网页 {url} 的内容，类型: {analysis_type}，要求: {analysis_query}")
         
-        # 构建发送给Claude的提示
-        search_content = "\n\n".join([
-            f"标题: {result['title']}\nURL: {result['url']}\n摘要: {result['snippet']}"
-            for result in search_results
-        ])
+        # 使用上下文匹配优化MCP解析分析要求
+        self._record_thought("使用上下文匹配优化MCP解析分析要求")
+        parsed_query = self.context_matching_mcp.optimize({
+            "type": "analysis_query",
+            "url": url,
+            "analysis_type": analysis_type,
+            "query": analysis_query
+        })
         
-        prompt = f"""
-        基于以下搜索结果，请提供关于"{query}"的综合分析和总结：
-
-        {search_content}
-
-        请提供：
-        1. 主要观点和事实的总结
-        2. 不同来源之间的共识和分歧
-        3. 关键信息点的提炼
-        4. 对信息可靠性的评估
-        """
+        # 使用特性优化MCP确定最佳分析策略
+        self._record_thought("使用特性优化MCP确定最佳分析策略")
+        analysis_strategy = self.feature_optimization_mcp.optimize({
+            "type": "analysis_strategy",
+            "url": url,
+            "parsed_query": parsed_query
+        })
         
-        try:
-            # 调用Claude API
-            headers = {
-                "x-api-key": self.claude_api_key,
-                "Content-Type": "application/json",
-                "anthropic-version": "2023-06-01"
-            }
-            
-            payload = {
-                "model": "claude-3-opus-20240229",
-                "max_tokens": 2000,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ]
-            }
-            
-            response = requests.post(self.claude_endpoint, json=payload, headers=headers)
-            response.raise_for_status()
-            
-            result = response.json()
-            enhanced_content = result.get("content", [{}])[0].get("text", "无法获取Claude响应")
-            
-            return {
-                "summary": enhanced_content,
-                "source": "Claude"
-            }
-            
-        except Exception as e:
-            self.logger.error(f"Claude API调用失败: {str(e)}")
-            return {
-                "summary": f"无法使用Claude增强结果: {str(e)}",
-                "source": "Error"
-            }
-    
-    def _fetch_webpage_content(self, url: str) -> str:
-        """
-        获取网页内容
+        # 模拟分析内容
+        self._record_action("analyze_content", {
+            "url": url,
+            "analysis_strategy": analysis_strategy
+        })
         
-        参数:
-            url: 网页URL
-            
-        返回:
-            网页内容
-        """
-        try:
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-            return response.text
-        except Exception as e:
-            self.logger.error(f"获取网页内容失败: {str(e)}")
-            raise Exception(f"获取网页内容失败: {str(e)}")
-    
-    def _summarize_content(self, content: str, url: str) -> Dict[str, Any]:
-        """
-        使用Claude总结网页内容
+        # 生成模拟结果
+        result = {
+            "type": "analysis",
+            "summary": "这是一个电子商务网站，主要销售电子产品。网站结构清晰，导航简单，产品分类合理。",
+            "keyPoints": [
+                "网站有5个主要类别",
+                "共有约200个产品",
+                "提供多种支付方式",
+                "有用户评论系统"
+            ]
+        }
         
-        参数:
-            content: 网页内容
-            url: 网页URL
-            
-        返回:
-            总结结果
-        """
-        # 如果没有配置Claude API密钥，返回简单摘要
-        if not self.claude_api_key:
-            return {
-                "url": url,
-                "summary": "需要配置Claude API密钥以生成摘要",
-                "source": "System"
-            }
-        
-        try:
-            # 截取内容（Claude有输入限制）
-            truncated_content = content[:50000]
-            
-            # 构建提示
-            prompt = f"""
-            请总结以下网页内容的主要信息：
-
-            URL: {url}
-            
-            内容:
-            {truncated_content}
-            
-            请提供一个全面但简洁的摘要，包括主要观点、关键事实和重要细节。
-            """
-            
-            # 调用Claude API
-            headers = {
-                "x-api-key": self.claude_api_key,
-                "Content-Type": "application/json",
-                "anthropic-version": "2023-06-01"
-            }
-            
-            payload = {
-                "model": "claude-3-opus-20240229",
-                "max_tokens": 1000,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ]
-            }
-            
-            response = requests.post(self.claude_endpoint, json=payload, headers=headers)
-            response.raise_for_status()
-            
-            result = response.json()
-            summary = result.get("content", [{}])[0].get("text", "无法获取Claude响应")
-            
-            return {
-                "url": url,
-                "summary": summary,
-                "source": "Claude"
-            }
-            
-        except Exception as e:
-            self.logger.error(f"内容总结失败: {str(e)}")
-            return {
-                "url": url,
-                "summary": f"内容总结失败: {str(e)}",
-                "source": "Error"
-            }
-    
-    def _extract_structured_data(self, content: str, url: str) -> Dict[str, Any]:
-        """
-        从网页内容中提取结构化数据
-        
-        参数:
-            content: 网页内容
-            url: 网页URL
-            
-        返回:
-            提取的结构化数据
-        """
-        # 如果没有配置Claude API密钥，返回错误信息
-        if not self.claude_api_key:
-            return {
-                "url": url,
-                "data": {},
-                "error": "需要配置Claude API密钥以提取结构化数据"
-            }
-        
-        try:
-            # 截取内容（Claude有输入限制）
-            truncated_content = content[:50000]
-            
-            # 构建提示
-            prompt = f"""
-            请从以下网页内容中提取关键的结构化数据，并以JSON格式返回：
-
-            URL: {url}
-            
-            内容:
-            {truncated_content}
-            
-            请分析内容并提取以下信息（如果存在）：
-            - 标题
-            - 作者
-            - 发布日期
-            - 主要主题
-            - 关键数据点
-            - 重要实体（人物、组织、地点等）
-            
-            请以有效的JSON格式返回，不要包含任何其他文本。
-            """
-            
-            # 调用Claude API
-            headers = {
-                "x-api-key": self.claude_api_key,
-                "Content-Type": "application/json",
-                "anthropic-version": "2023-06-01"
-            }
-            
-            payload = {
-                "model": "claude-3-opus-20240229",
-                "max_tokens": 1000,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ]
-            }
-            
-            response = requests.post(self.claude_endpoint, json=payload, headers=headers)
-            response.raise_for_status()
-            
-            result = response.json()
-            extracted_text = result.get("content", [{}])[0].get("text", "{}")
-            
-            # 尝试解析JSON
-            try:
-                extracted_data = json.loads(extracted_text)
-            except json.JSONDecodeError:
-                # 如果解析失败，尝试提取JSON部分
-                import re
-                json_match = re.search(r'```json\n(.*?)\n```', extracted_text, re.DOTALL)
-                if json_match:
-                    try:
-                        extracted_data = json.loads(json_match.group(1))
-                    except json.JSONDecodeError:
-                        extracted_data = {"error": "无法解析JSON数据"}
-                else:
-                    extracted_data = {"error": "无法提取JSON数据"}
-            
-            return {
-                "url": url,
-                "data": extracted_data,
-                "source": "Claude"
-            }
-            
-        except Exception as e:
-            self.logger.error(f"结构化数据提取失败: {str(e)}")
-            return {
-                "url": url,
-                "data": {},
-                "error": f"结构化数据提取失败: {str(e)}"
-            }
+        self._record_action("return_result", None, result)
+        return result

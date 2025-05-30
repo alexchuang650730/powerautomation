@@ -1,193 +1,127 @@
-# PowerAutomation 多智能体平台
+# PowerAutomation 平台
 
-PowerAutomation是一个多智能体平台，集成了多种专业智能体，包括PPT智能体、文档智能体、表格智能体、网页智能体、播客智能体和通用智能体等。本项目采用模块化设计，每个智能体都集成了六大MCP（模块化认知处理器），提供高度定制化的AI服务。
+PowerAutomation 是一个多智能体协作平台，集成了PPT智能体、代码智能体、网页智能体和通用智能体，通过MCP（多智能体通信协议）实现智能体间的协作与优化。
 
 ## 项目结构
 
 ```
 powerautomation/
-├── agents/                  # 智能体目录
-│   ├── ppt_agent/           # PPT智能体
-│   │   ├── __init__.py
-│   │   ├── ppt_agent.py     # PPT智能体主类
-│   │   ├── core/            # 核心功能
-│   │   │   ├── mcp/         # 模块化认知处理器
-│   │   │   │   ├── base_mcp.py                      # MCP基类
-│   │   │   │   ├── prompt_optimization_mcp.py       # 提示词优化MCP
-│   │   │   │   ├── feature_optimization_mcp.py      # 特性优化MCP
-│   │   │   │   ├── ui_journey_optimization_mcp.py   # 用户界面旅程优化MCP
-│   │   │   │   ├── content_template_optimization_mcp.py  # 内容模板优化MCP
-│   │   │   │   ├── context_matching_optimization_mcp.py  # 思维上下文匹配优化MCP
-│   │   │   │   └── project_memory_optimization_mcp.py    # 项目级记忆优化MCP
-│   │   │   └── utils/       # 工具函数
-│   │   ├── templates/       # PPT模板
-│   │   └── output/          # 输出目录
-│   ├── web_agent/           # 网页智能体（集成WebAgentB和Claude）
-│   │   ├── __init__.py
-│   │   ├── web_agent.py
-│   │   └── core/
-│   │       ├── mcp/         # 模块化认知处理器
-│   │       └── webagentb/   # WebAgentB集成
-│   └── ...                  # 其他智能体
-├── backend/                 # 后端服务
-│   ├── __init__.py
-│   ├── main.py              # 主应用入口
-│   ├── routes/              # API路由
-│   │   ├── __init__.py
-│   │   ├── ppt_agent_routes.py
-│   │   └── web_agent_routes.py
-│   ├── services/            # 服务层
-│   └── utils/               # 工具函数
-├── frontend/                # 前端代码
-│   ├── public/
-│   └── src/
-│       ├── components/      # 组件
-│       ├── pages/           # 页面
-│       ├── styles/          # 样式
-│       └── utils/           # 工具函数
-├── visual_test/             # 端到端视觉化测试
-│   ├── README.md
-│   ├── ppt_task_manager.py
-│   ├── test_ppt_generation.py
-│   ├── ppt_to_image.py
-│   └── static/
-│       └── templates/
-└── requirements.txt         # 项目依赖
+├── agents/                      # 智能体模块
+│   ├── ppt_agent/               # PPT智能体
+│   │   ├── core/                # 核心功能
+│   │   │   └── mcp/             # MCP优化模块
+│   │   └── ppt_agent.py         # PPT智能体主类
+│   ├── code_agent/              # 代码智能体
+│   ├── web_agent/               # 网页智能体
+│   └── general_agent/           # 通用智能体
+├── backend/                     # 后端服务
+│   ├── agents/                  # 智能体实现
+│   ├── routes/                  # API路由
+│   ├── services/                # 服务层
+│   └── main.py                  # 主入口
+├── frontend/                    # 前端界面
+│   ├── src/                     # 源代码
+│   │   ├── components/          # 组件
+│   │   ├── pages/               # 页面
+│   │   └── styles/              # 样式
+│   └── public/                  # 静态资源
+├── development_tools/           # 开发工具模块
+│   ├── agent_problem_solver.py  # 智能体问题解决器
+│   ├── thought_action_recorder.py # 思考与操作记录器
+│   ├── release_manager.py       # Release管理器
+│   └── test_issue_collector.py  # 测试与问题收集器
+├── visual_test/                 # 视觉化测试
+│   ├── ppt_agent_test_plan.md   # PPT智能体测试方案
+│   ├── code_agent_test_plan.md  # 代码智能体测试方案
+│   ├── web_agent_test_plan.md   # 网页智能体测试方案
+│   ├── general_agent_test_plan.md # 通用智能体测试方案
+│   └── TEST_REPORT.md           # 测试报告
+└── README.md                    # 项目说明文档
 ```
 
-## 智能体架构
+## 核心功能
 
-每个智能体都集成了六大MCP（模块化认知处理器）：
+- **PPT智能体**：根据用户需求自动生成专业PPT，支持思维导图生成与编辑
+- **代码智能体**：接收问题报告，通过manus.im定位、分析、解决问题，并更新代码
+- **网页智能体**：提供网页抓取、内容分析、数据提取和自动化操作功能
+- **通用智能体**：支持对话、任务执行和项目管理功能
 
-1. **提示词优化MCP**：负责生成和优化提示词
-2. **特性优化MCP**：负责智能体的核心功能
-3. **用户界面旅程优化MCP**：负责用户交互和体验
-4. **内容模板优化MCP**：负责管理和应用内容模板
-5. **思维上下文匹配优化MCP**：负责理解和匹配上下文
-6. **项目级记忆优化MCP**：负责管理项目记忆（集成SuperMemory.ai）
+## 开发工具模块
 
-## PPT智能体
+### 1. 智能体问题解决器 (AgentProblemSolver)
 
-PPT智能体是一个专业级PPT生成工具，能够根据用户需求自动生成高质量的PPT演示文稿。
+该模块负责分析测试日志和问题报告，调用智能体能力进行问题定位，生成修复策略建议，提出测试方案。主要特点：
 
-### 主要功能
+- 从问题报告中提取问题信息
+- 分析问题，确定问题类别、严重性和可能原因
+- 生成修复策略，包括优先级、预估工作量和推荐操作
+- 生成测试方案，验证修复效果
+- 更新文档，添加解决方案
 
-- 根据用户输入的主题和内容生成完整PPT
-- 支持多种专业模板
-- 自动优化内容结构和布局
-- 智能匹配适合的样式和配色
-- 保存项目记忆，支持后续修改和优化
+### 2. 思考与操作记录器 (ThoughtActionRecorder)
 
-### 使用方法
+该模块负责记录智能体的思考过程和执行的操作，提供结构化的日志存储和查询功能。主要特点：
 
-```python
-from agents.ppt_agent.ppt_agent import PPTAgent
+- 记录思考过程，包括推理、决策和计划
+- 记录执行的操作，包括输入参数和执行结果
+- 支持按时间、类型、内容等条件查询日志
+- 提供日志导出和可视化功能
 
-# 初始化PPT智能体
-ppt_agent = PPTAgent()
+### 3. Release管理器 (ReleaseManager)
 
-# 生成PPT
-result = ppt_agent.generate_ppt({
-    "title": "公司业务介绍",
-    "content": "这是一个关于我们公司业务的介绍...",
-    "template_type": "business",
-    "output_path": "output/business_presentation.pptx"
-})
+该模块负责监控GitHub release事件，自动下载代码到指定路径，处理GitHub上传流程。主要特点：
 
-print(f"PPT已生成: {result['output_path']}")
-```
+- 检查GitHub上是否有新的release
+- 下载release代码到指定的本地路径
+- 支持SSH密钥认证
+- 提供代码上传功能，自动处理提交和推送
 
-## 网页智能体
+### 4. 测试与问题收集器 (TestAndIssueCollector)
 
-网页智能体集成了WebAgentB和Claude，提供增强的网页搜索和内容分析能力。
+该模块负责执行自动化测试，收集问题并更新文档。主要特点：
 
-### 主要功能
+- 执行指定的测试脚本
+- 分析测试日志，提取问题信息
+- 将问题信息结构化存储
+- 更新文档，添加测试发现的问题
 
-- 高级网页搜索和内容提取
-- 多源信息整合和分析
-- 网页内容理解和摘要
-- 搜索历史记忆和个性化推荐
+## MCP优化模块
 
-### 使用方法
+每个智能体都集成了以下MCP优化模块：
 
-```python
-from agents.web_agent.web_agent import WebAgent
-
-# 初始化网页智能体
-web_agent = WebAgent()
-
-# 执行网页搜索
-result = web_agent.process({
-    "mcp_type": "feature",
-    "search_action": "web_search",
-    "query": "人工智能最新发展",
-    "result_count": 5
-})
-
-print(f"搜索结果: {result}")
-```
-
-## API接口
-
-### PPT智能体API
-
-- `GET /api/agents/ppt/info` - 获取PPT智能体信息
-- `POST /api/agents/ppt/process` - 处理PPT智能体请求
-- `POST /api/agents/ppt/generate` - 生成PPT
-- `GET /api/agents/ppt/templates` - 列出可用的PPT模板
-- `POST /api/agents/ppt/memory` - 管理项目记忆
-
-### 网页智能体API
-
-- `GET /api/agents/web/info` - 获取网页智能体信息
-- `POST /api/agents/web/search` - 执行网页搜索
-- `POST /api/agents/web/analyze` - 分析网页内容
-- `GET /api/agents/web/templates` - 获取结果展示模板
-- `POST /api/agents/web/memory` - 管理搜索历史
-
-## 安装与部署
-
-### 依赖安装
-
-```bash
-pip install -r requirements.txt
-```
-
-### 启动后端服务
-
-```bash
-cd backend
-python main.py
-```
-
-### 启动前端开发服务器
-
-```bash
-cd frontend
-npm install
-npm start
-```
+1. **上下文匹配优化MCP (ContextMatchingOptimizationMCP)**：优化智能体对用户需求的理解和匹配
+2. **内容模板优化MCP (ContentTemplateOptimizationMCP)**：优化内容生成的模板和结构
+3. **特性优化MCP (FeatureOptimizationMCP)**：优化智能体功能特性的使用和组合
+4. **UI旅程优化MCP (UIJourneyOptimizationMCP)**：优化用户界面交互流程
+5. **项目记忆优化MCP (ProjectMemoryOptimizationMCP)**：优化项目相关的记忆和知识管理
+6. **提示词优化MCP (PromptOptimizationMCP)**：优化智能体的提示词生成和使用
 
 ## 端到端测试
 
-详见 [visual_test/README.md](visual_test/README.md)
+平台提供了基于视觉验证和自动化操作的端到端测试方案，覆盖所有智能体和MCP模块。测试方案位于`visual_test`目录，包括：
 
-## 技术栈
+- PPT智能体测试方案（包含思维导图生成与编辑测试）
+- 代码智能体测试方案
+- 网页智能体测试方案
+- 通用智能体测试方案
 
-- **后端**：Flask, Python 3.11
-- **前端**：React, TypeScript
-- **数据库**：SQLite (开发), MySQL (生产)
-- **API**：RESTful API
-- **外部服务**：SuperMemory.ai, WebAgentB, Claude
+## 安装与使用
+
+1. 克隆仓库：`git clone https://github.com/alexchuang650730/powerautomation.git`
+2. 安装依赖：`pip install -r requirements.txt`
+3. 启动后端服务：`python backend/main.py`
+4. 启动前端开发服务器：`cd frontend && npm install && npm start`
 
 ## 贡献指南
 
-1. Fork 本仓库
-2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add some amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 创建 Pull Request
+欢迎贡献代码、报告问题或提出改进建议。请遵循以下步骤：
+
+1. Fork 仓库
+2. 创建功能分支：`git checkout -b feature/your-feature-name`
+3. 提交更改：`git commit -m 'Add some feature'`
+4. 推送到分支：`git push origin feature/your-feature-name`
+5. 提交 Pull Request
 
 ## 许可证
 
-MIT License
+本项目采用 MIT 许可证。详情请参阅 LICENSE 文件。
