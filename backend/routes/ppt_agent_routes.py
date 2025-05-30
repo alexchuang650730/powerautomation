@@ -1,168 +1,83 @@
 """
-PPT智能体API接口模块
+后端API路由模块 - PPT智能体
 
-提供PPT智能体的RESTful API接口
+提供PPT智能体相关的API端点，将请求转发给MCP规划器进行处理。
 """
 
-from flask import Blueprint, request, jsonify
-import logging
-import os
+from flask import Blueprint, request, jsonify, send_file
 import json
-from typing import Dict, Any
+import os
+from ...agents.ppt_agent.ppt_agent import PPTAgent
 
-from ..agents.ppt_agent.ppt_agent import PPTAgent
-
-# 创建蓝图
-ppt_agent_bp = Blueprint('ppt_agent', __name__, url_prefix='/api/agents/ppt')
-
-# 初始化PPT智能体
+ppt_agent_bp = Blueprint('ppt_agent', __name__)
 ppt_agent = PPTAgent()
 
-# 配置日志
-logger = logging.getLogger(__name__)
-
-@ppt_agent_bp.route('/info', methods=['GET'])
-def get_agent_info():
-    """获取PPT智能体信息"""
-    try:
-        # 获取所有MCP模块信息
-        mcps = ppt_agent.get_all_mcps()
-        
-        return jsonify({
-            "status": "success",
-            "agent": {
-                "name": "PPT智能体",
-                "description": "省时高效的专家级PPT智能体",
-                "version": "2.0.0",
-                "mcps": mcps
-            }
-        })
-    except Exception as e:
-        logger.error(f"获取智能体信息异常: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": f"获取智能体信息异常: {str(e)}"
-        }), 500
-
-@ppt_agent_bp.route('/process', methods=['POST'])
-def process_request():
-    """处理PPT智能体请求"""
-    try:
-        # 获取请求数据
-        data = request.json
-        if not data:
-            return jsonify({
-                "status": "error",
-                "message": "请求数据为空"
-            }), 400
-        
-        # 处理请求
-        result = ppt_agent.process(data)
-        
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"处理请求异常: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": f"处理请求异常: {str(e)}"
-        }), 500
-
-@ppt_agent_bp.route('/generate', methods=['POST'])
+@ppt_agent_bp.route('/generate_ppt', methods=['POST'])
 def generate_ppt():
-    """生成PPT"""
-    try:
-        # 获取请求数据
-        data = request.json
-        if not data:
-            return jsonify({
-                "status": "error",
-                "message": "请求数据为空"
-            }), 400
-        
-        # 检查必要参数
-        if not data.get("title"):
-            return jsonify({
-                "status": "error",
-                "message": "缺少title参数"
-            }), 400
-        
-        if not data.get("content") and not data.get("topic"):
-            return jsonify({
-                "status": "error",
-                "message": "缺少content或topic参数"
-            }), 400
-        
-        # 设置输出路径
-        if not data.get("output_path"):
-            # 生成默认输出路径
-            output_dir = os.path.join(os.getcwd(), "output")
-            os.makedirs(output_dir, exist_ok=True)
-            data["output_path"] = os.path.join(output_dir, f"{data.get('title', 'presentation')}.pptx")
-        
-        # 生成PPT
-        result = ppt_agent.generate_ppt(data)
-        
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"生成PPT异常: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": f"生成PPT异常: {str(e)}"
-        }), 500
+    """
+    生成PPT演示文稿
+    """
+    data = request.json
+    topic = data.get('topic', '')
+    content = data.get('content')
+    style = data.get('style')
+    template = data.get('template')
+    
+    file_path = ppt_agent.generate_ppt(topic, content, style, template)
+    
+    # 返回文件路径，前端可以通过另一个接口下载
+    return jsonify({
+        "status": "success",
+        "file_path": file_path
+    })
 
-@ppt_agent_bp.route('/templates', methods=['GET'])
-def list_templates():
-    """列出可用的PPT模板"""
-    try:
-        # 获取查询参数
-        template_type = request.args.get('type')
-        industry = request.args.get('industry')
-        
-        # 构建请求数据
-        data = {
-            "mcp_type": "content_template",
-            "template_action": "list_templates"
-        }
-        
-        if template_type:
-            data["template_type"] = template_type
-        
-        if industry:
-            data["industry"] = industry
-        
-        # 获取模板列表
-        result = ppt_agent.process(data)
-        
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"列出模板异常: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": f"列出模板异常: {str(e)}"
-        }), 500
+@ppt_agent_bp.route('/mindmap_to_ppt', methods=['POST'])
+def mindmap_to_ppt():
+    """
+    将思维导图转换为PPT
+    """
+    data = request.json
+    mindmap_data = data.get('mindmap_data', {})
+    style = data.get('style')
+    template = data.get('template')
+    
+    file_path = ppt_agent.mindmap_to_ppt(mindmap_data, style, template)
+    
+    # 返回文件路径，前端可以通过另一个接口下载
+    return jsonify({
+        "status": "success",
+        "file_path": file_path
+    })
 
-@ppt_agent_bp.route('/memory', methods=['POST'])
-def manage_memory():
-    """管理项目记忆"""
-    try:
-        # 获取请求数据
-        data = request.json
-        if not data:
-            return jsonify({
-                "status": "error",
-                "message": "请求数据为空"
-            }), 400
-        
-        # 添加MCP类型
-        data["mcp_type"] = "project_memory"
-        
-        # 处理记忆请求
-        result = ppt_agent.process(data)
-        
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"管理记忆异常: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": f"管理记忆异常: {str(e)}"
-        }), 500
+@ppt_agent_bp.route('/generate_mindmap', methods=['POST'])
+def generate_mindmap():
+    """
+    生成思维导图
+    """
+    data = request.json
+    topic = data.get('topic', '')
+    content = data.get('content')
+    
+    mindmap_data = ppt_agent.generate_mindmap(topic, content)
+    return jsonify(mindmap_data)
+
+@ppt_agent_bp.route('/edit_mindmap', methods=['POST'])
+def edit_mindmap():
+    """
+    编辑思维导图
+    """
+    data = request.json
+    mindmap_data = data.get('mindmap_data', {})
+    changes = data.get('changes', {})
+    
+    updated_mindmap = ppt_agent.edit_mindmap(mindmap_data, changes)
+    return jsonify(updated_mindmap)
+
+@ppt_agent_bp.route('/download_ppt/<path:filename>', methods=['GET'])
+def download_ppt(filename):
+    """
+    下载生成的PPT文件
+    """
+    directory = os.path.dirname(filename)
+    file_name = os.path.basename(filename)
+    return send_file(filename, as_attachment=True, download_name=file_name)

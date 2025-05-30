@@ -1,183 +1,237 @@
 """
-PPT智能体集成模块
+PPT智能体模块 - PPT Agent
 
-整合六大MCP模块，提供统一的PPT智能体接口
+提供PPT生成、思维导图转换和模板优化功能，作为PowerAutomation平台的PPT处理组件。
+通过MCP规划器和MCP头脑风暴器调用开发工具模块和已有工具。
 """
 
-import logging
-from typing import Dict, Any, List, Optional
-
-from .core.mcp.base_mcp import BaseMCP
-from .core.mcp.prompt_optimization_mcp import PromptOptimizationMCP
-from .core.mcp.feature_optimization_mcp import FeatureOptimizationMCP
-from .core.mcp.ui_journey_optimization_mcp import UIJourneyOptimizationMCP
-from .core.mcp.content_template_optimization_mcp import ContentTemplateOptimizationMCP
-from .core.mcp.context_matching_optimization_mcp import ContextMatchingOptimizationMCP
-from .core.mcp.project_memory_optimization_mcp import ProjectMemoryOptimizationMCP
+import os
+import json
+from datetime import datetime
+from .core.mcp.mcp_planner import MCPPlanner
+from .core.mcp.mcp_brainstorm import MCPBrainstorm
+from ...development_tools.thought_action_recorder import ThoughtActionRecorder
 
 class PPTAgent:
-    """PPT智能体，整合六大MCP模块，提供统一的接口"""
-    
     def __init__(self):
-        """初始化PPT智能体"""
-        self.logger = logging.getLogger(__name__)
+        # 初始化MCP规划器和头脑风暴器
+        self.mcp_planner = MCPPlanner()
+        self.mcp_brainstorm = MCPBrainstorm()
         
-        # 初始化六大MCP模块
-        self.prompt_mcp = PromptOptimizationMCP()
-        self.feature_mcp = FeatureOptimizationMCP()
-        self.ui_journey_mcp = UIJourneyOptimizationMCP()
-        self.content_template_mcp = ContentTemplateOptimizationMCP()
-        self.context_matching_mcp = ContextMatchingOptimizationMCP()
-        self.project_memory_mcp = ProjectMemoryOptimizationMCP()
+        # 初始化思考与操作记录器
+        self.recorder = ThoughtActionRecorder()
         
-        # MCP模块映射
-        self.mcp_mapping = {
-            "prompt": self.prompt_mcp,
-            "feature": self.feature_mcp,
-            "ui_journey": self.ui_journey_mcp,
-            "content_template": self.content_template_mcp,
-            "context_matching": self.context_matching_mcp,
-            "project_memory": self.project_memory_mcp
-        }
-        
-    def process(self, input_data: Dict[str, Any], context: Dict[str, Any] = None) -> Dict[str, Any]:
+        # 初始化会话ID
+        self.session_id = None
+    
+    def _start_session(self):
+        """启动新的会话"""
+        self.session_id = self.recorder.start_session("ppt_agent")
+        return self.session_id
+    
+    def _record_thought(self, thought):
+        """记录思考过程"""
+        if self.session_id:
+            self.recorder.record_thought(self.session_id, thought)
+    
+    def _record_action(self, action, params=None, result=None):
+        """记录执行的操作"""
+        if self.session_id:
+            self.recorder.record_action(self.session_id, action, params, result)
+    
+    def generate_ppt(self, topic, content=None, style=None, template=None):
         """
-        处理PPT智能体请求
+        生成PPT演示文稿
         
         参数:
-            input_data: 输入数据字典，必须包含mcp_type字段
-            context: 上下文信息字典
-            
-        返回:
-            处理结果字典
-        """
-        mcp_type = input_data.get("mcp_type")
-        
-        if not mcp_type:
-            return {"status": "error", "message": "缺少mcp_type参数"}
-        
-        if mcp_type not in self.mcp_mapping:
-            return {"status": "error", "message": f"不支持的MCP类型: {mcp_type}"}
-        
-        # 获取对应的MCP模块
-        mcp = self.mcp_mapping[mcp_type]
-        
-        # 调用MCP模块处理请求
-        try:
-            result = mcp.process(input_data, context)
-            return result
-        except Exception as e:
-            self.logger.error(f"MCP处理异常: {str(e)}")
-            return {"status": "error", "message": f"MCP处理异常: {str(e)}"}
-    
-    def generate_ppt(self, input_data: Dict[str, Any], context: Dict[str, Any] = None) -> Dict[str, Any]:
-        """
-        生成PPT的便捷方法，整合多个MCP模块
-        
-        参数:
-            input_data: 输入数据字典
-            context: 上下文信息字典
-            
-        返回:
-            PPT生成结果字典
-        """
-        # 1. 分析上下文
-        context_input = {
-            "mcp_type": "context_matching",
-            "context_action": "analyze_context",
-            "content": input_data.get("content", ""),
-            "context_type": input_data.get("context_type", "general")
-        }
-        context_result = self.process(context_input, context)
-        
-        if context_result.get("status") != "success":
-            return context_result
-        
-        context_features = context_result.get("context_features", {})
-        
-        # 2. 获取适合的模板
-        template_input = {
-            "mcp_type": "content_template",
-            "template_action": "get_template",
-            "template_type": input_data.get("template_type", "general"),
-            "industry": context_features.get("industry", "general")
-        }
-        template_result = self.process(template_input, context)
-        
-        if template_result.get("status") != "success":
-            return template_result
-        
-        template = template_result.get("template", {})
-        
-        # 3. 生成优化的提示词
-        prompt_input = {
-            "mcp_type": "prompt",
-            "prompt_type": "content_generation",
-            "title": input_data.get("title", ""),
-            "topic": input_data.get("topic", ""),
-            "audience": input_data.get("audience", "通用"),
-            "purpose": context_features.get("purpose", "informative"),
-            "length": "high" if context_features.get("complexity") == "high" else "medium"
-        }
-        prompt_result = self.process(prompt_input, context)
-        
-        if prompt_result.get("status") != "success":
-            return prompt_result
-        
-        # 4. 使用特性优化MCP生成PPT
-        feature_input = {
-            "mcp_type": "feature",
-            "feature_action": "generate_ppt",
-            "title": input_data.get("title", ""),
-            "content": input_data.get("content", ""),
-            "template_id": template.get("id", ""),
-            "prompt": prompt_result.get("prompt", ""),
-            "output_path": input_data.get("output_path", "")
-        }
-        feature_result = self.process(feature_input, context)
-        
-        if feature_result.get("status") != "success":
-            return feature_result
-        
-        # 5. 保存项目记忆
-        if input_data.get("save_memory", True):
-            memory_input = {
-                "mcp_type": "project_memory",
-                "memory_action": "store",
-                "project_id": input_data.get("project_id", ""),
-                "memory_type": "ppt_project",
-                "memory_data": {
-                    "title": input_data.get("title", ""),
-                    "content": input_data.get("content", ""),
-                    "template_id": template.get("id", ""),
-                    "context_features": context_features,
-                    "output_path": feature_result.get("output_path", "")
-                }
-            }
-            self.process(memory_input, context)
-        
-        # 返回最终结果
-        return {
-            "status": "success",
-            "output_path": feature_result.get("output_path", ""),
-            "template_used": template.get("name", ""),
-            "slide_count": feature_result.get("slide_count", 0),
-            "context_features": context_features
-        }
-    
-    def get_all_mcps(self) -> List[Dict[str, Any]]:
-        """
-        获取所有MCP模块的信息
+        - topic: 主题
+        - content: 内容（可选）
+        - style: 样式（可选）
+        - template: 模板（可选）
         
         返回:
-            MCP模块信息列表
+        - 生成的PPT文件路径
         """
-        mcp_info = []
-        for mcp_type, mcp in self.mcp_mapping.items():
-            mcp_info.append({
-                "type": mcp_type,
-                "id": mcp.mcp_id,
-                "name": mcp.name,
-                "description": mcp.description
+        self._start_session()
+        self._record_thought(f"准备生成PPT，主题: {topic}")
+        
+        # 使用MCP规划器解析PPT需求
+        self._record_thought("使用MCP规划器解析PPT需求")
+        parsed_request = self.mcp_planner.plan({
+            "type": "ppt_request_parsing",
+            "topic": topic,
+            "content": content,
+            "style": style,
+            "template": template
+        })
+        
+        # 如果MCP规划器无法处理，尝试使用MCP头脑风暴器
+        if not parsed_request.get("success"):
+            self._record_thought("MCP规划器无法处理，尝试使用MCP头脑风暴器")
+            parsed_request = self.mcp_brainstorm.generate({
+                "type": "ppt_request_parsing",
+                "topic": topic,
+                "content": content,
+                "style": style,
+                "template": template
             })
-        return mcp_info
+        
+        # 使用MCP规划器生成PPT内容结构
+        self._record_thought("使用MCP规划器生成PPT内容结构")
+        ppt_structure = self.mcp_planner.plan({
+            "type": "ppt_structure_generation",
+            "parsed_request": parsed_request
+        })
+        
+        # 使用MCP规划器生成PPT
+        self._record_thought("使用MCP规划器生成PPT")
+        ppt_result = self.mcp_planner.plan({
+            "type": "ppt_generation",
+            "structure": ppt_structure,
+            "style": style,
+            "template": template
+        })
+        
+        # 记录操作和结果
+        self._record_action("generate_ppt", {
+            "topic": topic,
+            "style": style,
+            "template": template
+        }, ppt_result)
+        
+        return ppt_result.get("file_path", f"/tmp/generated_ppt_{datetime.now().timestamp()}.pptx")
+    
+    def mindmap_to_ppt(self, mindmap_data, style=None, template=None):
+        """
+        将思维导图转换为PPT
+        
+        参数:
+        - mindmap_data: 思维导图数据
+        - style: 样式（可选）
+        - template: 模板（可选）
+        
+        返回:
+        - 生成的PPT文件路径
+        """
+        self._start_session()
+        self._record_thought("准备将思维导图转换为PPT")
+        
+        # 使用MCP规划器解析思维导图
+        self._record_thought("使用MCP规划器解析思维导图")
+        parsed_mindmap = self.mcp_planner.plan({
+            "type": "mindmap_parsing",
+            "mindmap_data": mindmap_data
+        })
+        
+        # 使用MCP规划器生成PPT结构
+        self._record_thought("使用MCP规划器生成PPT结构")
+        ppt_structure = self.mcp_planner.plan({
+            "type": "mindmap_to_ppt_structure",
+            "parsed_mindmap": parsed_mindmap,
+            "style": style,
+            "template": template
+        })
+        
+        # 使用MCP规划器生成PPT
+        self._record_thought("使用MCP规划器生成PPT")
+        ppt_result = self.mcp_planner.plan({
+            "type": "ppt_generation",
+            "structure": ppt_structure,
+            "style": style,
+            "template": template
+        })
+        
+        # 记录操作和结果
+        self._record_action("mindmap_to_ppt", {
+            "mindmap_nodes": len(mindmap_data.get("nodes", [])),
+            "style": style,
+            "template": template
+        }, ppt_result)
+        
+        return ppt_result.get("file_path", f"/tmp/mindmap_ppt_{datetime.now().timestamp()}.pptx")
+    
+    def generate_mindmap(self, topic, content=None):
+        """
+        生成思维导图
+        
+        参数:
+        - topic: 主题
+        - content: 内容（可选）
+        
+        返回:
+        - 生成的思维导图数据
+        """
+        self._start_session()
+        self._record_thought(f"准备生成思维导图，主题: {topic}")
+        
+        # 使用MCP规划器解析思维导图需求
+        self._record_thought("使用MCP规划器解析思维导图需求")
+        parsed_request = self.mcp_planner.plan({
+            "type": "mindmap_request_parsing",
+            "topic": topic,
+            "content": content
+        })
+        
+        # 使用MCP规划器生成思维导图
+        self._record_thought("使用MCP规划器生成思维导图")
+        mindmap_result = self.mcp_planner.plan({
+            "type": "mindmap_generation",
+            "parsed_request": parsed_request
+        })
+        
+        # 记录操作和结果
+        self._record_action("generate_mindmap", {
+            "topic": topic
+        }, mindmap_result)
+        
+        return mindmap_result.get("data", {
+            "topic": topic,
+            "nodes": [
+                {"id": "root", "text": topic, "parent": ""},
+                {"id": "node1", "text": "主要内容1", "parent": "root"},
+                {"id": "node2", "text": "主要内容2", "parent": "root"},
+                {"id": "node3", "text": "主要内容3", "parent": "root"},
+                {"id": "node1.1", "text": "子内容1.1", "parent": "node1"},
+                {"id": "node1.2", "text": "子内容1.2", "parent": "node1"},
+                {"id": "node2.1", "text": "子内容2.1", "parent": "node2"}
+            ]
+        })
+    
+    def edit_mindmap(self, mindmap_data, changes):
+        """
+        编辑思维导图
+        
+        参数:
+        - mindmap_data: 思维导图数据
+        - changes: 变更内容
+        
+        返回:
+        - 更新后的思维导图数据
+        """
+        self._start_session()
+        self._record_thought("准备编辑思维导图")
+        
+        # 使用MCP规划器解析编辑请求
+        self._record_thought("使用MCP规划器解析编辑请求")
+        parsed_request = self.mcp_planner.plan({
+            "type": "mindmap_edit_parsing",
+            "mindmap_data": mindmap_data,
+            "changes": changes
+        })
+        
+        # 使用MCP规划器执行编辑操作
+        self._record_thought("使用MCP规划器执行编辑操作")
+        edit_result = self.mcp_planner.plan({
+            "type": "mindmap_edit_execution",
+            "parsed_request": parsed_request
+        })
+        
+        # 记录操作和结果
+        self._record_action("edit_mindmap", {
+            "changes": changes
+        }, edit_result)
+        
+        return edit_result.get("data", {
+            "topic": mindmap_data.get("topic", "更新后的主题"),
+            "nodes": mindmap_data.get("nodes", [])
+        })

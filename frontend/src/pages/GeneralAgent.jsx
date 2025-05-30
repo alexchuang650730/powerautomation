@@ -1,102 +1,241 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../styles/GeneralAgent.css';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
-import SearchBar from '../components/SearchBar';
 
 const GeneralAgent = () => {
   const [query, setQuery] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [conversation, setConversation] = useState([]);
-  const [activeMode, setActiveMode] = useState('chat'); // 'chat', 'task', 'project'
+  const [task, setTask] = useState('');
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [sessionId, setSessionId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('chat');
+  
+  const navigate = useNavigate();
 
-  // 模拟提交处理
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  useEffect(() => {
+    // 生成会话ID
+    if (!sessionId) {
+      setSessionId(`session-${Date.now()}`);
+    }
+  }, []);
 
-    // 添加用户消息到对话
+  const handleChat = async () => {
+    if (!query) {
+      alert('请输入问题');
+      return;
+    }
+    
+    // 添加用户消息
     const userMessage = {
       role: 'user',
       content: query,
       timestamp: new Date().toISOString()
     };
+    setMessages(prev => [...prev, userMessage]);
     
-    setConversation([...conversation, userMessage]);
-    setIsProcessing(true);
-    
-    // 模拟API调用
-    setTimeout(() => {
-      // 根据不同的模式返回不同的响应
-      let agentResponse;
+    setLoading(true);
+    try {
+      const response = await axios.post('/api/general_agent/chat', {
+        query,
+        session_id: sessionId,
+        context: { messages }
+      });
       
-      if (activeMode === 'chat') {
-        agentResponse = {
-          role: 'assistant',
-          content: `我理解您的问题是关于"${query}"。这是一个很好的问题，让我来回答...\n\n根据最新的研究和数据，这个问题的答案是多方面的。首先，我们需要考虑...\n\n总结来说，关键点是：1) ... 2) ... 3) ...`,
-          timestamp: new Date().toISOString()
-        };
-      } else if (activeMode === 'task') {
-        agentResponse = {
-          role: 'assistant',
-          content: `我将帮助您完成"${query}"任务。\n\n我已经开始处理这个任务，以下是我的计划：\n\n1. 分析任务需求\n2. 收集必要信息\n3. 执行任务步骤\n4. 验证结果\n\n我现在正在执行第一步...`,
-          actions: [
-            { type: 'task_started', name: query, id: 'task-' + Date.now() }
-          ],
-          timestamp: new Date().toISOString()
-        };
-      } else {
-        agentResponse = {
-          role: 'assistant',
-          content: `我将为您创建"${query}"项目。\n\n这个项目将包含以下组件：\n\n1. 需求分析文档\n2. 设计方案\n3. 实施计划\n4. 测试策略\n\n我已经开始准备项目文档，您可以在项目面板中查看进度。`,
-          actions: [
-            { type: 'project_created', name: query, id: 'proj-' + Date.now() }
-          ],
-          timestamp: new Date().toISOString()
-        };
-      }
-      
-      setConversation([...conversation, userMessage, agentResponse]);
+      // 添加助手回复
+      setMessages(prev => [...prev, response.data]);
       setQuery('');
-      setIsProcessing(false);
-    }, 2000);
+    } catch (error) {
+      console.error('对话失败:', error);
+      // 添加错误消息
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: '对话失败，请稍后重试',
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 渲染对话消息
-  const renderMessage = (message, index) => {
-    const isUser = message.role === 'user';
+  const handleExecuteTask = async () => {
+    if (!task) {
+      alert('请输入任务描述');
+      return;
+    }
     
-    return (
-      <div 
-        key={index} 
-        className={`message ${isUser ? 'user-message' : 'agent-message'}`}
-      >
-        <div className="message-header">
-          <div className="message-avatar">
-            {isUser ? '👤' : '🤖'}
-          </div>
-          <div className="message-info">
-            <div className="message-sender">{isUser ? '您' : '通用智能体'}</div>
-            <div className="message-time">
-              {new Date(message.timestamp).toLocaleTimeString()}
+    setLoading(true);
+    try {
+      const response = await axios.post('/api/general_agent/execute_task', {
+        task,
+        session_id: sessionId,
+        parameters: {}
+      });
+      
+      // 添加任务执行结果
+      setMessages(prev => [...prev, {
+        role: 'user',
+        content: `执行任务: ${task}`,
+        timestamp: new Date().toISOString()
+      }, response.data]);
+      setTask('');
+    } catch (error) {
+      console.error('执行任务失败:', error);
+      // 添加错误消息
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: '执行任务失败，请稍后重试',
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateProject = async () => {
+    if (!projectName || !projectDescription) {
+      alert('请输入项目名称和描述');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const response = await axios.post('/api/general_agent/create_project', {
+        project_name: projectName,
+        project_description: projectDescription,
+        session_id: sessionId,
+        parameters: {}
+      });
+      
+      // 添加项目创建结果
+      setMessages(prev => [...prev, {
+        role: 'user',
+        content: `创建项目: ${projectName}\n${projectDescription}`,
+        timestamp: new Date().toISOString()
+      }, response.data]);
+      setProjectName('');
+      setProjectDescription('');
+    } catch (error) {
+      console.error('创建项目失败:', error);
+      // 添加错误消息
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: '创建项目失败，请稍后重试',
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderForm = () => {
+    switch (activeTab) {
+      case 'chat':
+        return (
+          <div className="form-container">
+            <div className="form-group">
+              <label>问题</label>
+              <textarea 
+                value={query} 
+                onChange={(e) => setQuery(e.target.value)} 
+                placeholder="输入您的问题"
+                disabled={loading}
+              />
             </div>
+            <button 
+              className="action-button" 
+              onClick={handleChat} 
+              disabled={loading}
+            >
+              {loading ? '处理中...' : '发送'}
+            </button>
           </div>
-        </div>
-        <div className="message-content">
-          {message.content.split('\n').map((line, i) => (
-            <React.Fragment key={i}>
-              {line}
-              <br />
-            </React.Fragment>
-          ))}
-        </div>
-        {message.actions && (
-          <div className="message-actions">
-            {message.actions.map((action, i) => (
-              <div key={i} className="action-badge">
-                {action.type === 'task_started' ? '任务已启动' : '项目已创建'}
-              </div>
-            ))}
+        );
+      
+      case 'task':
+        return (
+          <div className="form-container">
+            <div className="form-group">
+              <label>任务描述</label>
+              <textarea 
+                value={task} 
+                onChange={(e) => setTask(e.target.value)} 
+                placeholder="输入任务描述，例如: 帮我整理一份周报"
+                disabled={loading}
+              />
+            </div>
+            <button 
+              className="action-button" 
+              onClick={handleExecuteTask} 
+              disabled={loading}
+            >
+              {loading ? '执行中...' : '执行任务'}
+            </button>
+          </div>
+        );
+      
+      case 'project':
+        return (
+          <div className="form-container">
+            <div className="form-group">
+              <label>项目名称</label>
+              <input 
+                type="text" 
+                value={projectName} 
+                onChange={(e) => setProjectName(e.target.value)} 
+                placeholder="输入项目名称"
+                disabled={loading}
+              />
+            </div>
+            <div className="form-group">
+              <label>项目描述</label>
+              <textarea 
+                value={projectDescription} 
+                onChange={(e) => setProjectDescription(e.target.value)} 
+                placeholder="输入项目描述"
+                disabled={loading}
+              />
+            </div>
+            <button 
+              className="action-button" 
+              onClick={handleCreateProject} 
+              disabled={loading}
+            >
+              {loading ? '创建中...' : '创建项目'}
+            </button>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
+  const renderMessages = () => {
+    return (
+      <div className="messages-container">
+        {messages.map((message, index) => (
+          <div 
+            key={index} 
+            className={`message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
+          >
+            <div className="message-header">
+              <span className="message-role">{message.role === 'user' ? '用户' : '助手'}</span>
+              <span className="message-time">
+                {new Date(message.timestamp).toLocaleString()}
+              </span>
+            </div>
+            <div className="message-content">{message.content}</div>
+          </div>
+        ))}
+        {loading && (
+          <div className="message assistant-message">
+            <div className="message-header">
+              <span className="message-role">助手</span>
+            </div>
+            <div className="message-content loading">思考中...</div>
           </div>
         )}
       </div>
@@ -105,99 +244,41 @@ const GeneralAgent = () => {
 
   return (
     <div className="general-agent-container">
-      <Sidebar />
+      <h1>通用智能体</h1>
+      <p className="description">
+        通用智能体可以帮助您回答问题、执行任务和管理项目。
+      </p>
       
-      <div className="main-content">
-        <Header />
-        
-        <div className="agent-header">
-          <div className="agent-badge">天工超级智能体</div>
-          <h1 className="agent-title">通用智能助手</h1>
-        </div>
-        
-        <div className="mode-selector">
-          <div 
-            className={`mode-option ${activeMode === 'chat' ? 'active' : ''}`}
-            onClick={() => setActiveMode('chat')}
-          >
-            <span className="mode-icon">💬</span>
-            对话模式
-          </div>
-          <div 
-            className={`mode-option ${activeMode === 'task' ? 'active' : ''}`}
-            onClick={() => setActiveMode('task')}
-          >
-            <span className="mode-icon">✅</span>
-            任务模式
-          </div>
-          <div 
-            className={`mode-option ${activeMode === 'project' ? 'active' : ''}`}
-            onClick={() => setActiveMode('project')}
-          >
-            <span className="mode-icon">📂</span>
-            项目模式
-          </div>
-        </div>
-        
-        <div className="conversation-container">
-          {conversation.length === 0 ? (
-            <div className="empty-conversation">
-              <div className="empty-icon">🔍</div>
-              <h3>开始与通用智能体对话</h3>
-              <p>
-                {activeMode === 'chat' 
-                  ? '您可以询问任何问题，我会尽力回答。' 
-                  : activeMode === 'task' 
-                    ? '描述您需要完成的任务，我会帮您执行。' 
-                    : '描述您想要创建的项目，我会为您规划和实施。'}
-              </p>
-            </div>
-          ) : (
-            <div className="messages-container">
-              {conversation.map(renderMessage)}
-            </div>
-          )}
-        </div>
-        
-        <form className="input-form" onSubmit={handleSubmit}>
-          <div className="input-container">
-            <textarea 
-              placeholder={
-                activeMode === 'chat' 
-                  ? '输入您的问题...' 
-                  : activeMode === 'task' 
-                    ? '描述您需要完成的任务...' 
-                    : '描述您想要创建的项目...'
-              }
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              disabled={isProcessing}
-              rows={3}
-            />
-            <button 
-              type="submit" 
-              className="send-button"
-              disabled={isProcessing || !query.trim()}
-            >
-              {isProcessing ? '处理中...' : '发送'}
-            </button>
-          </div>
-          <div className="input-options">
-            <button type="button" className="option-button">
-              <span className="option-icon">🔗</span>
-              联网
-            </button>
-            <button type="button" className="option-button">
-              <span className="option-icon">📎</span>
-              上传文件
-            </button>
-            <button type="button" className="option-button">
-              <span className="option-icon">🔄</span>
-              调用其他智能体
-            </button>
-          </div>
-        </form>
+      <div className="tabs">
+        <button 
+          className={activeTab === 'chat' ? 'active' : ''} 
+          onClick={() => setActiveTab('chat')}
+        >
+          对话
+        </button>
+        <button 
+          className={activeTab === 'task' ? 'active' : ''} 
+          onClick={() => setActiveTab('task')}
+        >
+          任务执行
+        </button>
+        <button 
+          className={activeTab === 'project' ? 'active' : ''} 
+          onClick={() => setActiveTab('project')}
+        >
+          项目管理
+        </button>
       </div>
+      
+      {renderForm()}
+      {renderMessages()}
+      
+      <button 
+        className="back-button" 
+        onClick={() => navigate('/')}
+      >
+        返回首页
+      </button>
     </div>
   );
 };
