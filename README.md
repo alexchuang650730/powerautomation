@@ -248,16 +248,53 @@ powerautomation/
 └── docs/                       # 文档
 ```
 
-### 5.2 模块关系
+### 5.2 系统架构图
 
-![模块关系图](docs/module_relationship.png)
+![PowerAutomation MCP 系统架构图](docs/images/mcp_architecture.png)
 
-- **Sequential Thinking适配器**：提供任务拆解和反思能力
-- **Playwright适配器**：提供浏览器自动化能力
-- **WebAgentB适配器**：提供高级网页理解与交互能力
-- **增强版MCP规划器**：集成Sequential Thinking的规划器
-- **增强版MCP头脑风暴器**：集成Playwright和WebAgentB的头脑风暴器
-- **主动问题解决器**：集成Sequential Thinking和WebAgentB的问题解决器
+### 5.3 架构说明
+
+PowerAutomation MCP系统采用分层架构设计，主要包含以下核心组件：
+
+- **MCP中央协调器(MCPCentralCoordinator)**：系统核心，负责协调各模块间的通信和任务分发，连接规划器和头脑风暴器
+  
+- **MCP规划器(MCPPlanner)**：负责任务分解和执行计划生成，通过Sequential Thinking增强能力，调用多个子模块：
+  - **MCPMatcher**：匹配任务与执行能力
+  - **MCPExecutor**：执行具体任务
+  - **MCPCacheManager**：管理缓存数据
+  - **CurrencyController**：控制资源使用
+
+- **MCP头脑风暴器(MCPBrainstorm)**：负责创意生成和方案优化，通过Playwright和WebAgentB增强能力，调用多个子模块：
+  - **CapabilityAnalyzer**：分析系统能力
+  - **MCPConverter**：转换数据格式
+  - **SearchEnhancer**：增强搜索功能
+
+- **思考与操作记录器(ThoughtActionRecorder)**：记录系统思考过程和操作，支持：
+  - **VisualThoughtRecorder**：可视化思考记录
+  - **EnhancedThoughtRecorder**：增强型思考记录
+
+- **Release管理器(ReleaseManager)**：管理系统版本和发布，支持：
+  - **ReleaseRulesChecker**：检查发布规则
+
+- **测试与问题收集器(TestAndIssueCollector)**：收集和管理测试结果和问题，支持：
+  - **TestReadmeUpdater**：更新测试文档
+
+- **Manus问题解决驱动器(ManusProblemSolver)**：主动发现和解决问题，支持：
+  - **SessionSavePointManager**：管理会话保存点
+  - **RollbackExecutor**：执行回滚操作
+
+系统数据流向：
+1. 外部系统(mcp.so)构建任务发送至中央协调器
+2. 中央协调器根据任务类型分发至规划器或头脑风暴器
+3. 规划器和头脑风暴器相互协作，增强彼此能力
+4. 规划器调用执行器和匹配器处理具体任务
+5. 头脑风暴器调用分析器和增强器生成创意方案
+6. 记录器全程记录思考和操作过程
+7. 测试收集器收集问题并反馈给问题解决器
+8. 问题解决器生成解决方案并推送至GitHub
+9. Release管理器管理版本发布和更新
+
+这一架构设计确保了系统的高度模块化、可扩展性和鲁棒性，同时通过六大MCP增强模块显著提升了系统的任务规划、创意生成和问题解决能力。
 
 ## 6. 安装与配置
 
