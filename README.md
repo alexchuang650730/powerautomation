@@ -4,6 +4,10 @@
 
 PowerAutomation是一个多智能体协作平台，集成了代码、PPT、网页和通用四种智能体，通过六大特性定义和MCP组件实现高效的任务处理和智能体协作。本项目实现了多智能体路由、六特性存储、自动化测试、RL Factory能力对齐等核心功能。
 
+## 系统架构图
+
+![PowerAutomation MCP 系统架构图](docs/images/architecture.png)
+
 ## 目录结构
 
 ```
