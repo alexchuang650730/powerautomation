@@ -323,49 +323,45 @@ powerautomation/
 
 #### 5.2.1 完整系统架构图
 
-![PowerAutomation 完整系统架构图](docs/images/powerautomation_complete_architecture.png)
-
-#### 5.2.2 MCP模块层次关系图
-
-![PowerAutomation MCP模块关系图](docs/images/module_relationship.png)
+![PowerAutomation 完整系统架构图](docs/images/powerautomation_layered_architecture_compact_final.png)
 
 ### 5.3 架构说明
 
-PowerAutomation MCP系统采用分层架构设计，主要包含以下核心组件：
+PowerAutomation MCP系统采用分层架构设计，主要包含以下核心层级：
 
-- **MCP中央协调器(MCPCentralCoordinator)**：系统核心，负责协调各模块间的通信和任务分发，连接规划器和头脑风暴器
-  
-- **MCP规划器(MCPPlanner)**：负责任务分解和执行计划生成，通过Sequential Thinking增强能力，调用多个子模块：
-  - **MCPMatcher**：匹配任务与执行能力
-  - **MCPExecutor**：执行具体任务
-  - **MCPCacheManager**：管理缓存数据
-  - **CurrencyController**：控制资源使用
+- **智能体层 (Agents)**：包括PPT智能体、代码智能体、网页智能体和通用智能体，负责与用户直接交互并执行具体任务。
 
-- **MCP头脑风暴器(MCPBrainstorm)**：负责创意生成和方案优化，通过Playwright和WebAgentB增强能力，调用多个子模块：
-  - **CapabilityAnalyzer**：分析系统能力
-  - **MCPConverter**：转换数据格式
-  - **SearchEnhancer**：增强搜索功能
+- **MCP核心组件层**：系统的核心协调层，包括：
+  - **MCP中央协调器(MCPCentralCoordinator)**：系统核心，负责协调各模块间的通信和任务分发
+  - **MCP规划器(MCPPlanner)**：负责任务分解和执行计划生成
+  - **MCP头脑风暴器(MCPBrainstorm)**：负责创意生成和方案优化
 
-- **思考与操作记录器(ThoughtActionRecorder)**：记录系统思考过程和操作，支持：
-  - **VisualThoughtRecorder**：可视化思考记录
-  - **EnhancedThoughtRecorder**：增强型思考记录
+- **MCP增强组件层**：提供核心功能增强，包括：
+  - **思考与操作记录器(ThoughtActionRecorder)**：记录系统思考过程和操作
+  - **Release管理器(ReleaseManager)**：管理系统版本和发布
+  - **测试与问题收集器(TestAndIssueCollector)**：收集和管理测试结果和问题
+  - **Agent问题解决驱动器(AgentProblemSolver)**：主动发现和解决问题
 
-- **Release管理器(ReleaseManager)**：管理系统版本和发布，支持：
-  - **ReleaseRulesChecker**：检查发布规则
-
-- **测试与问题收集器(TestAndIssueCollector)**：收集和管理测试结果和问题，支持：
-  - **TestReadmeUpdater**：更新测试文档
-
-- **Agent问题解决驱动器(AgentProblemSolver)**：主动发现和解决问题，支持：
-  - **SessionSavePointManager**：管理会话保存点
-  - **RollbackExecutor**：执行回滚操作
-
-- **RL增强器(RLEnhancer)**：通过强化学习实现思考能力迁移，包含：
-  - **思考过程结构化模块**：分解和表示思考过程
-  - **混合学习架构**：结合监督学习、强化学习和对比学习
+- **外部工具适配器层**：连接外部工具和服务，包括：
   - **无限上下文适配器**：处理大规模上下文数据
   - **MCP.so适配器**：与现有MCP工具集成
   - **GitHub Actions适配器**：实现CI/CD自动化
+  - **ACI.dev适配器**：连接ACI.dev服务
+  - **WebUI工具构建器**：构建WebUI工具
+
+- **开发工具层 (Dev Tools)**：提供开发支持工具
+
+- **RL-Factory层**：提供强化学习能力，包括：
+  - **Sequential Thinking适配器**：提供任务拆解和反思能力
+  - **Playwright适配器**：提供浏览器自动化能力
+  - **WebAgentB增强适配器**：提供高级网页理解与交互能力
+
+- **关键模块层 (Key Modules)**：提供核心功能模块，包括：
+  - **增强版MCP规划器**：集成Sequential Thinking能力
+  - **增强版MCP头脑风暴器**：集成Playwright和WebAgentB自动化能力
+  - **主动问题解决器**：提供主动问题解决能力
+
+- **基础仓库层 (Base Repository)**：提供基础代码和资源
 
 #### 5.3.1 GitHub Actions与Release Manager的关系
 
@@ -646,7 +642,7 @@ pytest enhancers/rl_enhancer/tests/end_to_end/test_rl_enhancer_integration.py
 
 ```bash
 # 运行视觉验证测试
-pytest tests/e2e/test_visual_verification.py
+pytest tests/visual_test/test_visual_verification.py
 ```
 
 ## 9. 持续集成
