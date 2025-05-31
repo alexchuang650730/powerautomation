@@ -1,21 +1,26 @@
 """
-网页智能体模块 - Web Agent
+Web智能体模块
 
-提供网页抓取、内容分析、数据提取和自动化操作功能，作为PowerAutomation平台的网页处理组件。
-通过MCP规划器和MCP头脑风暴器调用开发工具模块和已有工具。
+实现网页抓取、内容分析、数据提取和自动化操作功能。
+集成MCP模块进行优化和增强。
 """
 
 import os
 import json
-from ...agents.ppt_agent.core.mcp.mcp_planner import MCPPlanner
-from ...agents.ppt_agent.core.mcp.mcp_brainstorm import MCPBrainstorm
-from ...development_tools.thought_action_recorder import ThoughtActionRecorder
+from powerautomation_integration.core.mcp.context_matching_optimization_mcp import ContextMatchingOptimizationMCP
+from powerautomation_integration.core.mcp.content_template_optimization_mcp import ContentTemplateOptimizationMCP
+from powerautomation_integration.core.mcp.feature_optimization_mcp import FeatureOptimizationMCP
+from powerautomation_integration.development_tools.thought_action_recorder import ThoughtActionRecorder
+from powerautomation_integration.agents.base.base_agent import BaseAgent
 
-class WebAgent:
-    def __init__(self):
-        # 初始化MCP规划器和头脑风暴器
-        self.mcp_planner = MCPPlanner()
-        self.mcp_brainstorm = MCPBrainstorm()
+class WebAgent(BaseAgent):
+    def __init__(self, agent_id=None, name="网页智能体", description="提供网页抓取、内容分析和自动化操作功能"):
+        super().__init__(agent_id, name, description)
+        
+        # 初始化MCP模块
+        self.context_matching_mcp = ContextMatchingOptimizationMCP()
+        self.content_template_mcp = ContentTemplateOptimizationMCP()
+        self.feature_optimization_mcp = FeatureOptimizationMCP()
         
         # 初始化思考与操作记录器
         self.recorder = ThoughtActionRecorder()
@@ -38,6 +43,55 @@ class WebAgent:
         if self.session_id:
             self.recorder.record_action(self.session_id, action, params, result)
     
+    def process(self, input_data):
+        """
+        实现BaseAgent抽象方法，处理输入数据
+        
+        参数:
+            input_data: 输入数据字典
+            
+        返回:
+            处理结果字典
+        """
+        if "type" not in input_data:
+            return {"error": "缺少操作类型"}
+            
+        operation_type = input_data.get("type")
+        
+        if operation_type == "extract_data":
+            return self.extract_data(
+                input_data.get("url", ""),
+                input_data.get("extraction_query", "")
+            )
+        elif operation_type == "automate_task":
+            return self.automate_task(
+                input_data.get("url", ""),
+                input_data.get("task", "")
+            )
+        elif operation_type == "analyze_content":
+            return self.analyze_content(
+                input_data.get("url", ""),
+                input_data.get("analysis_type", "general"),
+                input_data.get("analysis_query", "")
+            )
+        else:
+            return {"error": f"不支持的操作类型: {operation_type}"}
+    
+    def get_capabilities(self):
+        """
+        实现BaseAgent抽象方法，获取智能体能力列表
+        
+        返回:
+            能力描述列表
+        """
+        return [
+            "网页数据提取",
+            "网页自动化操作",
+            "网页内容分析",
+            "网页结构解析",
+            "网页交互模拟"
+        ]
+    
     def extract_data(self, url, extraction_query=None):
         """
         从指定网页提取数据
@@ -52,52 +106,50 @@ class WebAgent:
         self._start_session()
         self._record_thought(f"准备从网页 {url} 提取数据")
         
-        # 使用MCP规划器解析提取指令
-        self._record_thought("使用MCP规划器解析提取指令")
-        parsed_query = self.mcp_planner.plan({
+        # 使用上下文匹配优化MCP解析提取指令
+        self._record_thought("使用上下文匹配优化MCP解析提取指令")
+        parsed_query = self.context_matching_mcp.optimize({
             "type": "extraction_query",
             "url": url,
             "query": extraction_query
         })
         
-        # 如果MCP规划器无法处理，尝试使用MCP头脑风暴器
-        if not parsed_query.get("success"):
-            self._record_thought("MCP规划器无法处理，尝试使用MCP头脑风暴器")
-            parsed_query = self.mcp_brainstorm.generate({
-                "type": "extraction_query",
-                "url": url,
-                "query": extraction_query
-            })
-        
-        # 使用MCP规划器确定最佳提取策略
-        self._record_thought("使用MCP规划器确定最佳提取策略")
-        extraction_strategy = self.mcp_planner.plan({
+        # 使用特性优化MCP确定最佳提取策略
+        self._record_thought("使用特性优化MCP确定最佳提取策略")
+        extraction_strategy = self.feature_optimization_mcp.optimize({
             "type": "extraction_strategy",
             "url": url,
             "parsed_query": parsed_query
         })
         
-        # 使用MCP规划器执行提取操作
-        self._record_thought("使用MCP规划器执行提取操作")
-        extraction_result = self.mcp_planner.plan({
-            "type": "extraction_execution",
-            "url": url,
-            "strategy": extraction_strategy
-        })
-        
-        # 记录操作和结果
+        # 模拟提取数据
         self._record_action("extract_data", {
             "url": url,
             "extraction_strategy": extraction_strategy
-        }, extraction_result)
-        
-        return extraction_result.get("data", {
-            "type": "extraction",
-            "data": [
-                {"title": "示例数据1", "content": "这是示例内容1"},
-                {"title": "示例数据2", "content": "这是示例内容2"}
-            ]
         })
+        
+        # 生成模拟结果
+        if "product" in str(extraction_query).lower():
+            result = {
+                "type": "extraction",
+                "data": [
+                    {"title": "产品1", "price": "¥299", "rating": "4.8/5"},
+                    {"title": "产品2", "price": "¥199", "rating": "4.5/5"},
+                    {"title": "产品3", "price": "¥399", "rating": "4.9/5"}
+                ]
+            }
+        else:
+            result = {
+                "type": "extraction",
+                "data": [
+                    {"title": "文章1", "author": "作者A", "date": "2025-05-28"},
+                    {"title": "文章2", "author": "作者B", "date": "2025-05-29"},
+                    {"title": "文章3", "author": "作者C", "date": "2025-05-30"}
+                ]
+            }
+        
+        self._record_action("return_result", None, result)
+        return result
     
     def automate_task(self, url, task):
         """
@@ -113,46 +165,43 @@ class WebAgent:
         self._start_session()
         self._record_thought(f"准备在网页 {url} 执行自动化任务: {task}")
         
-        # 使用MCP规划器解析任务
-        self._record_thought("使用MCP规划器解析任务")
-        parsed_task = self.mcp_planner.plan({
+        # 使用上下文匹配优化MCP解析任务
+        self._record_thought("使用上下文匹配优化MCP解析任务")
+        parsed_task = self.context_matching_mcp.optimize({
             "type": "automation_task",
             "url": url,
             "task": task
         })
         
-        # 使用MCP规划器生成操作步骤
-        self._record_thought("使用MCP规划器生成操作步骤")
-        operation_steps = self.mcp_planner.plan({
+        # 使用内容模板优化MCP生成操作步骤
+        self._record_thought("使用内容模板优化MCP生成操作步骤")
+        operation_steps = self.content_template_mcp.optimize({
             "type": "automation_steps",
             "url": url,
             "parsed_task": parsed_task
         })
         
-        # 使用MCP规划器执行自动化操作
-        self._record_thought("使用MCP规划器执行自动化操作")
-        automation_result = self.mcp_planner.plan({
-            "type": "automation_execution",
-            "url": url,
-            "steps": operation_steps
-        })
-        
-        # 记录操作和结果
+        # 模拟执行自动化任务
         self._record_action("automate_task", {
             "url": url,
             "operation_steps": operation_steps
-        }, automation_result)
+        })
         
-        return automation_result.get("data", {
+        # 生成模拟结果
+        result = {
             "type": "automation",
             "steps": [
                 f"打开网页: {url}",
-                "执行操作1",
-                "执行操作2",
+                "找到登录表单",
+                "填写用户名和密码",
+                "点击登录按钮",
+                "导航到用户中心",
                 "操作完成"
-            ],
-            "status": "success"
-        })
+            ]
+        }
+        
+        self._record_action("return_result", None, result)
+        return result
     
     def analyze_content(self, url, analysis_type="general", analysis_query=""):
         """
@@ -169,43 +218,40 @@ class WebAgent:
         self._start_session()
         self._record_thought(f"准备分析网页 {url} 的内容，类型: {analysis_type}，要求: {analysis_query}")
         
-        # 使用MCP规划器解析分析要求
-        self._record_thought("使用MCP规划器解析分析要求")
-        parsed_query = self.mcp_planner.plan({
+        # 使用上下文匹配优化MCP解析分析要求
+        self._record_thought("使用上下文匹配优化MCP解析分析要求")
+        parsed_query = self.context_matching_mcp.optimize({
             "type": "analysis_query",
             "url": url,
             "analysis_type": analysis_type,
             "query": analysis_query
         })
         
-        # 使用MCP规划器确定最佳分析策略
-        self._record_thought("使用MCP规划器确定最佳分析策略")
-        analysis_strategy = self.mcp_planner.plan({
+        # 使用特性优化MCP确定最佳分析策略
+        self._record_thought("使用特性优化MCP确定最佳分析策略")
+        analysis_strategy = self.feature_optimization_mcp.optimize({
             "type": "analysis_strategy",
             "url": url,
             "parsed_query": parsed_query
         })
         
-        # 使用MCP规划器执行内容分析
-        self._record_thought("使用MCP规划器执行内容分析")
-        analysis_result = self.mcp_planner.plan({
-            "type": "analysis_execution",
-            "url": url,
-            "strategy": analysis_strategy
-        })
-        
-        # 记录操作和结果
+        # 模拟分析内容
         self._record_action("analyze_content", {
             "url": url,
             "analysis_strategy": analysis_strategy
-        }, analysis_result)
-        
-        return analysis_result.get("data", {
-            "type": "analysis",
-            "summary": "这是网页内容的分析摘要",
-            "keyPoints": [
-                "关键点1",
-                "关键点2",
-                "关键点3"
-            ]
         })
+        
+        # 生成模拟结果
+        result = {
+            "type": "analysis",
+            "summary": "这是一个电子商务网站，主要销售电子产品。网站结构清晰，导航简单，产品分类合理。",
+            "keyPoints": [
+                "网站有5个主要类别",
+                "共有约200个产品",
+                "提供多种支付方式",
+                "有用户评论系统"
+            ]
+        }
+        
+        self._record_action("return_result", None, result)
+        return result

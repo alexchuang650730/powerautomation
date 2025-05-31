@@ -7,8 +7,8 @@ from typing import Dict, List, Any, Optional, Union, Tuple
 import torch
 from transformers import AutoTokenizer, AutoModel
 
-from ...core.thought.schema import ThoughtProcess
-from ...core.thought.serializer import ThoughtSerializer
+from rl_factory.core.thought.schema import ThoughtProcess
+from rl_factory.core.thought.serializer import ThoughtSerializer
 
 
 class InfiniteContextAdapter:
@@ -260,7 +260,7 @@ class InfiniteContextAdapter:
 
 if __name__ == "__main__":
     # 示例用法
-    from ...core.thought.decomposer import ThoughtDecomposer
+    from rl_factory.core.thought.decomposer import ThoughtDecomposer
     
     # 创建示例思考过程
     raw_thought = """设计一个在线教育平台

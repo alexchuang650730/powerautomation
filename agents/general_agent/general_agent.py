@@ -1,22 +1,29 @@
 """
-通用智能体模块 - General Agent
+通用智能体模块
 
-提供对话、任务执行和项目管理功能，作为PowerAutomation平台的通用入口。
-通过MCP规划器和MCP头脑风暴器调用开发工具模块和已有工具。
+实现对话、任务执行和项目管理功能。
+集成MCP模块进行优化和增强。
 """
 
 import os
 import json
 from datetime import datetime
-from ...agents.ppt_agent.core.mcp.mcp_planner import MCPPlanner
-from ...agents.ppt_agent.core.mcp.mcp_brainstorm import MCPBrainstorm
-from ...development_tools.thought_action_recorder import ThoughtActionRecorder
+from powerautomation_integration.core.mcp.context_matching_optimization_mcp import ContextMatchingOptimizationMCP
+from powerautomation_integration.core.mcp.content_template_optimization_mcp import ContentTemplateOptimizationMCP
+from powerautomation_integration.core.mcp.prompt_optimization_mcp import PromptOptimizationMCP
+from powerautomation_integration.core.mcp.project_memory_optimization_mcp import ProjectMemoryOptimizationMCP
+from powerautomation_integration.development_tools.thought_action_recorder import ThoughtActionRecorder
+from powerautomation_integration.agents.base.base_agent import BaseAgent
 
-class GeneralAgent:
-    def __init__(self):
-        # 初始化MCP规划器和头脑风暴器
-        self.mcp_planner = MCPPlanner()
-        self.mcp_brainstorm = MCPBrainstorm()
+class GeneralAgent(BaseAgent):
+    def __init__(self, agent_id=None, name="通用智能体", description="提供对话、任务执行和项目管理功能"):
+        super().__init__(agent_id, name, description)
+        
+        # 初始化MCP模块
+        self.context_matching_mcp = ContextMatchingOptimizationMCP()
+        self.content_template_mcp = ContentTemplateOptimizationMCP()
+        self.prompt_optimization_mcp = PromptOptimizationMCP()
+        self.project_memory_mcp = ProjectMemoryOptimizationMCP()
         
         # 初始化思考与操作记录器
         self.recorder = ThoughtActionRecorder()
@@ -39,6 +46,58 @@ class GeneralAgent:
         if self.session_id:
             self.recorder.record_action(self.session_id, action, params, result)
     
+    def process(self, input_data):
+        """
+        实现BaseAgent抽象方法，处理输入数据
+        
+        参数:
+            input_data: 输入数据字典
+            
+        返回:
+            处理结果字典
+        """
+        if "type" not in input_data:
+            return {"error": "缺少操作类型"}
+            
+        operation_type = input_data.get("type")
+        
+        if operation_type == "chat":
+            return self.chat(
+                input_data.get("query", ""),
+                input_data.get("session_id"),
+                input_data.get("context")
+            )
+        elif operation_type == "execute_task":
+            return self.execute_task(
+                input_data.get("task", ""),
+                input_data.get("session_id"),
+                input_data.get("parameters")
+            )
+        elif operation_type == "create_project":
+            return self.create_project(
+                input_data.get("project_name", ""),
+                input_data.get("project_description", ""),
+                input_data.get("session_id"),
+                input_data.get("parameters")
+            )
+        else:
+            return {"error": f"不支持的操作类型: {operation_type}"}
+    
+    def get_capabilities(self):
+        """
+        实现BaseAgent抽象方法，获取智能体能力列表
+        
+        返回:
+            能力描述列表
+        """
+        return [
+            "多轮对话",
+            "任务执行",
+            "项目管理",
+            "上下文理解",
+            "内容生成"
+        ]
+    
     def chat(self, query, session_id=None, context=None):
         """
         与通用智能体进行对话
@@ -58,40 +117,38 @@ class GeneralAgent:
         
         self._record_thought(f"收到用户问题: {query}")
         
-        # 使用MCP规划器解析用户问题
-        self._record_thought("使用MCP规划器解析用户问题")
-        parsed_query = self.mcp_planner.plan({
+        # 使用上下文匹配优化MCP解析用户问题
+        self._record_thought("使用上下文匹配优化MCP解析用户问题")
+        parsed_query = self.context_matching_mcp.optimize({
             "type": "chat_query",
             "query": query,
             "context": context or {}
         })
         
-        # 如果MCP规划器无法处理，尝试使用MCP头脑风暴器
-        if not parsed_query.get("success"):
-            self._record_thought("MCP规划器无法处理，尝试使用MCP头脑风暴器")
-            parsed_query = self.mcp_brainstorm.generate({
-                "type": "chat_query",
-                "query": query,
-                "context": context or {}
-            })
-        
-        # 使用MCP规划器生成回答
-        self._record_thought("使用MCP规划器生成回答")
-        response_content = self.mcp_planner.plan({
-            "type": "chat_response",
+        # 使用提示词优化MCP生成最佳回答
+        self._record_thought("使用提示词优化MCP生成最佳回答")
+        optimized_prompt = self.prompt_optimization_mcp.optimize({
+            "type": "chat_prompt",
             "parsed_query": parsed_query
+        })
+        
+        # 使用内容模板优化MCP生成回答内容
+        self._record_thought("使用内容模板优化MCP生成回答内容")
+        response_content = self.content_template_mcp.optimize({
+            "type": "chat_response",
+            "optimized_prompt": optimized_prompt
         })
         
         # 记录操作和结果
         self._record_action("generate_response", {
             "query": query,
-            "parsed_query": parsed_query
+            "optimized_prompt": optimized_prompt
         }, response_content)
         
         # 构建响应
         response = {
             "role": "assistant",
-            "content": response_content.get("content", "我理解您的问题，正在思考中..."),
+            "content": response_content,
             "timestamp": datetime.now().isoformat()
         }
         
@@ -116,17 +173,17 @@ class GeneralAgent:
         
         self._record_thought(f"收到任务执行请求: {task}")
         
-        # 使用MCP规划器解析任务
-        self._record_thought("使用MCP规划器解析任务")
-        parsed_task = self.mcp_planner.plan({
+        # 使用上下文匹配优化MCP解析任务
+        self._record_thought("使用上下文匹配优化MCP解析任务")
+        parsed_task = self.context_matching_mcp.optimize({
             "type": "task_parsing",
             "task": task,
             "parameters": parameters or {}
         })
         
-        # 使用MCP规划器生成任务执行计划
-        self._record_thought("使用MCP规划器生成任务执行计划")
-        task_plan = self.mcp_planner.plan({
+        # 使用项目记忆优化MCP生成任务执行计划
+        self._record_thought("使用项目记忆优化MCP生成任务执行计划")
+        task_plan = self.project_memory_mcp.optimize({
             "type": "task_planning",
             "parsed_task": parsed_task
         })
@@ -137,10 +194,13 @@ class GeneralAgent:
             "parsed_task": parsed_task
         }, task_plan)
         
+        # 模拟任务执行
+        self._record_thought("开始执行任务")
+        
         # 构建响应
         response = {
             "role": "assistant",
-            "content": task_plan.get("content", f"我将帮助您完成"{task}"任务。\n\n我已经开始处理这个任务，以下是我的计划：\n\n1. 分析任务需求\n2. 收集必要信息\n3. 执行任务步骤\n4. 验证结果\n\n我现在正在执行第一步..."),
+            "content": f"我将帮助您完成"{task}"任务。\n\n我已经开始处理这个任务，以下是我的计划：\n\n1. 分析任务需求\n2. 收集必要信息\n3. 执行任务步骤\n4. 验证结果\n\n我现在正在执行第一步...",
             "actions": [
                 {"type": "task_started", "name": task, "id": f"task-{datetime.now().timestamp()}"}
             ],
@@ -169,20 +229,27 @@ class GeneralAgent:
         
         self._record_thought(f"收到项目创建请求: {project_name}")
         
-        # 使用MCP规划器解析项目需求
-        self._record_thought("使用MCP规划器解析项目需求")
-        parsed_project = self.mcp_planner.plan({
+        # 使用上下文匹配优化MCP解析项目需求
+        self._record_thought("使用上下文匹配优化MCP解析项目需求")
+        parsed_project = self.context_matching_mcp.optimize({
             "type": "project_parsing",
             "project_name": project_name,
             "project_description": project_description,
             "parameters": parameters or {}
         })
         
-        # 使用MCP规划器生成项目结构
-        self._record_thought("使用MCP规划器生成项目结构")
-        project_structure = self.mcp_planner.plan({
+        # 使用项目记忆优化MCP生成项目结构
+        self._record_thought("使用项目记忆优化MCP生成项目结构")
+        project_structure = self.project_memory_mcp.optimize({
             "type": "project_structure",
             "parsed_project": parsed_project
+        })
+        
+        # 使用内容模板优化MCP生成项目组件
+        self._record_thought("使用内容模板优化MCP生成项目组件")
+        project_components = self.content_template_mcp.optimize({
+            "type": "project_components",
+            "project_structure": project_structure
         })
         
         # 记录操作和结果
@@ -194,7 +261,7 @@ class GeneralAgent:
         # 构建响应
         response = {
             "role": "assistant",
-            "content": project_structure.get("content", f"我将为您创建"{project_name}"项目。\n\n这个项目将包含以下组件：\n\n1. 需求分析文档\n2. 设计方案\n3. 实施计划\n4. 测试策略\n\n我已经开始准备项目文档，您可以在项目面板中查看进度。"),
+            "content": f"我将为您创建"{project_name}"项目。\n\n这个项目将包含以下组件：\n\n1. 需求分析文档\n2. 设计方案\n3. 实施计划\n4. 测试策略\n\n我已经开始准备项目文档，您可以在项目面板中查看进度。",
             "actions": [
                 {"type": "project_created", "name": project_name, "id": f"proj-{datetime.now().timestamp()}"}
             ],

@@ -23,13 +23,13 @@ try:
 except ImportError:
     # 如果上面的导入失败，尝试直接导入
     sys.path.insert(0, os.path.abspath(os.path.join(current_dir, '../../..')))
-    from enhancers.rl_enhancer.adapters.mcp_so_adapter import MCPSoAdapter, MCPToolWrapper
-    from enhancers.rl_enhancer.adapters.infinite_context_adapter import InfiniteContextAdapter
-    from enhancers.rl_enhancer.adapters.github_actions_adapter import GitHubActionsAdapter
-    from enhancers.rl_enhancer.adapters.aci_dev_adapter import ACIDevAdapter
-    from enhancers.rl_enhancer.adapters.webui_tool_builder import WebUIToolBuilder
-    from enhancers.rl_enhancer.core.thought.decomposer import ThoughtDecomposer
-    from enhancers.rl_enhancer.core.learning.hybrid import HybridLearningArchitecture
+    from rl_factory.adapters.mcp_so_adapter import MCPSoAdapter, MCPToolWrapper
+    from rl_factory.adapters.infinite_context_adapter import InfiniteContextAdapter
+    from rl_factory.adapters.github_actions_adapter import GitHubActionsAdapter
+    from rl_factory.adapters.aci_dev_adapter import ACIDevAdapter
+    from rl_factory.adapters.webui_tool_builder import WebUIToolBuilder
+    from rl_factory.core.thought.decomposer import ThoughtDecomposer
+    from rl_factory.core.learning.hybrid import HybridLearningArchitecture
 
 
 class TestRLSystemIntegration(unittest.TestCase):

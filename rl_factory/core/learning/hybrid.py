@@ -9,9 +9,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from ...core.thought.schema import ThoughtProcess
-from ...core.thought.serializer import ThoughtSerializer
-from ...core.thought.decomposer import ThoughtDecomposer
+from rl_factory.core.thought.schema import ThoughtProcess
+from rl_factory.core.thought.serializer import ThoughtSerializer
+from rl_factory.core.thought.decomposer import ThoughtDecomposer
 from .supervised import SupervisedLearner
 from .reinforcement import ReinforcementLearner
 from .contrastive import ContrastiveLearner

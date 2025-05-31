@@ -12,19 +12,22 @@ import time
 class GitHubActionsAdapter:
     """GitHub Actions适配器，用于与GitHub Actions进行交互"""
     
-    def __init__(self, repo_owner: str, repo_name: str, token: str = None):
+    def __init__(self, owner=None, repo=None, repo_owner=None, repo_name=None, token=None):
         """
         初始化GitHub Actions适配器
         
         Args:
+            owner: 仓库所有者（兼容旧接口）
+            repo: 仓库名称（兼容旧接口）
             repo_owner: 仓库所有者
             repo_name: 仓库名称
             token: GitHub访问令牌（可选）
         """
-        self.repo_owner = repo_owner
-        self.repo_name = repo_name
+        # 兼容两种不同的参数命名方式
+        self.repo_owner = repo_owner or owner or "default-owner"
+        self.repo_name = repo_name or repo or "default-repo"
         self.token = token
-        self.base_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+        self.base_url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}"
         self.headers = {}
         
         if token:
@@ -476,7 +479,7 @@ class GitHubReleaseManagerIntegration:
             token: GitHub访问令牌（可选）
             base_dir: 基础目录
         """
-        self.github_actions = GitHubActionsAdapter(repo_owner, repo_name, token)
+        self.github_actions = GitHubActionsAdapter(repo_owner=repo_owner, repo_name=repo_name, token=token)
         self.release_manager = ReleaseManagerAdapter(base_dir)
     
     def setup_integration(self, workflow_id: str, ref: str = "main") -> bool:
@@ -540,13 +543,10 @@ class GitHubReleaseManagerIntegration:
         
         # 更新发布状态
         status = "success" if run.get("conclusion") == "success" else "failed"
+        
         self.release_manager.update_release_status(version, status, {
-            "github_actions": {
-                "run_id": run_id,
-                "status": run.get("status"),
-                "conclusion": run.get("conclusion"),
-                "url": run.get("html_url")
-            }
+            "conclusion": run.get("conclusion"),
+            "html_url": run.get("html_url")
         })
         
         return {
@@ -554,36 +554,3 @@ class GitHubReleaseManagerIntegration:
             "message": f"Release {version} {status}",
             "details": run
         }
-
-
-if __name__ == "__main__":
-    # 示例用法
-    # 创建集成
-    integration = GitHubReleaseManagerIntegration(
-        repo_owner="alexchuang650730",
-        repo_name="powerautomation_mcp",
-        token=os.environ.get("GITHUB_TOKEN"),
-        base_dir="/home/ubuntu/powerautomation_integration"
-    )
-    
-    # 设置集成
-    integration.setup_integration(workflow_id="release.yml")
-    
-    # 触发发布
-    result = integration.trigger_release(
-        version="1.0.0",
-        changes=[
-            {"type": "feature", "description": "Add new feature"},
-            {"type": "bugfix", "description": "Fix critical bug"}
-        ]
-    )
-    
-    print(f"Trigger result: {result}")
-    
-    # 如果触发成功，监控发布
-    if result.get("status") == "success" and "github_actions" in result:
-        run_id = result["github_actions"].get("run_id")
-        
-        if run_id:
-            monitor_result = integration.monitor_release("1.0.0", run_id)
-            print(f"Monitor result: {monitor_result}")

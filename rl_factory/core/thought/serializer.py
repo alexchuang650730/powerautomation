@@ -24,7 +24,7 @@ class ThoughtSerializer:
         Returns:
             JSON字符串
         """
-        return thought_process.json(indent=2)
+        return thought_process.model_dump_json(indent=2)
     
     @staticmethod
     def from_json(json_str: str) -> ThoughtProcess:

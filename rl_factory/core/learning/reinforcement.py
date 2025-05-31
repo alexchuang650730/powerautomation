@@ -11,8 +11,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.distributions import Categorical
 
-from ...core.thought.schema import ThoughtProcess
-from ...core.thought.serializer import ThoughtSerializer
+from rl_factory.core.thought.schema import ThoughtProcess
+from rl_factory.core.thought.serializer import ThoughtSerializer
 
 
 class ThoughtPolicyNetwork(nn.Module):
@@ -481,7 +481,7 @@ class ReinforcementLearner:
 
 if __name__ == "__main__":
     # 示例用法
-    from ...core.thought.decomposer import ThoughtDecomposer
+    from rl_factory.core.thought.decomposer import ThoughtDecomposer
     
     # 创建示例思考过程
     raw_thought = """设计一个在线教育平台

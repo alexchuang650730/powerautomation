@@ -11,17 +11,17 @@ from unittest.mock import patch, MagicMock
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
 # 导入被测试模块
-from enhancers.rl_enhancer.core.thought.decomposer import ThoughtDecomposer
-from enhancers.rl_enhancer.core.thought.serializer import ThoughtSerializer
-from enhancers.rl_enhancer.core.learning.supervised import SupervisedLearner
-from enhancers.rl_enhancer.core.learning.reinforcement import ReinforcementLearner
-from enhancers.rl_enhancer.core.learning.contrastive import ContrastiveLearner
-from enhancers.rl_enhancer.core.learning.hybrid import HybridLearner
-from enhancers.rl_enhancer.adapters.infinite_context_adapter import InfiniteContextAdapter
-from enhancers.rl_enhancer.adapters.mcp_so_adapter import MCPSoAdapter
-from enhancers.rl_enhancer.adapters.github_actions_adapter import GitHubActionsAdapter
-from enhancers.rl_enhancer.adapters.aci_dev_adapter import ACIDevAdapter
-from enhancers.rl_enhancer.adapters.webui_tool_builder import WebUIToolBuilder
+from rl_factory.core.thought.decomposer import ThoughtDecomposer
+from rl_factory.core.thought.serializer import ThoughtSerializer
+from rl_factory.core.learning.supervised import SupervisedLearner
+from rl_factory.core.learning.reinforcement import ReinforcementLearner
+from rl_factory.core.learning.contrastive import ContrastiveLearner
+from rl_factory.core.learning.hybrid import HybridLearner
+from rl_factory.adapters.infinite_context_adapter import InfiniteContextAdapter
+from rl_factory.adapters.mcp_so_adapter import MCPSoAdapter
+from rl_factory.adapters.github_actions_adapter import GitHubActionsAdapter
+from rl_factory.adapters.aci_dev_adapter import ACIDevAdapter
+from rl_factory.adapters.webui_tool_builder import WebUIToolBuilder
 
 
 class TestRLEnhancerEndToEnd(unittest.TestCase):
@@ -144,7 +144,7 @@ class TestRLEnhancerEndToEnd(unittest.TestCase):
         # 验证文件保存和加载结果
         self.assertEqual(decomposed.process_id, loaded.process_id)
     
-    @patch('enhancers.rl_enhancer.core.learning.supervised.SupervisedLearner.train')
+    @patch('rl_factory.core.learning.supervised.SupervisedLearner.train')
     def test_hybrid_learning_architecture(self, mock_train):
         """测试混合学习架构"""
         # 设置Mock返回值
@@ -164,7 +164,7 @@ class TestRLEnhancerEndToEnd(unittest.TestCase):
         ]
         
         # 执行混合学习
-        with patch('enhancers.rl_enhancer.core.learning.hybrid.HybridLearner.train') as mock_hybrid_train:
+        with patch('rl_factory.core.learning.hybrid.HybridLearner.train') as mock_hybrid_train:
             mock_hybrid_train.return_value = {
                 "supervised_result": {"loss": 0.1},
                 "reinforcement_result": {"reward": 0.8},
@@ -221,7 +221,7 @@ class TestRLEnhancerEndToEnd(unittest.TestCase):
         self.assertEqual("success", result["status"])
         self.assertEqual("工具执行结果", result["result"])
     
-    @patch('enhancers.rl_enhancer.adapters.github_actions_adapter.GitHubActionsAdapter.trigger_workflow')
+    @patch('rl_factory.adapters.github_actions_adapter.GitHubActionsAdapter.trigger_workflow')
     def test_github_actions_integration(self, mock_trigger_workflow):
         """测试GitHub Actions集成"""
         # 设置Mock返回值
@@ -352,7 +352,7 @@ class TestRLEnhancerEndToEnd(unittest.TestCase):
         decomposed = self.thought_decomposer.decompose_raw_thought(thought_process_str)
         
         # 2. 使用混合学习架构学习思考过程
-        with patch('enhancers.rl_enhancer.core.learning.hybrid.HybridLearner.train') as mock_train:
+        with patch('rl_factory.core.learning.hybrid.HybridLearner.train') as mock_train:
             mock_train.return_value = {
                 "supervised_result": {"loss": 0.1},
                 "reinforcement_result": {"reward": 0.8},
@@ -374,7 +374,7 @@ class TestRLEnhancerEndToEnd(unittest.TestCase):
         tool_result = self.mcp_so_adapter.execute_tool("create_scraper", {"url": "https://example.com"})
         
         # 5. 使用GitHub Actions部署
-        with patch('enhancers.rl_enhancer.adapters.github_actions_adapter.GitHubActionsAdapter.trigger_workflow') as mock_trigger:
+        with patch('rl_factory.adapters.github_actions_adapter.GitHubActionsAdapter.trigger_workflow') as mock_trigger:
             mock_trigger.return_value = {"status": "success", "run_id": "12345"}
             deploy_result = self.github_actions_adapter.trigger_workflow("deploy", {"repo": "user/repo"})
         
