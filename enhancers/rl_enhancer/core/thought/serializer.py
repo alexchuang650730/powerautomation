@@ -24,7 +24,8 @@ class ThoughtSerializer:
         Returns:
             JSON字符串
         """
-        return thought_process.json(indent=2)
+        # 使用model_dump_json替代已废弃的json方法
+        return thought_process.model_dump_json(indent=2)
     
     @staticmethod
     def from_json(json_str: str) -> ThoughtProcess:
@@ -97,7 +98,8 @@ class ThoughtSerializer:
         Returns:
             字典表示
         """
-        return json.loads(ThoughtSerializer.to_json(thought_process))
+        # 使用model_dump替代通过json转换的方式
+        return thought_process.model_dump()
     
     @staticmethod
     def from_dict(data: Dict[str, Any]) -> ThoughtProcess:
