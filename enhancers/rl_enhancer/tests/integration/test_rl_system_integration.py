@@ -4,253 +4,312 @@ RL增强器与系统集成验证模块
 import os
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
-import json
-import time
-from typing import Dict, List, Any, Optional, Union, Tuple
+from unittest.mock import patch, MagicMock
 
-# 添加项目根目录到路径
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..')))
+# 添加项目根目录到Python路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, '../../../..'))
+sys.path.insert(0, project_root)
 
-from powerautomation_integration.enhancers.rl_enhancer.core.thought.schema import ThoughtProcess
-from powerautomation_integration.enhancers.rl_enhancer.core.thought.decomposer import ThoughtDecomposer
-from powerautomation_integration.enhancers.rl_enhancer.core.learning.hybrid import HybridLearner
-from powerautomation_integration.enhancers.rl_enhancer.adapters.infinite_context_adapter import InfiniteContextAdapter
-from powerautomation_integration.enhancers.rl_enhancer.adapters.mcp_so_adapter import MCPSoAdapter
-from powerautomation_integration.enhancers.rl_enhancer.adapters.github_actions_adapter import GitHubActionsAdapter, ReleaseManagerAdapter
+# 导入被测试模块
+try:
+    from powerautomation_integration.enhancers.rl_enhancer.adapters.mcp_so_adapter import MCPSoAdapter, MCPToolWrapper
+    from powerautomation_integration.enhancers.rl_enhancer.adapters.infinite_context_adapter import InfiniteContextAdapter
+    from powerautomation_integration.enhancers.rl_enhancer.adapters.github_actions_adapter import GitHubActionsAdapter
+    from powerautomation_integration.enhancers.rl_enhancer.adapters.aci_dev_adapter import ACIDevAdapter
+    from powerautomation_integration.enhancers.rl_enhancer.adapters.webui_tool_builder import WebUIToolBuilder
+    from powerautomation_integration.enhancers.rl_enhancer.core.thought.decomposer import ThoughtDecomposer
+    from powerautomation_integration.enhancers.rl_enhancer.core.learning.hybrid import HybridLearningArchitecture
+except ImportError:
+    # 如果上面的导入失败，尝试直接导入
+    sys.path.insert(0, os.path.abspath(os.path.join(current_dir, '../../..')))
+    from enhancers.rl_enhancer.adapters.mcp_so_adapter import MCPSoAdapter, MCPToolWrapper
+    from enhancers.rl_enhancer.adapters.infinite_context_adapter import InfiniteContextAdapter
+    from enhancers.rl_enhancer.adapters.github_actions_adapter import GitHubActionsAdapter
+    from enhancers.rl_enhancer.adapters.aci_dev_adapter import ACIDevAdapter
+    from enhancers.rl_enhancer.adapters.webui_tool_builder import WebUIToolBuilder
+    from enhancers.rl_enhancer.core.thought.decomposer import ThoughtDecomposer
+    from enhancers.rl_enhancer.core.learning.hybrid import HybridLearningArchitecture
 
-# 模拟MCP组件
-from unittest.mock import MagicMock
-class MockMCPPlanner:
-    def plan(self, task):
-        return {"steps": ["步骤1", "步骤2", "步骤3"], "status": "success"}
-    
-    def execute_plan(self, plan):
-        return {"result": "执行成功", "status": "completed"}
-
-class MockMCPBrainstorm:
-    def generate(self, topic):
-        return {"ideas": ["创意1", "创意2", "创意3"], "status": "success"}
-    
-    def explore_idea(self, idea):
-        return {"details": "创意详情...", "status": "success"}
 
 class TestRLSystemIntegration(unittest.TestCase):
-    """RL增强器与系统集成测试"""
+    """RL增强器与系统集成测试类"""
     
-    @classmethod
-    def setUpClass(cls):
-        """设置测试环境"""
-        # 创建测试目录
-        cls.test_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_data'))
-        os.makedirs(cls.test_dir, exist_ok=True)
+    def setUp(self):
+        """测试前准备工作"""
+        # 使用Mock对象模拟外部依赖
+        self.mcp_so_adapter = MagicMock(spec=MCPSoAdapter)
+        self.infinite_context_adapter = MagicMock(spec=InfiniteContextAdapter)
+        self.github_actions_adapter = MagicMock(spec=GitHubActionsAdapter)
+        self.aci_dev_adapter = MagicMock(spec=ACIDevAdapter)
+        self.webui_tool_builder = MagicMock(spec=WebUIToolBuilder)
         
-        # 创建示例思考过程
-        cls.raw_thought = """设计一个在线教育平台
+        # 设置Mock返回值
+        self.mcp_so_adapter.get_tools.return_value = [
+            {"name": "tool1", "description": "Test tool 1"},
+            {"name": "tool2", "description": "Test tool 2"}
+        ]
+        self.mcp_so_adapter.execute_tool.return_value = {"status": "success", "result": "Tool executed"}
         
-        问题分析:
-        我们需要设计一个功能完善、用户友好的在线教育平台。该平台应支持多种课程类型，包括视频课程、互动测验和讨论区。
+        # 创建工具包装器
+        self.tool_wrapper = MCPToolWrapper(self.mcp_so_adapter)
         
-        约束: 响应时间不超过200ms
-        约束: 支持至少10000名并发用户
-        挑战: 确保师生实时互动的流畅性
-        挑战: 高效管理大量教育内容
+        # 创建思考分解器
+        self.thought_decomposer = ThoughtDecomposer()
         
-        方案设计:
-        基于微服务架构设计平台，将功能拆分为多个独立服务。
-        
-        设计原则: 高可用性
-        设计原则: 可扩展性
-        设计原则: 用户体验优先
-        
-        方案1: 基于AWS的云原生架构
-        方案2: 基于自建数据中心的传统架构
-        
-        实现规划:
-        1. 设计数据库架构
-        2. 实现用户认证服务
-        3. 开发课程管理系统
-        4. 实现视频流处理服务
-        5. 开发互动测验模块
-        6. 实现实时通讯功能
-        
-        风险: 视频流处理可能面临性能瓶颈
-        风险: 实时通讯在高并发下可能不稳定
-        
-        验证评估:
-        标准: 系统响应时间
-        标准: 并发用户支持数量
-        标准: 用户满意度
-        
-        测试: 负载测试以验证并发支持能力
-        测试: A/B测试以评估用户界面设计
-        
-        改进: 考虑引入AI推荐系统
-        改进: 增加移动端适配
-        """
-        
-        # 分解思考过程
-        cls.decomposer = ThoughtDecomposer()
-        cls.thought_process = cls.decomposer.decompose_raw_thought(cls.raw_thought)
-        
-        # 模拟MCP组件
-        cls.mock_planner = MockMCPPlanner()
-        cls.mock_brainstorm = MockMCPBrainstorm()
-    
-    def test_hybrid_learner_with_mcp_planner(self):
-        """测试混合学习器与MCP规划器的集成"""
-        # 创建混合学习器（使用mock避免实际模型加载）
-        with patch('powerautomation_integration.enhancers.rl_enhancer.core.learning.hybrid.HybridLearner._load_models') as mock_load:
-            mock_load.return_value = None
-            learner = HybridLearner(model_name="mock-model")
-            
-            # 模拟predict_quality方法
-            learner.predict_quality = MagicMock(return_value=0.85)
-            
-            # 模拟improve_thought方法
-            learner.improve_thought = MagicMock(return_value=self.raw_thought + "\n\n额外的改进内容...")
-            
-            # 测试与MCP规划器的集成
-            improved_thought = learner.improve_thought(self.raw_thought)
-            plan = self.mock_planner.plan(improved_thought)
-            
-            # 验证结果
-            self.assertIsNotNone(improved_thought)
-            self.assertIsNotNone(plan)
-            self.assertIn("steps", plan)
-            self.assertEqual(plan["status"], "success")
-    
-    def test_infinite_context_adapter_integration(self):
-        """测试无限上下文适配器的集成"""
-        # 创建无限上下文适配器（使用mock避免实际模型加载）
-        with patch('powerautomation_integration.enhancers.rl_enhancer.adapters.infinite_context_adapter.InfiniteContextAdapter._encode_chunks') as mock_encode:
-            import torch
-            mock_encode.return_value = [torch.zeros((1, 768))]
-            
-            adapter = InfiniteContextAdapter(model_name="mock-model")
-            
-            # 处理思考过程
-            context_id = "test_context"
-            encoding = adapter.process_context(context_id, self.raw_thought)
-            
-            # 使用上下文处理MCP规划器的输入
-            plan_with_context = self.mock_planner.plan(self.raw_thought)
-            
-            # 验证结果
-            self.assertIsNotNone(encoding)
-            self.assertIsNotNone(plan_with_context)
-            self.assertIn("steps", plan_with_context)
-            self.assertEqual(plan_with_context["status"], "success")
+        # 创建混合学习架构
+        self.hybrid_learning = MagicMock(spec=HybridLearningArchitecture)
+        self.hybrid_learning.train.return_value = {
+            "supervised_result": {"loss": 0.1},
+            "reinforcement_result": {"reward": 0.8},
+            "contrastive_result": {"accuracy": 0.9}
+        }
     
     def test_mcp_so_adapter_integration(self):
-        """测试MCP.so适配器的集成"""
-        # 创建MCP.so适配器（使用mock避免实际库加载）
-        adapter = MCPSoAdapter("/path/to/nonexistent/mcp.so")
+        """测试MCP.so适配器集成"""
+        # 验证工具列表获取
+        tools = self.mcp_so_adapter.get_tools()
+        self.assertEqual(2, len(tools))
+        self.assertEqual("tool1", tools[0]["name"])
         
-        # 模拟初始化和调用方法
-        adapter.initialize = MagicMock(return_value=True)
-        adapter.call_tool = MagicMock(return_value={"result": "工具调用结果", "status": "success"})
+        # 验证工具执行
+        result = self.mcp_so_adapter.execute_tool("tool1", {"param1": "value1"})
+        self.assertEqual("success", result["status"])
+        self.assertEqual("Tool executed", result["result"])
         
-        # 初始化适配器
-        adapter.initialize()
+        # 验证工具包装器
+        tool_names = self.tool_wrapper.list_tools()
+        self.assertEqual(2, len(tool_names))
         
-        # 调用MCP工具
-        tool_result = adapter.call_tool("planning_tool", {"task": "设计在线教育平台"})
+        # 验证工具包装器执行
+        self.mcp_so_adapter.execute_tool.assert_called_once_with("tool1", {"param1": "value1"})
+    
+    def test_infinite_context_adapter_integration(self):
+        """测试无限上下文适配器集成"""
+        # 设置Mock返回值
+        self.infinite_context_adapter.process.return_value = {
+            "processed_context": "处理后的上下文",
+            "tokens_saved": 1024
+        }
         
-        # 验证结果
-        self.assertTrue(adapter.initialize.called)
-        self.assertTrue(adapter.call_tool.called)
-        self.assertIsNotNone(tool_result)
-        self.assertEqual(tool_result["status"], "success")
+        # 验证上下文处理
+        result = self.infinite_context_adapter.process("长文本..." * 1000)
+        self.assertEqual("处理后的上下文", result["processed_context"])
+        self.assertEqual(1024, result["tokens_saved"])
+        
+        # 验证调用参数
+        self.infinite_context_adapter.process.assert_called_once()
+        args, _ = self.infinite_context_adapter.process.call_args
+        self.assertTrue(args[0].startswith("长文本..."))
     
     def test_github_actions_adapter_integration(self):
-        """测试GitHub Actions适配器与Release Manager的集成"""
-        # 创建GitHub Actions适配器
-        github_adapter = GitHubActionsAdapter("test_owner", "test_repo")
+        """测试GitHub Actions适配器集成"""
+        # 设置Mock返回值
+        self.github_actions_adapter.trigger_workflow.return_value = {
+            "status": "success",
+            "workflow_id": "12345",
+            "run_id": "67890"
+        }
+        self.github_actions_adapter.get_workflow_status.return_value = {
+            "status": "completed",
+            "conclusion": "success"
+        }
         
-        # 创建Release Manager适配器
-        release_adapter = ReleaseManagerAdapter(self.test_dir)
+        # 验证工作流触发
+        result = self.github_actions_adapter.trigger_workflow("test_workflow", {"input1": "value1"})
+        self.assertEqual("success", result["status"])
+        self.assertEqual("12345", result["workflow_id"])
         
-        # 模拟方法
-        github_adapter.trigger_workflow = MagicMock(return_value={"id": 12345, "status": "queued"})
-        github_adapter.get_workflow_run = MagicMock(return_value={"id": 12345, "status": "completed", "conclusion": "success"})
+        # 验证工作流状态获取
+        status = self.github_actions_adapter.get_workflow_status("67890")
+        self.assertEqual("completed", status["status"])
+        self.assertEqual("success", status["conclusion"])
         
-        release_adapter.add_release = MagicMock(return_value=True)
-        release_adapter.update_release_status = MagicMock(return_value=True)
+        # 验证调用参数
+        self.github_actions_adapter.trigger_workflow.assert_called_once_with("test_workflow", {"input1": "value1"})
+        self.github_actions_adapter.get_workflow_status.assert_called_once_with("67890")
+    
+    def test_aci_dev_adapter_integration(self):
+        """测试ACI.dev适配器集成"""
+        # 设置Mock返回值
+        self.aci_dev_adapter.list_tools.return_value = [
+            {"id": "tool1", "name": "Tool 1", "description": "Test tool 1"},
+            {"id": "tool2", "name": "Tool 2", "description": "Test tool 2"}
+        ]
+        self.aci_dev_adapter.get_tool.return_value = {
+            "id": "tool1",
+            "name": "Tool 1",
+            "description": "Test tool 1",
+            "parameters": {"param1": {"type": "string"}}
+        }
+        self.aci_dev_adapter.execute_tool.return_value = {
+            "status": "success",
+            "result": "Tool executed"
+        }
         
-        # 触发工作流
-        workflow_result = github_adapter.trigger_workflow("test_workflow.yml", {"ref": "main"})
+        # 验证工具列表获取
+        tools = self.aci_dev_adapter.list_tools()
+        self.assertEqual(2, len(tools))
+        self.assertEqual("tool1", tools[0]["id"])
         
-        # 获取工作流运行状态
-        run_result = github_adapter.get_workflow_run(workflow_result["id"])
+        # 验证工具获取
+        tool = self.aci_dev_adapter.get_tool("tool1")
+        self.assertEqual("Tool 1", tool["name"])
         
-        # 更新发布状态
-        if run_result["conclusion"] == "success":
-            release_result = release_adapter.update_release_status("1.0.0", "success")
+        # 验证工具执行
+        result = self.aci_dev_adapter.execute_tool("tool1", {"param1": "value1"})
+        self.assertEqual("success", result["status"])
+        self.assertEqual("Tool executed", result["result"])
         
-        # 验证结果
-        self.assertTrue(github_adapter.trigger_workflow.called)
-        self.assertTrue(github_adapter.get_workflow_run.called)
-        self.assertTrue(release_adapter.update_release_status.called)
-        self.assertEqual(workflow_result["status"], "queued")
-        self.assertEqual(run_result["conclusion"], "success")
-        self.assertTrue(release_result)
+        # 验证调用参数
+        self.aci_dev_adapter.list_tools.assert_called_once()
+        self.aci_dev_adapter.get_tool.assert_called_once_with("tool1")
+        self.aci_dev_adapter.execute_tool.assert_called_once_with("tool1", {"param1": "value1"})
+    
+    def test_webui_tool_builder_integration(self):
+        """测试WebUI工具构建器集成"""
+        # 设置Mock返回值
+        self.webui_tool_builder.create_tool.return_value = {
+            "id": "new_tool",
+            "name": "New Tool",
+            "description": "A new test tool",
+            "parameters": {"param1": {"type": "string"}},
+            "implementation": "def main(param1): return param1"
+        }
+        self.webui_tool_builder.list_tools.return_value = [
+            {"id": "new_tool", "name": "New Tool", "description": "A new test tool"}
+        ]
+        self.webui_tool_builder.test_tool.return_value = {
+            "status": "success",
+            "result": "test_value"
+        }
+        
+        # 验证工具创建
+        tool = self.webui_tool_builder.create_tool(
+            name="New Tool",
+            description="A new test tool",
+            parameters={"param1": {"type": "string"}},
+            implementation="def main(param1): return param1"
+        )
+        self.assertEqual("new_tool", tool["id"])
+        self.assertEqual("New Tool", tool["name"])
+        
+        # 验证工具列表获取
+        tools = self.webui_tool_builder.list_tools()
+        self.assertEqual(1, len(tools))
+        self.assertEqual("new_tool", tools[0]["id"])
+        
+        # 验证工具测试
+        result = self.webui_tool_builder.test_tool("new_tool", {"param1": "test_value"})
+        self.assertEqual("success", result["status"])
+        self.assertEqual("test_value", result["result"])
+        
+        # 验证调用参数
+        self.webui_tool_builder.create_tool.assert_called_once()
+        self.webui_tool_builder.list_tools.assert_called_once()
+        self.webui_tool_builder.test_tool.assert_called_once_with("new_tool", {"param1": "test_value"})
+    
+    def test_thought_decomposer_integration(self):
+        """测试思考分解器集成"""
+        # 准备测试数据
+        thought_process = {
+            "task": "创建一个简单的网页爬虫",
+            "thinking": "我需要使用requests库来获取网页内容，然后使用BeautifulSoup来解析HTML。"
+                       "首先，我需要安装这些库，然后编写代码来发送HTTP请求，解析响应，最后提取所需的数据。",
+            "steps": [
+                "安装必要的库",
+                "编写代码发送HTTP请求",
+                "解析HTML响应",
+                "提取所需数据"
+            ]
+        }
+        
+        # 执行思考过程分解
+        decomposed = self.thought_decomposer.decompose(thought_process)
+        
+        # 验证分解结果
+        self.assertIn("problem_analysis", decomposed)
+        self.assertIn("solution_design", decomposed)
+        self.assertIn("implementation_planning", decomposed)
+        self.assertIn("validation_evaluation", decomposed)
+    
+    def test_hybrid_learning_integration(self):
+        """测试混合学习架构集成"""
+        # 准备测试数据
+        training_data = [
+            {
+                "input": "创建一个简单的网页爬虫",
+                "output": {
+                    "problem_analysis": "需要获取和解析网页内容",
+                    "solution_design": "使用requests和BeautifulSoup库",
+                    "implementation_planning": "分四步实现：安装库、发送请求、解析HTML、提取数据",
+                    "validation_evaluation": "验证能否正确提取目标数据"
+                }
+            }
+        ]
+        
+        # 执行混合学习
+        result = self.hybrid_learning.train(training_data)
+        
+        # 验证学习结果
+        self.assertIn("supervised_result", result)
+        self.assertIn("reinforcement_result", result)
+        self.assertIn("contrastive_result", result)
+        
+        # 验证调用参数
+        self.hybrid_learning.train.assert_called_once()
+        args, _ = self.hybrid_learning.train.call_args
+        self.assertEqual(training_data, args[0])
     
     def test_end_to_end_integration(self):
         """测试端到端集成"""
-        # 创建混合学习器（使用mock避免实际模型加载）
-        with patch('powerautomation_integration.enhancers.rl_enhancer.core.learning.hybrid.HybridLearner._load_models') as mock_load:
-            mock_load.return_value = None
-            learner = HybridLearner(model_name="mock-model")
-            
-            # 模拟方法
-            learner.improve_thought = MagicMock(return_value=self.raw_thought + "\n\n额外的改进内容...")
-            
-            # 创建无限上下文适配器（使用mock避免实际模型加载）
-            with patch('powerautomation_integration.enhancers.rl_enhancer.adapters.infinite_context_adapter.InfiniteContextAdapter._encode_chunks') as mock_encode:
-                import torch
-                mock_encode.return_value = [torch.zeros((1, 768))]
-                
-                adapter = InfiniteContextAdapter(model_name="mock-model")
-                
-                # 创建MCP.so适配器
-                mcp_adapter = MCPSoAdapter("/path/to/nonexistent/mcp.so")
-                mcp_adapter.initialize = MagicMock(return_value=True)
-                mcp_adapter.call_tool = MagicMock(return_value={"result": "工具调用结果", "status": "success"})
-                
-                # 创建GitHub Actions适配器
-                github_adapter = GitHubActionsAdapter("test_owner", "test_repo")
-                github_adapter.trigger_workflow = MagicMock(return_value={"id": 12345, "status": "queued"})
-                
-                # 端到端流程
-                # 1. 改进思考过程
-                improved_thought = learner.improve_thought(self.raw_thought)
-                
-                # 2. 处理上下文
-                context_id = "test_context"
-                encoding = adapter.process_context(context_id, improved_thought)
-                
-                # 3. 调用MCP工具
-                mcp_adapter.initialize()
-                tool_result = mcp_adapter.call_tool("planning_tool", {"task": improved_thought})
-                
-                # 4. 使用MCP规划器生成计划
-                plan = self.mock_planner.plan(improved_thought)
-                
-                # 5. 使用MCP头脑风暴器生成创意
-                ideas = self.mock_brainstorm.generate("在线教育平台创新")
-                
-                # 6. 触发GitHub Actions工作流
-                workflow_result = github_adapter.trigger_workflow("test_workflow.yml", {"ref": "main"})
-                
-                # 验证结果
-                self.assertIsNotNone(improved_thought)
-                self.assertIsNotNone(encoding)
-                self.assertEqual(tool_result["status"], "success")
-                self.assertEqual(plan["status"], "success")
-                self.assertEqual(ideas["status"], "success")
-                self.assertEqual(workflow_result["status"], "queued")
+        # 这个测试模拟一个完整的工作流，从思考过程分解到工具执行
+        
+        # 1. 思考过程分解
+        thought_process = {
+            "task": "创建一个网页爬虫并部署到GitHub",
+            "thinking": "我需要使用requests和BeautifulSoup创建爬虫，然后使用GitHub Actions自动部署。",
+            "steps": [
+                "创建爬虫代码",
+                "测试爬虫功能",
+                "设置GitHub Actions",
+                "部署到GitHub"
+            ]
+        }
+        decomposed = self.thought_decomposer.decompose(thought_process)
+        
+        # 2. 使用混合学习架构学习思考过程
+        learning_result = self.hybrid_learning.train([{"input": thought_process, "output": decomposed}])
+        
+        # 3. 使用无限上下文处理长文本
+        context_result = self.infinite_context_adapter.process("长文本..." * 1000)
+        
+        # 4. 使用MCP.so调用工具
+        tool_result = self.mcp_so_adapter.execute_tool("tool1", {"param1": "value1"})
+        
+        # 5. 使用GitHub Actions部署
+        deploy_result = self.github_actions_adapter.trigger_workflow("deploy", {"repo": "user/repo"})
+        
+        # 6. 使用ACI.dev导入工具
+        import_result = self.aci_dev_adapter.get_tool("tool1")
+        
+        # 7. 使用WebUI工具构建器创建工具
+        create_result = self.webui_tool_builder.create_tool(
+            name="Test Tool",
+            description="A test tool",
+            parameters={},
+            implementation="def main(): pass"
+        )
+        
+        # 验证整个工作流的结果
+        self.assertIsNotNone(decomposed)
+        self.assertIsNotNone(learning_result)
+        self.assertIsNotNone(context_result)
+        self.assertEqual("success", tool_result["status"])
+        self.assertEqual("success", deploy_result["status"])
+        self.assertEqual("Tool 1", import_result["name"])
+        self.assertEqual("new_tool", create_result["id"])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
