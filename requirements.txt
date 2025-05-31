@@ -1,0 +1,38 @@
+# PowerAutomation MCP 依赖包
+
+# 核心依赖
+numpy>=1.20.0
+opencv-python>=4.5.0
+matplotlib>=3.4.0
+requests>=2.25.0
+beautifulsoup4>=4.9.0
+lxml>=4.6.0
+
+# Playwright相关依赖
+playwright>=1.20.0
+pytest-playwright>=0.3.0
+
+# WebAgentB相关依赖
+transformers>=4.15.0
+torch>=1.10.0
+selenium>=4.1.0
+webdriver-manager>=3.5.0
+
+# 测试相关依赖
+pytest>=6.2.0
+pytest-html>=3.1.0
+pytest-xdist>=2.5.0
+
+# 文档相关依赖
+sphinx>=4.0.0
+sphinx-rtd-theme>=1.0.0
+
+# 开发工具依赖
+black>=21.5b0
+flake8>=3.9.0
+mypy>=0.900
+isort>=5.9.0
+
+# CI/CD相关依赖
+pytest-cov>=2.12.0
+codecov>=2.1.0
