@@ -89,7 +89,7 @@ python scripts/init_db.py
 
 ```bash
 # 启动后端服务
-python backend/app.py
+python backend/main.py
 
 # 在另一个终端启动前端服务
 cd frontend
