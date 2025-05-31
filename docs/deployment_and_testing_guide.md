@@ -74,8 +74,16 @@ pip install torch torchvision torchaudio --extra-index-url https://download.pyto
 5. **初始化数据库**
 
 ```bash
+# 创建数据目录（如果不存在）
+mkdir -p data
+
+# 初始化SQLite数据库
 python scripts/init_db.py
+
+# 初始化完成后，数据库文件将位于data/powerautomation.db
 ```
+
+> **注意**：初始化脚本将创建必要的表结构并插入基础数据，包括默认的智能体配置和测试用户。
 
 6. **启动服务**
 
