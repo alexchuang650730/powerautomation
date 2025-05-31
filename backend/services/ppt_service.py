@@ -9,7 +9,8 @@ import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
-from ..agents.ppt_agent import PPTAgent
+# 更新引用路径，从agents目录导入
+from powerautomation_integration.agents.ppt.ppt_agent import PPTAgent
 
 class PPTTaskService:
     """PPT任务服务类，负责处理PPT相关任务请求"""

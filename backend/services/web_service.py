@@ -9,11 +9,13 @@ import time
 import uuid
 from datetime import datetime
 from playwright.sync_api import sync_playwright
+from powerautomation_integration.agents.web.web_agent import WebAgent
 
 class WebService:
     def __init__(self):
         self.screenshots_dir = os.path.join(os.getcwd(), 'data', 'screenshots')
         os.makedirs(self.screenshots_dir, exist_ok=True)
+        self.web_agent = WebAgent()
     
     def take_screenshot(self, url, full_page=False):
         """
@@ -151,3 +153,56 @@ class WebService:
             browser.close()
         
         return data
+    
+    def analyze_web_content(self, url, analysis_type="general", analysis_query=""):
+        """
+        分析网页内容
+        
+        参数:
+        - url: 网页URL
+        - analysis_type: 分析类型
+        - analysis_query: 分析查询
+        
+        返回:
+        - 分析结果
+        """
+        return self.web_agent.execute({
+            "type": "analyze_content",
+            "url": url,
+            "analysis_type": analysis_type,
+            "analysis_query": analysis_query
+        })
+    
+    def extract_web_data(self, url, extraction_query=""):
+        """
+        提取网页数据
+        
+        参数:
+        - url: 网页URL
+        - extraction_query: 提取查询
+        
+        返回:
+        - 提取结果
+        """
+        return self.web_agent.execute({
+            "type": "extract_data",
+            "url": url,
+            "extraction_query": extraction_query
+        })
+    
+    def automate_web_task(self, url, task):
+        """
+        自动化网页任务
+        
+        参数:
+        - url: 网页URL
+        - task: 任务描述
+        
+        返回:
+        - 执行结果
+        """
+        return self.web_agent.execute({
+            "type": "automate_task",
+            "url": url,
+            "task": task
+        })

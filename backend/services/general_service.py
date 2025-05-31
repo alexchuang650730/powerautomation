@@ -8,6 +8,7 @@ import os
 import json
 import uuid
 from datetime import datetime
+from powerautomation_integration.agents.general.general_agent import GeneralAgent
 
 class GeneralService:
     def __init__(self):
@@ -19,6 +20,9 @@ class GeneralService:
         # 创建必要的目录
         for directory in [self.data_dir, self.sessions_dir, self.tasks_dir, self.projects_dir]:
             os.makedirs(directory, exist_ok=True)
+            
+        # 初始化通用智能体
+        self.general_agent = GeneralAgent()
     
     def create_session(self):
         """
@@ -103,7 +107,23 @@ class GeneralService:
         with open(session_file, 'r', encoding='utf-8') as f:
             session_data = json.load(f)
         
-        session_data["messages"].append(message)
+        # 如果是用户消息，使用通用智能体处理
+        if message.get("role") == "user":
+            response = self.general_agent.chat(
+                query=message.get("content", ""),
+                session_id=session_id,
+                context={"messages": session_data["messages"]}
+            )
+            
+            # 添加用户消息
+            session_data["messages"].append(message)
+            
+            # 添加智能体响应
+            session_data["messages"].append(response)
+        else:
+            # 直接添加消息
+            session_data["messages"].append(message)
+        
         session_data["updated_at"] = datetime.now().isoformat()
         
         with open(session_file, 'w', encoding='utf-8') as f:
@@ -121,9 +141,18 @@ class GeneralService:
         - parameters: 任务参数
         
         返回:
-        - 任务ID
+        - 任务ID和执行结果
         """
         task_id = str(uuid.uuid4())
+        
+        # 使用通用智能体执行任务
+        result = self.general_agent.execute_task(
+            task=task_description,
+            session_id=None,
+            parameters=parameters
+        )
+        
+        # 保存任务信息
         task_data = {
             "id": task_id,
             "name": task_name,
@@ -132,14 +161,15 @@ class GeneralService:
             "status": "created",
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            "steps": []
+            "steps": [],
+            "result": result
         }
         
         task_file = os.path.join(self.tasks_dir, f"{task_id}.json")
         with open(task_file, 'w', encoding='utf-8') as f:
             json.dump(task_data, f, ensure_ascii=False, indent=2)
         
-        return task_id
+        return {"task_id": task_id, "result": result}
     
     def update_task_status(self, task_id, status, step=None):
         """
@@ -185,9 +215,18 @@ class GeneralService:
         - parameters: 项目参数
         
         返回:
-        - 项目ID
+        - 项目ID和创建结果
         """
         project_id = str(uuid.uuid4())
+        
+        # 使用通用智能体创建项目
+        result = self.general_agent.create_project(
+            project_name=project_name,
+            project_description=project_description,
+            parameters=parameters
+        )
+        
+        # 保存项目信息
         project_data = {
             "id": project_id,
             "name": project_name,
@@ -196,14 +235,15 @@ class GeneralService:
             "status": "created",
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            "components": []
+            "components": [],
+            "result": result
         }
         
         project_file = os.path.join(self.projects_dir, f"{project_id}.json")
         with open(project_file, 'w', encoding='utf-8') as f:
             json.dump(project_data, f, ensure_ascii=False, indent=2)
         
-        return project_id
+        return {"project_id": project_id, "result": result}
     
     def add_project_component(self, project_id, component_name, component_type, content=None):
         """

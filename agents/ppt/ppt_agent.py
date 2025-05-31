@@ -2,7 +2,6 @@
 PPT智能体模块
 
 负责处理PPT生成相关任务，继承自BaseAgent
-集成MCP规划器和MCP头脑风暴器调用开发工具模块和已有工具
 """
 
 import os
@@ -12,10 +11,7 @@ from typing import Dict, Any, List, Optional
 from pptx import Presentation
 from datetime import datetime
 
-from ..base.base_agent import BaseAgent
-from ...agents.ppt_agent.core.mcp.mcp_planner import MCPPlanner
-from ...agents.ppt_agent.core.mcp.mcp_brainstorm import MCPBrainstorm
-from ...development_tools.thought_action_recorder import ThoughtActionRecorder
+from powerautomation_integration.agents.base.base_agent import BaseAgent
 
 class PPTAgent(BaseAgent):
     """PPT智能体，负责生成和管理PPT演示文稿"""
@@ -34,13 +30,6 @@ class PPTAgent(BaseAgent):
         )
         self.template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "templates")
         self.output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "output")
-        
-        # 初始化MCP规划器和头脑风暴器
-        self.mcp_planner = MCPPlanner()
-        self.mcp_brainstorm = MCPBrainstorm()
-        
-        # 初始化思考与操作记录器
-        self.recorder = ThoughtActionRecorder()
         
         # 确保输出目录存在
         os.makedirs(self.output_dir, exist_ok=True)
@@ -70,16 +59,29 @@ class PPTAgent(BaseAgent):
         返回:
             数据是否有效
         """
-        # 使用MCP规划器验证输入
-        validation_result = self.mcp_planner.plan({
-            "type": "input_validation",
-            "input_data": input_data
-        })
-        
-        if not validation_result.get("success", False):
-            self.logger.error(f"输入验证失败: {validation_result.get('message', '未知错误')}")
+        # 验证必要字段
+        if "task_type" not in input_data:
+            self.logger.error("缺少task_type字段")
             return False
             
+        # 根据任务类型验证其他必要字段
+        task_type = input_data["task_type"]
+        
+        if task_type == "text_to_ppt":
+            if "content" not in input_data and "title" not in input_data:
+                self.logger.error("文本转PPT任务缺少content或title字段")
+                return False
+                
+        elif task_type == "mindmap_to_ppt":
+            if "mindmap_data" not in input_data:
+                self.logger.error("思维导图转PPT任务缺少mindmap_data字段")
+                return False
+                
+        elif task_type == "template_ppt":
+            if "template_name" not in input_data:
+                self.logger.error("模板PPT任务缺少template_name字段")
+                return False
+        
         return True
     
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -92,151 +94,91 @@ class PPTAgent(BaseAgent):
         返回:
             处理结果字典
         """
-        # 记录会话
-        session_id = self.recorder.start_session("ppt_agent")
-        self.recorder.record_thought(session_id, f"开始处理PPT生成任务: {input_data.get('task_type', '未知任务')}")
-        
-        # 使用MCP规划器解析任务
-        self.recorder.record_thought(session_id, "使用MCP规划器解析任务")
-        task_plan = self.mcp_planner.plan({
-            "type": "task_parsing",
-            "input_data": input_data
-        })
-        
-        # 如果MCP规划器无法处理，尝试使用MCP头脑风暴器
-        if not task_plan.get("success"):
-            self.recorder.record_thought(session_id, "MCP规划器无法处理，尝试使用MCP头脑风暴器")
-            task_plan = self.mcp_brainstorm.generate({
-                "type": "task_parsing",
-                "input_data": input_data
-            })
-        
-        # 根据任务类型执行相应的处理
-        task_type = input_data.get("task_type", "")
+        task_type = input_data["task_type"]
         
         if task_type == "text_to_ppt":
-            self.recorder.record_thought(session_id, "执行文本转PPT任务")
-            result = self._process_text_to_ppt(input_data, session_id)
+            return self._process_text_to_ppt(input_data)
             
         elif task_type == "mindmap_to_ppt":
-            self.recorder.record_thought(session_id, "执行思维导图转PPT任务")
-            result = self._process_mindmap_to_ppt(input_data, session_id)
+            return self._process_mindmap_to_ppt(input_data)
             
         elif task_type == "template_ppt":
-            self.recorder.record_thought(session_id, "执行模板PPT任务")
-            result = self._process_template_ppt(input_data, session_id)
+            return self._process_template_ppt(input_data)
             
         else:
             self.logger.error(f"不支持的任务类型: {task_type}")
-            self.recorder.record_thought(session_id, f"不支持的任务类型: {task_type}")
-            result = {"error": f"不支持的任务类型: {task_type}"}
-        
-        # 记录操作结果
-        self.recorder.record_action(session_id, "process_result", input_data, result)
-        
-        return result
+            return {"error": f"不支持的任务类型: {task_type}"}
     
-    def _process_text_to_ppt(self, input_data: Dict[str, Any], session_id: str) -> Dict[str, Any]:
+    def _process_text_to_ppt(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         处理文本转PPT任务
         
         参数:
             input_data: 输入数据字典
-            session_id: 会话ID
             
         返回:
             处理结果字典
         """
-        # 使用MCP规划器解析文本内容
-        self.recorder.record_thought(session_id, "使用MCP规划器解析文本内容")
-        content_parsing = self.mcp_planner.plan({
-            "type": "content_parsing",
-            "input_data": input_data
-        })
-        
         title = input_data.get("title", "未命名演示文稿")
         content = input_data.get("content", "")
         template_name = input_data.get("template_name", "专业简历.pptx")
         
         # 解析内容，生成幻灯片结构
-        self.recorder.record_thought(session_id, "解析内容，生成幻灯片结构")
         slides_data = self._parse_content_to_slides(content)
         
         # 使用模板创建演示文稿
         template_path = os.path.join(self.template_dir, template_name)
         if not os.path.exists(template_path):
             self.logger.error(f"模板文件不存在: {template_path}")
-            self.recorder.record_thought(session_id, f"模板文件不存在: {template_path}")
             return {"error": f"模板文件不存在: {template_name}"}
         
         # 生成PPT
-        self.recorder.record_thought(session_id, "生成PPT")
         output_path = self._generate_ppt(template_path, title, slides_data)
         
-        # 记录操作结果
-        result = {
+        return {
             "ppt_path": output_path,
             "title": title,
             "slides_count": len(slides_data)
         }
-        self.recorder.record_action(session_id, "text_to_ppt_result", input_data, result)
-        
-        return result
     
-    def _process_mindmap_to_ppt(self, input_data: Dict[str, Any], session_id: str) -> Dict[str, Any]:
+    def _process_mindmap_to_ppt(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         处理思维导图转PPT任务
         
         参数:
             input_data: 输入数据字典
-            session_id: 会话ID
             
         返回:
             处理结果字典
         """
-        # 使用MCP规划器解析思维导图数据
-        self.recorder.record_thought(session_id, "使用MCP规划器解析思维导图数据")
-        mindmap_parsing = self.mcp_planner.plan({
-            "type": "mindmap_parsing",
-            "input_data": input_data
-        })
-        
         mindmap_data = input_data["mindmap_data"]
         title = input_data.get("title", "思维导图演示文稿")
         template_name = input_data.get("template_name", "专业简历.pptx")
         
         # 解析思维导图数据，生成幻灯片结构
-        self.recorder.record_thought(session_id, "解析思维导图数据，生成幻灯片结构")
         slides_data = self._parse_mindmap_to_slides(mindmap_data)
         
         # 使用模板创建演示文稿
         template_path = os.path.join(self.template_dir, template_name)
         if not os.path.exists(template_path):
             self.logger.error(f"模板文件不存在: {template_path}")
-            self.recorder.record_thought(session_id, f"模板文件不存在: {template_path}")
             return {"error": f"模板文件不存在: {template_name}"}
         
         # 生成PPT
-        self.recorder.record_thought(session_id, "生成PPT")
         output_path = self._generate_ppt(template_path, title, slides_data)
         
-        # 记录操作结果
-        result = {
+        return {
             "ppt_path": output_path,
             "title": title,
             "slides_count": len(slides_data)
         }
-        self.recorder.record_action(session_id, "mindmap_to_ppt_result", input_data, result)
-        
-        return result
     
-    def _process_template_ppt(self, input_data: Dict[str, Any], session_id: str) -> Dict[str, Any]:
+    def _process_template_ppt(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         处理模板PPT任务
         
         参数:
             input_data: 输入数据字典
-            session_id: 会话ID
             
         返回:
             处理结果字典
@@ -248,26 +190,20 @@ class PPTAgent(BaseAgent):
         template_path = os.path.join(self.template_dir, template_name)
         if not os.path.exists(template_path):
             self.logger.error(f"模板文件不存在: {template_path}")
-            self.recorder.record_thought(session_id, f"模板文件不存在: {template_path}")
             return {"error": f"模板文件不存在: {template_name}"}
         
         # 复制模板并保存为新文件
-        self.recorder.record_thought(session_id, "复制模板并保存为新文件")
         ppt = Presentation(template_path)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_filename = f"{title}_{timestamp}.pptx"
         output_path = os.path.join(self.output_dir, output_filename)
         ppt.save(output_path)
         
-        # 记录操作结果
-        result = {
+        return {
             "ppt_path": output_path,
             "title": title,
             "slides_count": len(ppt.slides)
         }
-        self.recorder.record_action(session_id, "template_ppt_result", input_data, result)
-        
-        return result
     
     def _parse_content_to_slides(self, content: str) -> List[Dict[str, Any]]:
         """

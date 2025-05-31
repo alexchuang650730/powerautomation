@@ -1,16 +1,16 @@
 """
 后端API路由模块 - PPT智能体
 
-提供PPT智能体相关的API端点，将请求转发给MCP规划器进行处理。
+提供PPT智能体相关的API端点，将请求转发给服务层进行处理。
 """
 
 from flask import Blueprint, request, jsonify, send_file
 import json
 import os
-from ...agents.ppt_agent.ppt_agent import PPTAgent
+from ..services.ppt_service import PPTTaskService
 
 ppt_agent_bp = Blueprint('ppt_agent', __name__)
-ppt_agent = PPTAgent()
+ppt_service = PPTTaskService()
 
 @ppt_agent_bp.route('/generate_ppt', methods=['POST'])
 def generate_ppt():
@@ -20,15 +20,15 @@ def generate_ppt():
     data = request.json
     topic = data.get('topic', '')
     content = data.get('content')
-    style = data.get('style')
-    template = data.get('template')
+    template = data.get('template', '专业简历.pptx')
     
-    file_path = ppt_agent.generate_ppt(topic, content, style, template)
+    result = ppt_service.create_ppt_from_text(topic, content, template)
     
     # 返回文件路径，前端可以通过另一个接口下载
     return jsonify({
         "status": "success",
-        "file_path": file_path
+        "file_path": result.get("ppt_path", ""),
+        "slides_count": result.get("slides_count", 0)
     })
 
 @ppt_agent_bp.route('/mindmap_to_ppt', methods=['POST'])
@@ -37,41 +37,35 @@ def mindmap_to_ppt():
     将思维导图转换为PPT
     """
     data = request.json
+    title = data.get('title', '思维导图演示文稿')
     mindmap_data = data.get('mindmap_data', {})
-    style = data.get('style')
-    template = data.get('template')
+    template = data.get('template', '专业简历.pptx')
     
-    file_path = ppt_agent.mindmap_to_ppt(mindmap_data, style, template)
+    result = ppt_service.create_ppt_from_mindmap(title, mindmap_data, template)
     
     # 返回文件路径，前端可以通过另一个接口下载
     return jsonify({
         "status": "success",
-        "file_path": file_path
+        "file_path": result.get("ppt_path", ""),
+        "slides_count": result.get("slides_count", 0)
     })
 
-@ppt_agent_bp.route('/generate_mindmap', methods=['POST'])
-def generate_mindmap():
+@ppt_agent_bp.route('/get_templates', methods=['GET'])
+def get_templates():
     """
-    生成思维导图
+    获取可用的PPT模板列表
     """
-    data = request.json
-    topic = data.get('topic', '')
-    content = data.get('content')
-    
-    mindmap_data = ppt_agent.generate_mindmap(topic, content)
-    return jsonify(mindmap_data)
+    templates = ppt_service.get_available_templates()
+    return jsonify(templates)
 
-@ppt_agent_bp.route('/edit_mindmap', methods=['POST'])
-def edit_mindmap():
+@ppt_agent_bp.route('/get_recent_ppts', methods=['GET'])
+def get_recent_ppts():
     """
-    编辑思维导图
+    获取最近生成的PPT列表
     """
-    data = request.json
-    mindmap_data = data.get('mindmap_data', {})
-    changes = data.get('changes', {})
-    
-    updated_mindmap = ppt_agent.edit_mindmap(mindmap_data, changes)
-    return jsonify(updated_mindmap)
+    limit = request.args.get('limit', 10, type=int)
+    ppts = ppt_service.get_recent_ppts(limit)
+    return jsonify(ppts)
 
 @ppt_agent_bp.route('/download_ppt/<path:filename>', methods=['GET'])
 def download_ppt(filename):
