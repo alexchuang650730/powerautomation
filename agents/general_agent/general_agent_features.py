@@ -103,6 +103,50 @@ class GeneralAgentFeatures:
             }
         }
     
+    def get_core_capabilities(self):
+        """
+        获取核心能力列表
+        
+        Returns:
+            List[str]: 核心能力列表
+        """
+        return [
+            "automated_testing",
+            "version_rollback",
+            "agent_manufacturing",
+            "structure_based_extension"
+        ]
+    
+    def get_ui_features(self):
+        """
+        获取UI布局特性列表
+        
+        Returns:
+            List[str]: UI布局特性列表
+        """
+        return [
+            "two_column_layout",
+            "responsive_design",
+            "theme_customization",
+            "agent_card_layout",
+            "work_node_visualizer",
+            "n8n_style_workflow_visualization"
+        ]
+    
+    def get_memory_features(self):
+        """
+        获取记忆特性列表
+        
+        Returns:
+            List[str]: 记忆特性列表
+        """
+        return [
+            "checkpoint_management",
+            "historical_data_analysis",
+            "knowledge_graph_integration",
+            "context_persistence"
+        ]
+    
     def _init_platform_features(self):
         """初始化平台特性"""
         return {
@@ -228,7 +272,7 @@ class GeneralAgentFeatures:
                     "highlight_selected": True
                 }
             },
-            "work_node_visualization": {
+            "work_node_visualizer": {
                 "name": "工作节点可视化",
                 "description": "在首页智能体下方展示工作节点和测试部署状态，左侧显示任务进度和ThoughtActionRecorder思考过程，右侧显示代码和画面回放",
                 "enabled": True,
@@ -437,38 +481,28 @@ class GeneralAgentFeatures:
                 "config": {
                     "report_formats": ["html", "pdf", "markdown"],
                     "visualization_types": ["charts", "tables", "heatmaps"],
-                    "executive_summary": True
+                    "auto_summary": True
                 }
             },
-            "github_integration": {
-                "name": "GitHub集成",
-                "description": "将测试结果自动提交到GitHub，支持Issue创建和更新",
+            "code_explanation": {
+                "name": "代码解释",
+                "description": "提供清晰、易懂的代码注释和解释",
                 "enabled": True,
                 "config": {
-                    "issue_creation": True,
-                    "pull_request_comments": True,
-                    "status_checks": True,
-                    "webhook_support": True
+                    "language_support": ["python", "javascript", "java", "c++"],
+                    "explanation_detail_level": "medium",
+                    "include_examples": True
                 }
             },
-            "code_comment_generation": {
-                "name": "代码注释生成",
-                "description": "为测试用例和修复代码生成清晰的注释",
+            "documentation_generation": {
+                "name": "文档生成",
+                "description": "自动生成API文档、用户手册和开发指南",
                 "enabled": True,
                 "config": {
-                    "comment_style": "descriptive",
-                    "language_specific_formatting": True,
-                    "reference_linking": True
-                }
-            },
-            "documentation_update": {
-                "name": "文档更新",
-                "description": "自动更新README和相关文档，反映最新测试状态",
-                "enabled": True,
-                "config": {
-                    "readme_sections": ["status", "issues", "coverage"],
-                    "changelog_updates": True,
-                    "api_doc_synchronization": True
+                    "api_doc_generation": True,
+                    "user_manual_generation": True,
+                    "developer_guide_generation": True,
+                    "multilingual_support": True
                 }
             }
         }
@@ -476,90 +510,49 @@ class GeneralAgentFeatures:
     def _init_memory_features(self):
         """初始化记忆特性"""
         return {
-            "test_history_tracking": {
-                "name": "测试历史追踪",
-                "description": "记录并分析历史测试结果，识别趋势和模式",
+            "historical_data_analysis": {
+                "name": "历史数据分析",
+                "description": "分析历史测试数据，识别趋势和模式",
                 "enabled": True,
                 "config": {
-                    "history_retention_days": 90,
+                    "data_retention_period": 365,
                     "trend_analysis": True,
-                    "regression_detection": True
+                    "pattern_recognition": True
                 }
             },
-            "knowledge_base_building": {
-                "name": "知识库构建",
-                "description": "积累常见问题和解决方案，形成项目专属知识库",
+            "knowledge_graph_integration": {
+                "name": "知识图谱集成",
+                "description": "构建测试和开发知识图谱，支持智能查询和推理",
                 "enabled": True,
                 "config": {
-                    "auto_categorization": True,
-                    "solution_effectiveness_tracking": True,
-                    "search_and_retrieval": True
+                    "entity_types": ["test", "bug", "fix", "component"],
+                    "relation_types": ["causes", "fixes", "depends_on", "affects"],
+                    "inference_enabled": True
                 }
             },
-            "release_manager_capability": {
-                "name": "ReleaseManager能力",
-                "description": "监控GitHub release事件，自动下载代码到指定路径，支持SSH密钥认证，处理代码上传和推送",
+            "context_persistence": {
+                "name": "上下文持久化",
+                "description": "保持测试和开发上下文，支持长期任务和多轮对话",
                 "enabled": True,
                 "config": {
-                    "github_release_monitoring": True,
-                    "auto_download": True,
-                    "ssh_key_authentication": True,
-                    "code_upload_automation": True,
-                    "mac_path_support": True,
-                    "structure_preservation": True
-                }
-            },
-            "continuous_learning": {
-                "name": "持续学习",
-                "description": "通过每次测试和修复过程不断优化测试策略和问题解决方法",
-                "enabled": True,
-                "config": {
-                    "feedback_incorporation": True,
-                    "strategy_adaptation": True,
-                    "performance_metrics_tracking": True
+                    "session_timeout": 3600,
+                    "context_size_limit": 10000,
+                    "priority_based_retention": True
                 }
             },
             "checkpoint_management": {
                 "name": "检查点管理",
-                "description": "创建和管理代码版本检查点，保存测试和部署状态，支持在web端显示工作节点",
+                "description": "创建和管理代码检查点，支持版本回滚和比较",
                 "enabled": True,
                 "config": {
-                    "checkpoint_creation_triggers": ["测试通过", "部署成功", "手动创建", "定时创建"],
-                    "checkpoint_retention_policy": {
-                        "max_checkpoints": 50,
-                        "min_retention_days": 30,
-                        "important_checkpoint_tags": ["release", "milestone", "stable"]
-                    },
-                    "web_display_enabled": True,
-                    "checkpoint_comparison_enabled": True,
-                    "structure_preservation": True
+                    "auto_checkpoint": True,
+                    "checkpoint_interval": 3600,
+                    "max_checkpoints": 50,
+                    "diff_visualization": True,
+                    "checkpoint_tagging": True,
+                    "checkpoint_search": True,
+                    "checkpoint_comparison": True,
+                    "checkpoint_restoration": True
                 }
             }
         }
-    
-    def get_all_features(self):
-        """获取所有特性"""
-        return {
-            "platform_features": self.platform_features,
-            "ui_layout_features": self.ui_layout_features,
-            "prompt_features": self.prompt_features,
-            "thinking_features": self.thinking_features,
-            "content_features": self.content_features,
-            "memory_features": self.memory_features,
-            "governance_principles": self.governance_principles
-        }
-    
-    def get_feature_by_name(self, feature_name):
-        """根据名称获取特性"""
-        all_features = self.get_all_features()
-        for category, features in all_features.items():
-            if feature_name in features:
-                return features[feature_name]
-        return None
-    
-    def is_feature_enabled(self, feature_name):
-        """检查特性是否启用"""
-        feature = self.get_feature_by_name(feature_name)
-        if feature:
-            return feature.get("enabled", False)
-        return False

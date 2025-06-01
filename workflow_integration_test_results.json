@@ -1,0 +1,7 @@
+{
+  "feature_integration": true,
+  "test_workflow": true,
+  "rollback_workflow": false,
+  "github_release_workflow": false,
+  "overall": false
+}

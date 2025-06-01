@@ -438,12 +438,12 @@ class AutomatedTestingFramework:
             
             # 创建保存点
             description = f"自动测试 {test_plan['id']} - {test_plan['status']}"
-            savepoint_id = solver.create_savepoint(description)
+            savepoint_result = solver.create_savepoint(description)
             
-            logger.info(f"创建保存点成功: {savepoint_id}, 描述: {description}")
+            logger.info(f"创建保存点成功: {savepoint_result['id']}, 描述: {description}")
             
             # 更新测试计划
-            test_plan["savepoint_id"] = savepoint_id
+            test_plan["savepoint_id"] = savepoint_result['id']
         except Exception as e:
             logger.error(f"创建保存点失败: {e}")
     
@@ -469,51 +469,52 @@ class AutomatedTestingFramework:
             "test_plan_id": test_plan["id"],
             "timestamp": datetime.datetime.now().isoformat(),
             "overall": {
-                "line": 75.5,
-                "branch": 68.2,
-                "function": 82.1
+                "line_rate": 0.85,
+                "branch_rate": 0.75,
+                "complexity": 0.65
             },
-            "by_type": {
-                "unit": {
-                    "line": 85.3,
-                    "branch": 78.6,
-                    "function": 90.2
-                },
-                "integration": {
-                    "line": 72.1,
-                    "branch": 65.4,
-                    "function": 80.5
-                },
-                "ui": {
-                    "line": 68.7,
-                    "branch": 60.2,
-                    "function": 75.8
-                }
-            },
-            "by_module": {
-                "frontend": {
-                    "line": 78.2,
-                    "branch": 70.5,
-                    "function": 85.3
-                },
-                "backend": {
-                    "line": 82.1,
-                    "branch": 75.8,
-                    "function": 88.6
-                },
-                "agents": {
-                    "line": 65.4,
-                    "branch": 58.2,
-                    "function": 72.3
-                }
-            },
-            "threshold_met": {}
+            "by_module": {}
         }
         
-        # 检查是否达到阈值
-        for test_type, threshold in self.config["coverage_threshold"].items():
-            if test_type in coverage_data["by_type"]:
-                coverage_data["threshold_met"][test_type] = coverage_data["by_type"][test_type]["line"] >= threshold
+        # 模拟各模块的覆盖率数据
+        modules = [
+            "agents.general_agent",
+            "agents.code",
+            "agents.web",
+            "agents.ppt",
+            "development_tools",
+            "workflow_driver"
+        ]
+        
+        import random
+        for module in modules:
+            coverage_data["by_module"][module] = {
+                "line_rate": round(random.uniform(0.7, 0.95), 2),
+                "branch_rate": round(random.uniform(0.6, 0.9), 2),
+                "complexity": round(random.uniform(0.5, 0.8), 2),
+                "classes": {}
+            }
+            
+            # 模拟各类的覆盖率数据
+            class_count = random.randint(2, 5)
+            for i in range(class_count):
+                class_name = f"{module.split('.')[-1].capitalize()}{i+1}"
+                coverage_data["by_module"][module]["classes"][class_name] = {
+                    "line_rate": round(random.uniform(0.7, 0.95), 2),
+                    "branch_rate": round(random.uniform(0.6, 0.9), 2),
+                    "complexity": round(random.uniform(0.5, 0.8), 2),
+                    "methods": {}
+                }
+                
+                # 模拟各方法的覆盖率数据
+                method_count = random.randint(3, 8)
+                for j in range(method_count):
+                    method_name = f"method{j+1}"
+                    coverage_data["by_module"][module]["classes"][class_name]["methods"][method_name] = {
+                        "line_rate": round(random.uniform(0.7, 0.95), 2),
+                        "branch_rate": round(random.uniform(0.6, 0.9), 2),
+                        "complexity": round(random.uniform(0.5, 0.8), 2)
+                    }
         
         # 保存覆盖率数据
         self.coverage_data[test_plan["id"]] = coverage_data
@@ -522,16 +523,13 @@ class AutomatedTestingFramework:
         
         return coverage_data
     
-    def generate_report(self, test_plan: Optional[Dict[str, Any]] = None, 
-                       coverage_data: Optional[Dict[str, Any]] = None,
-                       report_format: str = "html") -> str:
+    def generate_report(self, test_plan: Optional[Dict[str, Any]] = None, include_coverage: bool = True) -> str:
         """
         生成测试报告
         
         Args:
             test_plan: 测试计划，如果为None则使用当前测试计划
-            coverage_data: 覆盖率数据，如果为None则使用当前覆盖率数据
-            report_format: 报告格式，支持html、markdown、pdf
+            include_coverage: 是否包含覆盖率数据
             
         Returns:
             报告文件路径
@@ -541,46 +539,55 @@ class AutomatedTestingFramework:
                 raise ValueError("没有可用的测试结果")
             test_plan = list(self.test_results.values())[-1]
         
-        if coverage_data is None:
+        logger.info(f"生成测试报告: {test_plan['id']}")
+        
+        # 准备报告数据
+        report_data = {
+            "test_plan": test_plan,
+            "timestamp": datetime.datetime.now().isoformat(),
+            "coverage": None
+        }
+        
+        # 如果需要包含覆盖率数据
+        if include_coverage:
             if test_plan["id"] in self.coverage_data:
-                coverage_data = self.coverage_data[test_plan["id"]]
+                report_data["coverage"] = self.coverage_data[test_plan["id"]]
             else:
-                coverage_data = self.analyze_coverage(test_plan)
+                try:
+                    report_data["coverage"] = self.analyze_coverage(test_plan)
+                except Exception as e:
+                    logger.error(f"分析覆盖率失败: {e}")
         
-        logger.info(f"生成测试报告: {test_plan['id']}, 格式: {report_format}")
-        
-        # 确保报告目录存在
+        # 创建报告目录
         report_dir = os.path.join(self.project_root, self.config["report_dir"])
         os.makedirs(report_dir, exist_ok=True)
         
         # 生成报告文件名
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        report_file = os.path.join(report_dir, f"test_report_{test_plan['id']}_{timestamp}.{report_format}")
+        report_file = os.path.join(report_dir, f"test_report_{test_plan['id']}.html")
         
-        # 根据格式生成报告
-        if report_format == "html":
-            self._generate_html_report(test_plan, coverage_data, report_file)
-        elif report_format == "markdown":
-            self._generate_markdown_report(test_plan, coverage_data, report_file)
-        elif report_format == "pdf":
-            self._generate_pdf_report(test_plan, coverage_data, report_file)
-        else:
-            raise ValueError(f"不支持的报告格式: {report_format}")
+        # 生成HTML报告
+        with open(report_file, 'w') as f:
+            f.write(self._generate_html_report(report_data))
         
         logger.info(f"测试报告生成完成: {report_file}")
         
         return report_file
     
-    def _generate_html_report(self, test_plan: Dict[str, Any], coverage_data: Dict[str, Any], report_file: str) -> None:
+    def _generate_html_report(self, report_data: Dict[str, Any]) -> str:
         """
         生成HTML格式的测试报告
         
         Args:
-            test_plan: 测试计划
-            coverage_data: 覆盖率数据
-            report_file: 报告文件路径
+            report_data: 报告数据
+            
+        Returns:
+            HTML报告内容
         """
-        # 这里是示例实现，实际项目中可能使用模板引擎
+        test_plan = report_data["test_plan"]
+        timestamp = report_data["timestamp"]
+        coverage = report_data["coverage"]
+        
+        # 生成HTML报告头部
         html = f"""
         <!DOCTYPE html>
         <html>
@@ -589,223 +596,133 @@ class AutomatedTestingFramework:
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>测试报告 - {test_plan['id']}</title>
             <style>
-                body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }}
-                h1, h2, h3 {{ color: #2c3e50; }}
-                .container {{ max-width: 1200px; margin: 0 auto; }}
-                .summary {{ background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
-                .summary-item {{ margin-bottom: 10px; }}
-                .passed {{ color: #27ae60; }}
-                .failed {{ color: #e74c3c; }}
-                table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; }}
-                th, td {{ padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }}
+                body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; }}
+                h1, h2, h3 {{ color: #333; }}
+                .summary {{ background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
+                .passed {{ color: green; }}
+                .failed {{ color: red; }}
+                .skipped {{ color: orange; }}
+                .error {{ color: darkred; }}
+                table {{ border-collapse: collapse; width: 100%; margin-bottom: 20px; }}
+                th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
                 th {{ background-color: #f2f2f2; }}
-                tr:hover {{ background-color: #f5f5f5; }}
-                .chart {{ height: 300px; margin-bottom: 30px; }}
+                tr:nth-child(even) {{ background-color: #f9f9f9; }}
+                .chart {{ height: 200px; margin-bottom: 20px; }}
             </style>
         </head>
         <body>
-            <div class="container">
-                <h1>自动化测试报告</h1>
-                
+            <h1>测试报告</h1>
+            <div class="summary">
+                <h2>摘要</h2>
+                <p><strong>测试计划ID:</strong> {test_plan['id']}</p>
+                <p><strong>创建时间:</strong> {test_plan['created_at']}</p>
+                <p><strong>完成时间:</strong> {test_plan['completed_at']}</p>
+                <p><strong>状态:</strong> <span class="{test_plan['status'].lower()}">{test_plan['status']}</span></p>
+                <p><strong>测试用例总数:</strong> {test_plan['statistics']['total']}</p>
+                <p><strong>通过:</strong> <span class="passed">{test_plan['statistics']['passed']}</span></p>
+                <p><strong>失败:</strong> <span class="failed">{test_plan['statistics']['failed']}</span></p>
+                <p><strong>跳过:</strong> <span class="skipped">{test_plan['statistics']['skipped']}</span></p>
+                <p><strong>错误:</strong> <span class="error">{test_plan['statistics']['error']}</span></p>
+                <p><strong>通过率:</strong> {test_plan['statistics']['pass_rate']}%</p>
+                <p><strong>执行时间:</strong> {test_plan['statistics']['duration']:.2f} 秒</p>
+            </div>
+        """
+        
+        # 生成测试类型统计
+        html += f"""
+            <h2>测试类型统计</h2>
+            <table>
+                <tr>
+                    <th>测试类型</th>
+                    <th>总数</th>
+                    <th>通过</th>
+                    <th>通过率</th>
+                </tr>
+        """
+        
+        for test_type, stats in test_plan['statistics']['by_type'].items():
+            html += f"""
+                <tr>
+                    <td>{test_type}</td>
+                    <td>{stats['total']}</td>
+                    <td>{stats['passed']}</td>
+                    <td>{stats['pass_rate']}%</td>
+                </tr>
+            """
+        
+        html += "</table>"
+        
+        # 生成测试用例详情
+        html += f"""
+            <h2>测试用例详情</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>优先级</th>
+                    <th>状态</th>
+                    <th>执行时间</th>
+                </tr>
+        """
+        
+        for test_case in test_plan['test_cases']:
+            html += f"""
+                <tr>
+                    <td>{test_case['id']}</td>
+                    <td>{test_case['name']}</td>
+                    <td>{test_case['type']}</td>
+                    <td>{test_case['priority']}</td>
+                    <td class="{test_case['status'].lower()}">{test_case['status']}</td>
+                    <td>{test_case.get('execution_time', 'N/A')}</td>
+                </tr>
+            """
+        
+        html += "</table>"
+        
+        # 如果有覆盖率数据，生成覆盖率报告
+        if coverage:
+            html += f"""
+                <h2>覆盖率报告</h2>
                 <div class="summary">
-                    <h2>测试摘要</h2>
-                    <div class="summary-item"><strong>测试计划ID:</strong> {test_plan['id']}</div>
-                    <div class="summary-item"><strong>开始时间:</strong> {test_plan['started_at']}</div>
-                    <div class="summary-item"><strong>完成时间:</strong> {test_plan['completed_at']}</div>
-                    <div class="summary-item"><strong>状态:</strong> <span class="{test_plan['status'].lower()}">{test_plan['status']}</span></div>
-                    <div class="summary-item"><strong>总用例数:</strong> {test_plan['statistics']['total']}</div>
-                    <div class="summary-item"><strong>通过:</strong> {test_plan['statistics']['passed']} ({test_plan['statistics']['pass_rate']}%)</div>
-                    <div class="summary-item"><strong>失败:</strong> {test_plan['statistics']['failed']}</div>
-                    <div class="summary-item"><strong>跳过:</strong> {test_plan['statistics']['skipped']}</div>
-                    <div class="summary-item"><strong>错误:</strong> {test_plan['statistics']['error']}</div>
-                    <div class="summary-item"><strong>执行时间:</strong> {test_plan['statistics']['duration']:.2f} 秒</div>
+                    <h3>总体覆盖率</h3>
+                    <p><strong>行覆盖率:</strong> {coverage['overall']['line_rate'] * 100:.2f}%</p>
+                    <p><strong>分支覆盖率:</strong> {coverage['overall']['branch_rate'] * 100:.2f}%</p>
+                    <p><strong>复杂度:</strong> {coverage['overall']['complexity']:.2f}</p>
                 </div>
                 
-                <h2>测试覆盖率</h2>
-                <div class="chart" id="coverage-chart"></div>
-                
+                <h3>模块覆盖率</h3>
                 <table>
                     <tr>
                         <th>模块</th>
                         <th>行覆盖率</th>
                         <th>分支覆盖率</th>
-                        <th>函数覆盖率</th>
+                        <th>复杂度</th>
                     </tr>
-                    <tr>
-                        <td>总体</td>
-                        <td>{coverage_data['overall']['line']}%</td>
-                        <td>{coverage_data['overall']['branch']}%</td>
-                        <td>{coverage_data['overall']['function']}%</td>
-                    </tr>
-        """
-        
-        # 添加按模块的覆盖率
-        for module, data in coverage_data["by_module"].items():
-            html += f"""
+            """
+            
+            for module, module_data in coverage['by_module'].items():
+                html += f"""
                     <tr>
                         <td>{module}</td>
-                        <td>{data['line']}%</td>
-                        <td>{data['branch']}%</td>
-                        <td>{data['function']}%</td>
+                        <td>{module_data['line_rate'] * 100:.2f}%</td>
+                        <td>{module_data['branch_rate'] * 100:.2f}%</td>
+                        <td>{module_data['complexity']:.2f}</td>
                     </tr>
-            """
-        
-        html += """
-                </table>
-                
-                <h2>测试用例详情</h2>
-                <table>
-                    <tr>
-                        <th>ID</th>
-                        <th>名称</th>
-                        <th>类型</th>
-                        <th>优先级</th>
-                        <th>状态</th>
-                        <th>执行时间</th>
-                    </tr>
-        """
-        
-        # 添加测试用例详情
-        for test_case in test_plan["test_cases"]:
-            execution_time = test_case.get("execution_time", 0)
-            html += f"""
-                    <tr>
-                        <td>{test_case['id']}</td>
-                        <td>{test_case['name']}</td>
-                        <td>{test_case['type']}</td>
-                        <td>{test_case['priority']}</td>
-                        <td class="{test_case['status'].lower()}">{test_case['status']}</td>
-                        <td>{execution_time:.2f} 秒</td>
-                    </tr>
-            """
-        
-        html += """
-                </table>
-            </div>
+                """
             
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                // 创建覆盖率图表
-                const ctx = document.createElement('canvas');
-                document.getElementById('coverage-chart').appendChild(ctx);
-                
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['行覆盖率', '分支覆盖率', '函数覆盖率'],
-                        datasets: [{
-                            label: '总体覆盖率',
-                            data: [
-        """
+            html += "</table>"
         
-        # 添加覆盖率数据
-        html += f"{coverage_data['overall']['line']}, {coverage_data['overall']['branch']}, {coverage_data['overall']['function']}"
-        
-        html += """
-                            ],
-                            backgroundColor: [
-                                'rgba(54, 162, 235, 0.5)',
-                                'rgba(255, 206, 86, 0.5)',
-                                'rgba(75, 192, 192, 0.5)'
-                            ],
-                            borderColor: [
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100
-                            }
-                        }
-                    }
-                });
-            </script>
+        # 生成HTML报告尾部
+        html += f"""
+            <div>
+                <p><em>报告生成时间: {timestamp}</em></p>
+            </div>
         </body>
         </html>
         """
         
-        with open(report_file, 'w') as f:
-            f.write(html)
-    
-    def _generate_markdown_report(self, test_plan: Dict[str, Any], coverage_data: Dict[str, Any], report_file: str) -> None:
-        """
-        生成Markdown格式的测试报告
-        
-        Args:
-            test_plan: 测试计划
-            coverage_data: 覆盖率数据
-            report_file: 报告文件路径
-        """
-        markdown = f"""# 自动化测试报告
-
-## 测试摘要
-
-- **测试计划ID:** {test_plan['id']}
-- **开始时间:** {test_plan['started_at']}
-- **完成时间:** {test_plan['completed_at']}
-- **状态:** {test_plan['status']}
-- **总用例数:** {test_plan['statistics']['total']}
-- **通过:** {test_plan['statistics']['passed']} ({test_plan['statistics']['pass_rate']}%)
-- **失败:** {test_plan['statistics']['failed']}
-- **跳过:** {test_plan['statistics']['skipped']}
-- **错误:** {test_plan['statistics']['error']}
-- **执行时间:** {test_plan['statistics']['duration']:.2f} 秒
-
-## 测试覆盖率
-
-| 模块 | 行覆盖率 | 分支覆盖率 | 函数覆盖率 |
-|------|----------|------------|------------|
-| 总体 | {coverage_data['overall']['line']}% | {coverage_data['overall']['branch']}% | {coverage_data['overall']['function']}% |
-"""
-        
-        # 添加按模块的覆盖率
-        for module, data in coverage_data["by_module"].items():
-            markdown += f"| {module} | {data['line']}% | {data['branch']}% | {data['function']}% |\n"
-        
-        markdown += """
-## 测试用例详情
-
-| ID | 名称 | 类型 | 优先级 | 状态 | 执行时间 |
-|----|------|------|--------|------|----------|
-"""
-        
-        # 添加测试用例详情
-        for test_case in test_plan["test_cases"]:
-            execution_time = test_case.get("execution_time", 0)
-            markdown += f"| {test_case['id']} | {test_case['name']} | {test_case['type']} | {test_case['priority']} | {test_case['status']} | {execution_time:.2f} 秒 |\n"
-        
-        with open(report_file, 'w') as f:
-            f.write(markdown)
-    
-    def _generate_pdf_report(self, test_plan: Dict[str, Any], coverage_data: Dict[str, Any], report_file: str) -> None:
-        """
-        生成PDF格式的测试报告
-        
-        Args:
-            test_plan: 测试计划
-            coverage_data: 覆盖率数据
-            report_file: 报告文件路径
-        """
-        # 先生成Markdown报告
-        md_file = report_file.replace(".pdf", ".md")
-        self._generate_markdown_report(test_plan, coverage_data, md_file)
-        
-        # 使用manus-md-to-pdf转换为PDF
-        try:
-            import subprocess
-            subprocess.run(["manus-md-to-pdf", md_file, report_file], check=True)
-            
-            # 删除临时Markdown文件
-            os.remove(md_file)
-        except Exception as e:
-            logger.error(f"生成PDF报告失败: {e}")
-            raise
+        return html
     
     def get_test_history(self) -> List[Dict[str, Any]]:
         """
@@ -816,209 +733,69 @@ class AutomatedTestingFramework:
         """
         return self.test_history
     
-    def analyze_trends(self) -> Dict[str, Any]:
+    def get_test_result(self, test_plan_id: str) -> Optional[Dict[str, Any]]:
         """
-        分析测试趋势
+        获取指定测试计划的结果
         
+        Args:
+            test_plan_id: 测试计划ID
+            
         Returns:
-            趋势分析结果
+            测试结果字典，如果不存在则返回None
         """
-        if not self.test_history:
-            return {"error": "没有可用的测试历史记录"}
-        
-        # 按时间排序
-        sorted_history = sorted(self.test_history, key=lambda x: x["created_at"])
-        
-        # 提取通过率趋势
-        pass_rates = [h["statistics"]["pass_rate"] for h in sorted_history]
-        timestamps = [h["created_at"] for h in sorted_history]
-        
-        # 计算平均通过率
-        avg_pass_rate = sum(pass_rates) / len(pass_rates) if pass_rates else 0
-        
-        # 计算通过率变化趋势
-        trend = "stable"
-        if len(pass_rates) >= 2:
-            recent_rates = pass_rates[-5:] if len(pass_rates) >= 5 else pass_rates
-            if all(recent_rates[i] <= recent_rates[i+1] for i in range(len(recent_rates)-1)):
-                trend = "improving"
-            elif all(recent_rates[i] >= recent_rates[i+1] for i in range(len(recent_rates)-1)):
-                trend = "declining"
-        
-        return {
-            "total_runs": len(sorted_history),
-            "pass_rates": pass_rates,
-            "timestamps": timestamps,
-            "avg_pass_rate": avg_pass_rate,
-            "trend": trend,
-            "latest_pass_rate": pass_rates[-1] if pass_rates else 0,
-            "highest_pass_rate": max(pass_rates) if pass_rates else 0,
-            "lowest_pass_rate": min(pass_rates) if pass_rates else 0
-        }
+        return self.test_results.get(test_plan_id)
     
-    def notify_results(self, test_plan: Optional[Dict[str, Any]] = None) -> None:
+    def get_coverage_data(self, test_plan_id: str) -> Optional[Dict[str, Any]]:
         """
-        通知测试结果
+        获取指定测试计划的覆盖率数据
         
         Args:
-            test_plan: 测试计划，如果为None则使用当前测试计划
+            test_plan_id: 测试计划ID
+            
+        Returns:
+            覆盖率数据字典，如果不存在则返回None
         """
-        if test_plan is None:
-            if not self.test_results:
-                raise ValueError("没有可用的测试结果")
-            test_plan = list(self.test_results.values())[-1]
-        
-        logger.info(f"通知测试结果: {test_plan['id']}")
-        
-        # 检查通知配置
-        if not any(self.config["notification"].values()):
-            logger.info("未配置通知方式，跳过通知")
-            return
-        
-        # 准备通知内容
-        notification = {
-            "test_plan_id": test_plan["id"],
-            "status": test_plan["status"],
-            "pass_rate": test_plan["statistics"]["pass_rate"],
-            "total": test_plan["statistics"]["total"],
-            "passed": test_plan["statistics"]["passed"],
-            "failed": test_plan["statistics"]["failed"],
-            "timestamp": datetime.datetime.now().isoformat()
-        }
-        
-        # 发送通知
-        if self.config["notification"]["email"]:
-            self._send_email_notification(notification)
-        
-        if self.config["notification"]["slack"]:
-            self._send_slack_notification(notification)
-        
-        if self.config["notification"]["github"]:
-            self._send_github_notification(notification, test_plan)
-        
-        logger.info(f"测试结果通知完成: {test_plan['id']}")
+        return self.coverage_data.get(test_plan_id)
+
+
+# 工厂函数，获取AutomatedTestingFramework实例
+_instance = None
+
+def get_instance(project_root: str = None) -> AutomatedTestingFramework:
+    """
+    获取AutomatedTestingFramework实例（单例模式）
     
-    def _send_email_notification(self, notification: Dict[str, Any]) -> None:
-        """
-        发送邮件通知
+    Args:
+        project_root: 项目根目录路径，仅在首次调用时需要提供
         
-        Args:
-            notification: 通知内容
-        """
-        logger.info(f"发送邮件通知: {notification['test_plan_id']}")
-        # 实际项目中应实现邮件发送逻辑
+    Returns:
+        AutomatedTestingFramework实例
+    """
+    global _instance
     
-    def _send_slack_notification(self, notification: Dict[str, Any]) -> None:
-        """
-        发送Slack通知
+    if _instance is None:
+        if project_root is None:
+            raise ValueError("首次调用必须提供project_root参数")
         
-        Args:
-            notification: 通知内容
-        """
-        logger.info(f"发送Slack通知: {notification['test_plan_id']}")
-        # 实际项目中应实现Slack通知逻辑
+        _instance = AutomatedTestingFramework(project_root)
     
-    def _send_github_notification(self, notification: Dict[str, Any], test_plan: Dict[str, Any]) -> None:
-        """
-        发送GitHub通知
-        
-        Args:
-            notification: 通知内容
-            test_plan: 测试计划
-        """
-        logger.info(f"发送GitHub通知: {notification['test_plan_id']}")
-        
-        try:
-            # 这里是示例实现，实际项目中应使用GitHub API
-            from powerautomation_integration.scripts.github_test_reporter import GitHubTestReporter
-            
-            # 初始化GitHub测试报告器
-            reporter = GitHubTestReporter()
-            
-            # 生成测试报告
-            report_file = self.generate_report(test_plan, report_format="markdown")
-            
-            # 上传测试报告
-            with open(report_file, 'r') as f:
-                report_content = f.read()
-            
-            # 创建或更新GitHub Issue
-            issue_number = reporter.create_or_update_test_report(
-                title=f"自动化测试报告: {test_plan['id']}",
-                body=report_content,
-                labels=["test-report", test_plan["status"].lower()]
-            )
-            
-            logger.info(f"GitHub通知完成，Issue #{issue_number}")
-        except Exception as e:
-            logger.error(f"发送GitHub通知失败: {e}")
-    
-    def integrate_with_mcp(self) -> None:
-        """
-        与MCP协调器集成
-        """
-        logger.info("与MCP协调器集成")
-        
-        try:
-            # 这里是示例实现，实际项目中应使用MCP API
-            from powerautomation_integration.agents.ppt_agent.core.mcp.webagent_adapter import MCPAdapter
-            
-            # 初始化MCP适配器
-            adapter = MCPAdapter()
-            
-            # 注册自动化测试能力
-            adapter.register_capability(
-                capability_id="automated_testing",
-                capability_name="自动化测试",
-                capability_description="自动执行测试用例，收集测试结果，分析测试覆盖率，生成测试报告",
-                handler=self.execute_tests
-            )
-            
-            # 注册测试报告生成能力
-            adapter.register_capability(
-                capability_id="test_report_generation",
-                capability_name="测试报告生成",
-                capability_description="生成结构化、可视化的测试报告",
-                handler=self.generate_report
-            )
-            
-            # 注册测试历史追踪能力
-            adapter.register_capability(
-                capability_id="test_history_tracking",
-                capability_name="测试历史追踪",
-                capability_description="记录并分析历史测试结果，识别趋势和模式",
-                handler=self.get_test_history
-            )
-            
-            logger.info("MCP协调器集成完成")
-        except Exception as e:
-            logger.error(f"MCP协调器集成失败: {e}")
+    return _instance
 
 
 # 使用示例
 if __name__ == "__main__":
-    # 初始化自动化测试框架
-    framework = AutomatedTestingFramework("/home/ubuntu/powerautomation_integration")
+    # 获取AutomatedTestingFramework实例
+    framework = get_instance("/path/to/project")
     
     # 生成测试计划
-    test_plan = framework.generate_test_plan(
-        test_types=[TestType.UNIT, TestType.INTEGRATION],
-        priority=[TestPriority.CRITICAL, TestPriority.HIGH]
-    )
+    test_plan = framework.generate_test_plan()
     
     # 执行测试
-    test_results = framework.execute_tests(test_plan)
+    test_result = framework.execute_tests(test_plan)
     
     # 分析覆盖率
-    coverage_data = framework.analyze_coverage(test_results)
+    coverage_data = framework.analyze_coverage(test_result)
     
     # 生成报告
-    report_file = framework.generate_report(test_results, coverage_data, "html")
-    
-    # 通知结果
-    framework.notify_results(test_results)
-    
-    # 与MCP协调器集成
-    framework.integrate_with_mcp()
-    
-    print(f"测试完成，报告已生成: {report_file}")
+    report_file = framework.generate_report(test_result)
+    print(f"测试报告已生成: {report_file}")

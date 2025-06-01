@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirna
 # 导入核心Agent组件
 from agents.general_agent.general_agent_features import get_instance as get_features
 from development_tools.agent_problem_solver import AgentProblemSolver
-from agents.release_manager.release_manager import ReleaseManager
+from development_tools.release_manager import ReleaseManager
 
 # 配置日志
 logging.basicConfig(
