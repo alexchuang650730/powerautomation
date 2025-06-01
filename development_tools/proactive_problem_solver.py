@@ -10,9 +10,9 @@ import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 
-# 导入适配器 - 调整导入路径以适应主仓库结构
-from agents.ppt_agent.core.mcp.sequential_thinking_adapter import SequentialThinkingAdapter
-from agents.ppt_agent.core.mcp.webagent_adapter import WebAgentBAdapter
+# 导入适配器 - 从mcptool导入
+from mcptool.adapters.sequential_thinking_adapter import SequentialThinkingAdapter
+from mcptool.adapters.webagent_adapter import WebAgentBAdapter
 
 class GitHubPushManager:
     """GitHub推送管理器，负责将解决方案推送到GitHub"""

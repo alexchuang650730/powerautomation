@@ -6,6 +6,21 @@
 核心治理原则：所有功能扩展将严格基于原本的文件结构进行，不会更改现有结构
 """
 
+# 单例模式实现
+_instance = None
+
+def get_instance():
+    """
+    获取GeneralAgentFeatures单例实例
+    
+    Returns:
+        GeneralAgentFeatures: 通用智能体六大特性定义类的单例实例
+    """
+    global _instance
+    if _instance is None:
+        _instance = GeneralAgentFeatures()
+    return _instance
+
 class GeneralAgentFeatures:
     """
     通用智能体六大特性定义类

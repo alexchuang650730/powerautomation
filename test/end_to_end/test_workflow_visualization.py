@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 # 导入被测试的模块
 from development_tools.agent_problem_solver import AgentProblemSolver
-from agents.release_manager.release_manager import ReleaseManager
+from development_tools.release_manager import ReleaseManager
 
 class TestWorkflowVisualizationE2E(unittest.TestCase):
     """自动化工作流展示能力的端到端测试"""

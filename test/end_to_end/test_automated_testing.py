@@ -16,7 +16,7 @@ from unittest.mock import patch, MagicMock
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 # 导入被测试的模块
-from agents.features.automated_testing import AutomatedTestingFramework, TestType, TestStatus, TestPriority
+from agents.general_agent.automated_testing import AutomatedTestingFramework, TestType, TestStatus, TestPriority
 from development_tools.agent_problem_solver import AgentProblemSolver
 from agents.ppt_agent.core.mcp.webagent_adapter import MCPAdapter
 
