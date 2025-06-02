@@ -60,7 +60,7 @@ const InputArea: React.FC<InputAreaProps> = ({
               onChange={handleFileChange}
               multiple
             />
-            <span className="file-icon">📎</span>
+            <span className="file-icon">⬆️</span>
           </label>
           <button type="submit" className="submit-button">➡️</button>
         </div>

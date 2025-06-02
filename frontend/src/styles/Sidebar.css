@@ -37,12 +37,13 @@
 }
 
 .sidebar-icon {
-  font-size: 24px;
-  margin-bottom: 5px;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
 .sidebar-text {
-  font-size: 12px;
+  font-size: 14px;
+  text-transform: none;
 }
 
 .sidebar-bottom {
