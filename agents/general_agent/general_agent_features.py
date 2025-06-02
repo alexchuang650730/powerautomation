@@ -1,7 +1,7 @@
 """
 通用智能体六大特性定义文档
 更新日期：2025-06-02
-版本：1.3
+版本：1.4
 
 核心治理原则：所有功能扩展将严格基于原本的文件结构进行，不会更改现有结构
 """
@@ -116,7 +116,9 @@ class GeneralAgentFeatures:
             "agent_manufacturing",
             "structure_based_extension",
             "integrated_workflow_management",
-            "unified_interface_experience"
+            "unified_interface_experience",
+            "manus_integration",
+            "multi_workflow_automation"
         ]
     
     def get_ui_features(self):
@@ -135,7 +137,8 @@ class GeneralAgentFeatures:
             "n8n_style_workflow_visualization",
             "integrated_input_area",
             "unified_work_node_workflow_view",
-            "message_history_display"
+            "message_history_display",
+            "file_upload_interface"
         ]
     
     def get_memory_features(self):
@@ -151,7 +154,8 @@ class GeneralAgentFeatures:
             "knowledge_graph_integration",
             "context_persistence",
             "workflow_state_persistence",
-            "message_history_management"
+            "message_history_management",
+            "task_data_classification_storage"
         ]
     
     def _init_platform_features(self):
@@ -258,6 +262,97 @@ class GeneralAgentFeatures:
                     "responsive_behavior": True,
                     "accessibility_compliance": True,
                     "theme_consistency": True
+                }
+            },
+            "manus_integration": {
+                "name": "Manus平台集成",
+                "description": "支持与Manus平台的深度集成，实现自动化任务获取、指令发送和数据同步",
+                "enabled": True,
+                "config": {
+                    "task_retrieval": {
+                        "enabled": True,
+                        "visual_recognition": True,
+                        "task_filtering": True,
+                        "priority_based_selection": True,
+                        "real_time_monitoring": True
+                    },
+                    "command_execution": {
+                        "enabled": True,
+                        "text_input": True,
+                        "file_upload": True,
+                        "response_handling": True,
+                        "error_recovery": True
+                    },
+                    "data_synchronization": {
+                        "enabled": True,
+                        "bidirectional_sync": True,
+                        "conflict_resolution": True,
+                        "offline_operation": True,
+                        "sync_scheduling": True
+                    },
+                    "authentication": {
+                        "token_based": True,
+                        "session_management": True,
+                        "permission_handling": True
+                    },
+                    "playwright_automation": {
+                        "enabled": True,
+                        "headless_operation": True,
+                        "visual_element_recognition": True,
+                        "interaction_simulation": True,
+                        "error_handling": True
+                    }
+                }
+            },
+            "multi_workflow_automation": {
+                "name": "多工作流自动化",
+                "description": "基于六大特性驱动自动化测试工作流、UI工作流和智能体工作流，逐步完善网站功能",
+                "enabled": True,
+                "config": {
+                    "testing_workflow": {
+                        "enabled": True,
+                        "unit_test_automation": True,
+                        "integration_test_automation": True,
+                        "ui_test_automation": True,
+                        "performance_test_automation": True,
+                        "test_result_analysis": True,
+                        "continuous_integration": True
+                    },
+                    "ui_workflow": {
+                        "enabled": True,
+                        "component_rendering": True,
+                        "layout_management": True,
+                        "style_application": True,
+                        "interaction_handling": True,
+                        "responsive_adaptation": True,
+                        "accessibility_compliance": True
+                    },
+                    "agent_workflow": {
+                        "enabled": True,
+                        "task_distribution": True,
+                        "agent_coordination": True,
+                        "result_aggregation": True,
+                        "error_handling": True,
+                        "performance_optimization": True,
+                        "resource_management": True
+                    },
+                    "workflow_coordination": {
+                        "enabled": True,
+                        "dependency_management": True,
+                        "parallel_execution": True,
+                        "sequential_execution": True,
+                        "conditional_branching": True,
+                        "error_recovery": True,
+                        "state_persistence": True
+                    },
+                    "feature_based_execution": {
+                        "platform_driven": True,
+                        "ui_layout_driven": True,
+                        "prompt_driven": True,
+                        "thinking_driven": True,
+                        "content_driven": True,
+                        "memory_driven": True
+                    }
                 }
             }
         }
@@ -439,20 +534,77 @@ class GeneralAgentFeatures:
                 "description": "在界面底部显示用户与智能体的消息历史记录，支持文本和文件附件",
                 "enabled": True,
                 "config": {
-                    "message_types": ["text", "file", "image", "code"],
-                    "message_grouping": True,
-                    "timestamp_display": True,
-                    "sender_identification": True,
-                    "message_styling": {
-                        "user_message_color": "#3498db",
-                        "agent_message_color": "#f5f5f5",
-                        "text_contrast": True,
-                        "bubble_style": True
+                    "message_types": {
+                        "user": {
+                            "align": "right",
+                            "background": "#e1f5fe",
+                            "text_color": "#01579b"
+                        },
+                        "agent": {
+                            "align": "left",
+                            "background": "#f5f5f5",
+                            "text_color": "#212121"
+                        },
+                        "system": {
+                            "align": "center",
+                            "background": "#fff3e0",
+                            "text_color": "#e65100"
+                        }
                     },
-                    "file_attachment_preview": True,
-                    "scrollable_container": True,
-                    "max_displayed_messages": 50,
-                    "load_more_functionality": True
+                    "attachment_preview": True,
+                    "timestamp_display": True,
+                    "pagination": True,
+                    "search_functionality": True,
+                    "scroll_to_bottom": True,
+                    "unread_indicator": True,
+                    "independent_module": {
+                        "standalone_component": True,
+                        "isolated_state": True,
+                        "style_encapsulation": True
+                    }
+                }
+            },
+            "file_upload_interface": {
+                "name": "文件上传界面",
+                "description": "提供直观的文件上传界面，支持拖放、多文件选择和上传进度显示，用于向Manus发送文件",
+                "enabled": True,
+                "config": {
+                    "drag_drop_zone": {
+                        "enabled": True,
+                        "highlight_on_hover": True,
+                        "accept_multiple_files": True,
+                        "file_type_validation": True
+                    },
+                    "file_browser_button": {
+                        "enabled": True,
+                        "custom_styling": True,
+                        "multiple_selection": True
+                    },
+                    "upload_progress": {
+                        "enabled": True,
+                        "progress_bar": True,
+                        "percentage_display": True,
+                        "cancel_option": True,
+                        "error_handling": True
+                    },
+                    "file_preview": {
+                        "enabled": True,
+                        "thumbnail_generation": True,
+                        "file_info_display": True,
+                        "remove_option": True
+                    },
+                    "upload_to_manus": {
+                        "enabled": True,
+                        "automatic_task_association": True,
+                        "metadata_inclusion": True,
+                        "retry_on_failure": True,
+                        "success_confirmation": True
+                    },
+                    "style_isolation": {
+                        "use_css_modules": True,
+                        "namespace_prefix": "file-upload-",
+                        "scoped_styles": True
+                    }
                 }
             }
         }
@@ -460,44 +612,65 @@ class GeneralAgentFeatures:
     def _init_prompt_features(self):
         """初始化提示词特性"""
         return {
+            "agent_mode_specific_prompts": {
+                "name": "智能体模式特定提示词",
+                "description": "根据不同的智能体模式提供特定的提示词模板",
+                "enabled": True,
+                "config": {
+                    "code_agent_prompts": True,
+                    "ppt_agent_prompts": True,
+                    "web_agent_prompts": True,
+                    "general_agent_prompts": True
+                }
+            },
             "context_aware_prompts": {
-                "name": "上下文感知提示",
-                "description": "根据测试阶段和问题类型生成针对性提示",
+                "name": "上下文感知提示词",
+                "description": "根据当前上下文和历史交互生成适应性提示词",
                 "enabled": True,
                 "config": {
-                    "test_phase_awareness": True,
-                    "problem_type_detection": True,
-                    "adaptive_prompting": True
+                    "history_incorporation": True,
+                    "context_analysis": True,
+                    "adaptive_generation": True,
+                    "relevance_optimization": True
                 }
             },
-            "multilingual_support": {
-                "name": "多语言支持",
-                "description": "支持中英文等多语言提示和报告生成",
+            "prompt_templates": {
+                "name": "提示词模板",
+                "description": "预定义的提示词模板，支持变量替换和条件逻辑",
                 "enabled": True,
                 "config": {
-                    "supported_languages": ["zh-CN", "en-US", "ja-JP"],
-                    "auto_language_detection": True,
-                    "translation_quality": 0.95
+                    "variable_substitution": True,
+                    "conditional_sections": True,
+                    "template_selection": True,
+                    "template_customization": True
                 }
             },
-            "template_based_generation": {
-                "name": "基于模板生成",
-                "description": "使用预定义模板生成标准化提示和报告",
+            "prompt_optimization": {
+                "name": "提示词优化",
+                "description": "自动优化提示词，提高智能体响应的质量和相关性",
                 "enabled": True,
                 "config": {
-                    "template_categories": ["test", "report", "analysis", "recommendation"],
-                    "template_customization": True,
-                    "variable_substitution": True
+                    "clarity_improvement": True,
+                    "specificity_enhancement": True,
+                    "context_enrichment": True,
+                    "performance_tracking": True,
+                    "a_b_testing": True,
+                    "feedback_incorporation": True,
+                    "optimization_strategies": {
+                        "token_reduction": True,
+                        "instruction_clarification": True,
+                        "example_inclusion": True,
+                        "format_specification": True
+                    }
                 }
             },
             "agent_mode_adaptive_prompts": {
                 "name": "智能体模式自适应提示",
-                "description": "根据选择的智能体模式自动调整输入框提示文本",
+                "description": "根据选择的智能体模式自动调整输入框提示文本，提供更精准的引导",
                 "enabled": True,
                 "config": {
                     "mode_detection": True,
-                    "context_preservation": True,
-                    "dynamic_placeholder_text": True,
+                    "placeholder_adaptation": True,
                     "suggestion_generation": True,
                     "history_awareness": True,
                     "agent_specific_templates": {
@@ -505,6 +678,42 @@ class GeneralAgentFeatures:
                         "ppt_agent": ["演示文稿创建", "幻灯片设计", "内容组织", "视觉效果"],
                         "web_agent": ["网页设计", "前端开发", "响应式布局", "交互功能"],
                         "general_agent": ["问题解答", "任务规划", "信息检索", "创意生成"]
+                    }
+                }
+            },
+            "manus_command_prompts": {
+                "name": "Manus命令提示",
+                "description": "为Manus平台交互提供专用命令提示，支持文本输入和文件传输指令格式化",
+                "enabled": True,
+                "config": {
+                    "command_templates": {
+                        "task_retrieval": ["获取任务", "查看任务列表", "查找PowerAutomation任务"],
+                        "task_execution": ["执行任务", "运行测试", "部署应用", "构建项目"],
+                        "file_transmission": ["上传文件", "发送代码", "传输数据", "共享资源"],
+                        "status_inquiry": ["查询状态", "检查进度", "获取结果", "查看日志"]
+                    },
+                    "parameter_formatting": {
+                        "enabled": True,
+                        "validation": True,
+                        "auto_completion": True,
+                        "syntax_highlighting": True
+                    },
+                    "context_based_suggestions": {
+                        "enabled": True,
+                        "task_aware": True,
+                        "history_aware": True,
+                        "file_type_aware": True
+                    },
+                    "error_prevention": {
+                        "enabled": True,
+                        "syntax_validation": True,
+                        "parameter_validation": True,
+                        "confirmation_for_critical_commands": True
+                    },
+                    "multi_modal_support": {
+                        "text_commands": True,
+                        "file_attachments": True,
+                        "combined_commands": True
                     }
                 }
             }
@@ -563,6 +772,108 @@ class GeneralAgentFeatures:
                         "resource_usage": True,
                         "success_rate": True,
                         "error_frequency": True
+                    }
+                }
+            },
+            "multi_workflow_coordination": {
+                "name": "多工作流协调",
+                "description": "协调和优化自动化测试、UI和智能体工作流的执行，确保高效运行和资源利用",
+                "enabled": True,
+                "config": {
+                    "workflow_prioritization": {
+                        "enabled": True,
+                        "priority_based_scheduling": True,
+                        "dynamic_adjustment": True,
+                        "dependency_aware": True
+                    },
+                    "resource_allocation": {
+                        "enabled": True,
+                        "load_balancing": True,
+                        "resource_reservation": True,
+                        "contention_management": True
+                    },
+                    "execution_strategy": {
+                        "enabled": True,
+                        "parallel_execution": True,
+                        "sequential_execution": True,
+                        "hybrid_approach": True,
+                        "adaptive_selection": True
+                    },
+                    "dependency_management": {
+                        "enabled": True,
+                        "dependency_graph": True,
+                        "circular_dependency_detection": True,
+                        "critical_path_analysis": True
+                    },
+                    "failure_handling": {
+                        "enabled": True,
+                        "retry_mechanisms": True,
+                        "fallback_strategies": True,
+                        "graceful_degradation": True,
+                        "recovery_procedures": True
+                    },
+                    "performance_optimization": {
+                        "enabled": True,
+                        "caching_strategies": True,
+                        "lazy_loading": True,
+                        "early_termination": True,
+                        "result_reuse": True
+                    },
+                    "cross_workflow_learning": {
+                        "enabled": True,
+                        "pattern_recognition": True,
+                        "optimization_transfer": True,
+                        "shared_knowledge_base": True
+                    }
+                }
+            },
+            "feature_driven_execution": {
+                "name": "特性驱动执行",
+                "description": "基于六大特性驱动工作流执行，确保全面覆盖系统功能和特性",
+                "enabled": True,
+                "config": {
+                    "platform_feature_execution": {
+                        "enabled": True,
+                        "api_testing": True,
+                        "integration_testing": True,
+                        "cross_platform_testing": True
+                    },
+                    "ui_feature_execution": {
+                        "enabled": True,
+                        "layout_testing": True,
+                        "responsive_testing": True,
+                        "accessibility_testing": True,
+                        "visual_regression_testing": True
+                    },
+                    "prompt_feature_execution": {
+                        "enabled": True,
+                        "template_testing": True,
+                        "context_awareness_testing": True,
+                        "optimization_testing": True
+                    },
+                    "thinking_feature_execution": {
+                        "enabled": True,
+                        "problem_solving_testing": True,
+                        "workflow_optimization_testing": True,
+                        "version_control_testing": True
+                    },
+                    "content_feature_execution": {
+                        "enabled": True,
+                        "code_generation_testing": True,
+                        "documentation_testing": True,
+                        "file_handling_testing": True
+                    },
+                    "memory_feature_execution": {
+                        "enabled": True,
+                        "persistence_testing": True,
+                        "history_analysis_testing": True,
+                        "context_preservation_testing": True
+                    },
+                    "coverage_tracking": {
+                        "enabled": True,
+                        "feature_coverage_metrics": True,
+                        "gap_analysis": True,
+                        "prioritization_based_on_coverage": True
                     }
                 }
             }
@@ -643,6 +954,113 @@ class GeneralAgentFeatures:
                         "deduplication": True,
                         "versioning": True,
                         "expiration": "7d"
+                    }
+                }
+            },
+            "manus_file_transmission": {
+                "name": "Manus文件传输",
+                "description": "支持向Manus平台传输文件，包括代码、文档、图像等多种类型",
+                "enabled": True,
+                "config": {
+                    "file_preparation": {
+                        "enabled": True,
+                        "validation": True,
+                        "optimization": True,
+                        "metadata_enrichment": True,
+                        "format_conversion": True
+                    },
+                    "transmission_methods": {
+                        "direct_upload": True,
+                        "chunked_upload": True,
+                        "resumable_upload": True,
+                        "background_upload": True
+                    },
+                    "file_type_handling": {
+                        "code_files": {
+                            "enabled": True,
+                            "syntax_validation": True,
+                            "linting": True,
+                            "formatting": True
+                        },
+                        "documents": {
+                            "enabled": True,
+                            "content_extraction": True,
+                            "structure_preservation": True,
+                            "metadata_extraction": True
+                        },
+                        "images": {
+                            "enabled": True,
+                            "compression": True,
+                            "format_conversion": True,
+                            "metadata_preservation": True
+                        },
+                        "data_files": {
+                            "enabled": True,
+                            "validation": True,
+                            "schema_enforcement": True,
+                            "anonymization": True
+                        }
+                    },
+                    "post_transmission_actions": {
+                        "verification": True,
+                        "notification": True,
+                        "task_association": True,
+                        "history_recording": True
+                    },
+                    "error_handling": {
+                        "retry_mechanism": True,
+                        "error_reporting": True,
+                        "fallback_options": True,
+                        "recovery_procedures": True
+                    }
+                }
+            },
+            "website_feature_enhancement": {
+                "name": "网站功能增强",
+                "description": "通过自动化工作流逐步完善网站功能，包括UI组件、交互体验和性能优化",
+                "enabled": True,
+                "config": {
+                    "component_development": {
+                        "enabled": True,
+                        "reusable_components": True,
+                        "component_testing": True,
+                        "documentation": True,
+                        "accessibility_compliance": True
+                    },
+                    "interaction_enhancement": {
+                        "enabled": True,
+                        "form_handling": True,
+                        "validation": True,
+                        "feedback_mechanisms": True,
+                        "error_handling": True
+                    },
+                    "performance_optimization": {
+                        "enabled": True,
+                        "code_splitting": True,
+                        "lazy_loading": True,
+                        "caching_strategies": True,
+                        "bundle_optimization": True
+                    },
+                    "visual_improvements": {
+                        "enabled": True,
+                        "animation": True,
+                        "transitions": True,
+                        "responsive_design": True,
+                        "theme_consistency": True
+                    },
+                    "feature_deployment": {
+                        "enabled": True,
+                        "feature_flags": True,
+                        "a_b_testing": True,
+                        "canary_releases": True,
+                        "rollback_capability": True
+                    },
+                    "user_experience_tracking": {
+                        "enabled": True,
+                        "usage_analytics": True,
+                        "performance_monitoring": True,
+                        "error_tracking": True,
+                        "user_feedback_collection": True
                     }
                 }
             }
@@ -734,6 +1152,92 @@ class GeneralAgentFeatures:
                         "data_anonymization": True,
                         "user_deletion_rights": True,
                         "access_controls": True
+                    }
+                }
+            },
+            "task_data_classification_storage": {
+                "name": "任务数据分类存储",
+                "description": "按照六大特性对任务数据进行分类存储，支持任务进度、用户历史、动作记录和工作更新的追踪",
+                "enabled": True,
+                "config": {
+                    "data_categories": {
+                        "task_progress": {
+                            "enabled": True,
+                            "status_tracking": True,
+                            "milestone_tracking": True,
+                            "completion_percentage": True,
+                            "time_estimation": True
+                        },
+                        "user_history": {
+                            "enabled": True,
+                            "interaction_recording": True,
+                            "feedback_collection": True,
+                            "preference_tracking": True,
+                            "intent_analysis": True
+                        },
+                        "action_record": {
+                            "enabled": True,
+                            "creation_actions": True,
+                            "update_actions": True,
+                            "replacement_actions": True,
+                            "deletion_actions": True,
+                            "timestamp_recording": True,
+                            "actor_tracking": True
+                        },
+                        "work_completion": {
+                            "enabled": True,
+                            "deliverable_tracking": True,
+                            "quality_assessment": True,
+                            "verification_status": True,
+                            "feedback_incorporation": True
+                        }
+                    },
+                    "feature_based_classification": {
+                        "enabled": True,
+                        "platform_feature_data": True,
+                        "ui_layout_feature_data": True,
+                        "prompt_feature_data": True,
+                        "thinking_feature_data": True,
+                        "content_feature_data": True,
+                        "memory_feature_data": True,
+                        "cross_feature_relationships": True
+                    },
+                    "storage_mechanisms": {
+                        "supermemory_api": {
+                            "enabled": True,
+                            "api_integration": True,
+                            "data_synchronization": True,
+                            "error_handling": True,
+                            "retry_mechanism": True
+                        },
+                        "local_storage": {
+                            "enabled": True,
+                            "file_based": True,
+                            "database": True,
+                            "cache": True
+                        },
+                        "distributed_storage": {
+                            "enabled": True,
+                            "cloud_storage": True,
+                            "shared_filesystem": True,
+                            "replication": True
+                        }
+                    },
+                    "data_lifecycle_management": {
+                        "enabled": True,
+                        "retention_policies": True,
+                        "archiving": True,
+                        "purging": True,
+                        "backup": True,
+                        "restoration": True
+                    },
+                    "access_patterns": {
+                        "enabled": True,
+                        "query_optimization": True,
+                        "indexing_strategies": True,
+                        "caching_mechanisms": True,
+                        "batch_processing": True,
+                        "real_time_access": True
                     }
                 }
             }
