@@ -1,55 +1,42 @@
 import React from 'react';
 import '../../styles/WorkflowNodes.css';
+import { SimpleNodeProps } from './TriggerNode';
 
-// 使用自定义SimpleNodeProps接口替代reactflow的NodeProps
-interface SimpleNodeProps {
-  node: {
-    id: string;
-    type: 'trigger' | 'action' | 'condition' | 'error';
-    name: string;
-    description: string;
-    status: 'pending' | 'running' | 'success' | 'error';
-    position: { x: number; y: number };
-    data?: Record<string, any>;
+const ActionNode: React.FC<SimpleNodeProps> = ({ id, data = {}, selected = false, onClick }) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick(id);
+    }
   };
-  isSelected: boolean;
-  onClick: () => void;
-}
 
-const ActionNode: React.FC<SimpleNodeProps> = ({ node, isSelected, onClick }) => {
-  // 根据节点状态设置颜色
-  let statusColor = '#9e9e9e'; // 默认灰色
-  if (node.status === 'success') statusColor = '#4CAF50';
-  else if (node.status === 'error') statusColor = '#F44336';
-  else if (node.status === 'running') statusColor = '#FFC107';
-
-  // 状态文本映射
-  const statusText = {
-    'success': '成功',
-    'error': '失败',
-    'running': '运行中',
-    'pending': '等待中'
-  }[node.status] || node.status;
+  // 添加默认值和空值检查
+  const { 
+    name = '动作', 
+    description = '', 
+    status = '', 
+    timestamp = '', 
+    type = '默认' 
+  } = data || {};
 
   return (
     <div 
-      className={`workflow-node workflow-node-action ${isSelected ? 'selected' : ''}`}
-      onClick={onClick}
+      className={`workflow-node workflow-node-action ${selected ? 'selected' : ''}`}
+      onClick={handleClick}
     >
       <div className="workflow-node-header">
-        <div className="workflow-node-type">{node.type}</div>
-        <div className="workflow-node-status" style={{ backgroundColor: statusColor }}>
-          {statusText}
-        </div>
+        <span className="workflow-node-type">动作: {type}</span>
+        {status && (
+          <span className="workflow-node-status" style={{ backgroundColor: '#4CAF50' }}>
+            {status}
+          </span>
+        )}
       </div>
-      
-      <div className="workflow-node-name">{node.name}</div>
-      <div className="workflow-node-description">{node.description}</div>
-      
-      {node.data && node.data.timestamp && (
-        <div className="workflow-node-timestamp">
-          {new Date(node.data.timestamp).toLocaleString('zh-CN')}
-        </div>
+      <div className="workflow-node-name">{name}</div>
+      {description && (
+        <div className="workflow-node-description">{description}</div>
+      )}
+      {timestamp && (
+        <div className="workflow-node-timestamp">执行时间: {timestamp}</div>
       )}
     </div>
   );

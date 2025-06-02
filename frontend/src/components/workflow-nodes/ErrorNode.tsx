@@ -1,56 +1,67 @@
 import React from 'react';
 import '../../styles/WorkflowNodes.css';
+import { SimpleNodeProps } from './TriggerNode';
 
-// 使用自定义SimpleNodeProps接口替代reactflow的NodeProps
-interface SimpleNodeProps {
-  node: {
-    id: string;
-    type: 'trigger' | 'action' | 'condition' | 'error';
-    name: string;
-    description: string;
-    status: 'pending' | 'running' | 'success' | 'error';
-    position: { x: number; y: number };
-    data?: Record<string, any>;
+interface ErrorNodeProps extends SimpleNodeProps {
+  data?: {
+    name?: string;
+    description?: string;
+    status?: string;
+    timestamp?: string;
+    type?: string;
+    errorType?: string;
+    errorMessage?: string;
   };
-  isSelected: boolean;
-  onClick: () => void;
 }
 
-const ErrorNode: React.FC<SimpleNodeProps> = ({ node, isSelected, onClick }) => {
-  // 错误节点始终使用红色
-  const statusColor = '#F44336';
+const ErrorNode: React.FC<ErrorNodeProps> = ({ 
+  id, 
+  data = {}, 
+  selected = false, 
+  onClick 
+}) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick(id);
+    }
+  };
+
+  // 添加默认值和空值检查
+  const { 
+    name = '错误', 
+    description = '', 
+    status = '', 
+    timestamp = '', 
+    type = '默认',
+    errorType = '',
+    errorMessage = ''
+  } = data || {};
 
   return (
     <div 
-      className={`workflow-node workflow-node-error ${isSelected ? 'selected' : ''}`}
-      onClick={onClick}
+      className={`workflow-node workflow-node-error ${selected ? 'selected' : ''}`}
+      onClick={handleClick}
     >
       <div className="workflow-node-header">
-        <div className="workflow-node-type">{node.type}</div>
-        <div className="workflow-node-status" style={{ backgroundColor: statusColor }}>
-          失败
-        </div>
+        <span className="workflow-node-type">错误: {type}</span>
+        {status && (
+          <span className="workflow-node-status" style={{ backgroundColor: '#F44336' }}>
+            {status}
+          </span>
+        )}
       </div>
-      
-      <div className="workflow-node-name">{node.name}</div>
-      <div className="workflow-node-description">{node.description}</div>
-      
-      {node.data && node.data.error_message && (
-        <div className="workflow-node-error-message">
-          错误信息: {node.data.error_message}
-        </div>
+      <div className="workflow-node-name">{name}</div>
+      {description && (
+        <div className="workflow-node-description">{description}</div>
       )}
-      
-      {node.data && node.data.error_type && (
-        <div className="workflow-node-error-type">
-          错误类型: {node.data.error_type}
-        </div>
+      {errorType && (
+        <div className="workflow-node-error-type">错误类型: {errorType}</div>
       )}
-      
-      {node.data && node.data.timestamp && (
-        <div className="workflow-node-timestamp">
-          {new Date(node.data.timestamp).toLocaleString('zh-CN')}
-        </div>
+      {errorMessage && (
+        <div className="workflow-node-error-message">错误信息: {errorMessage}</div>
+      )}
+      {timestamp && (
+        <div className="workflow-node-timestamp">发生时间: {timestamp}</div>
       )}
     </div>
   );
