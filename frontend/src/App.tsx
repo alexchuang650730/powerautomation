@@ -132,6 +132,7 @@ function App() {
 
   const [selectedAgentType, setSelectedAgentType] = useState('general');
   const [inputText, setInputText] = useState('');
+  const [activeMenu, setActiveMenu] = useState('agents'); // 默认显示智能体内容
 
   const handleAgentSelect = (agentId: string) => {
     setSelectedAgentType(agentId);
@@ -151,9 +152,56 @@ function App() {
     // 实际应用中这里会处理文件上传
   };
 
+  const handleMenuSelect = (menuId: string) => {
+    setActiveMenu(menuId);
+  };
+
+  // 根据当前选中的菜单渲染对应内容
+  const renderContent = () => {
+    switch (activeMenu) {
+      case 'dashboard':
+      case 'agents':
+        return (
+          <>
+            <InputArea 
+              onInputChange={handleInputChange} 
+              onSubmit={handleSubmit} 
+              onFileUpload={handleFileUpload}
+              selectedAgentType={selectedAgentType}
+              selectedAgentName={agentTypes.find(agent => agent.id === selectedAgentType)?.name}
+              selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
+            />
+            <AgentCards 
+              agents={agentTypes} 
+              selectedAgentId={selectedAgentType} 
+              onSelect={handleAgentSelect} 
+            />
+          </>
+        );
+      case 'workflows':
+        return (
+          <div className="workflow-section">
+            <h2 className="section-title">工作流节点及工作流</h2>
+            <IntegratedWorkflowView>
+              <N8nWorkflowVisualizer nodes={nodes} connections={connections} />
+            </IntegratedWorkflowView>
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="settings-section">
+            <h2 className="section-title">设置</h2>
+            <p>系统设置内容将在此显示</p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="app-container">
-      <Sidebar />
+      <Sidebar activeMenu={activeMenu} onMenuSelect={handleMenuSelect} />
       
       <div className="main-content">
         <header className="app-header">
@@ -168,29 +216,7 @@ function App() {
         </header>
         
         <div className="content-area">
-          <InputArea 
-            onInputChange={handleInputChange} 
-            onSubmit={handleSubmit} 
-            onFileUpload={handleFileUpload}
-            selectedAgentType={selectedAgentType}
-            selectedAgentName={agentTypes.find(agent => agent.id === selectedAgentType)?.name}
-            selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
-          />
-          
-          {/* 上传按钮已移除 */}
-          
-          <AgentCards 
-            agents={agentTypes} 
-            selectedAgentId={selectedAgentType} 
-            onSelect={handleAgentSelect} 
-          />
-          
-          <div className="workflow-section">
-            <h2 className="section-title">工作流节点及工作流</h2>
-            <IntegratedWorkflowView>
-              <N8nWorkflowVisualizer nodes={nodes} connections={connections} />
-            </IntegratedWorkflowView>
-          </div>
+          {renderContent()}
         </div>
       </div>
     </div>
