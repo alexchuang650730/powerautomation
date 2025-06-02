@@ -177,12 +177,6 @@ function App() {
             selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
           />
           
-          <div className="action-buttons">
-            <button className="upload-button">
-              <span className="icon">⬆️</span>
-            </button>
-          </div>
-          
           <AgentCards 
             agents={agentTypes} 
             selectedAgentId={selectedAgentType} 
