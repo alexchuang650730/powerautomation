@@ -1,25 +1,34 @@
 import React from 'react';
-import '../styles/WorkflowNodes.css';
+import '../../styles/WorkflowNodes.css';
 
 export interface SimpleNodeProps {
   id: string;
-  data: {
-    name: string;
+  data?: {
+    name?: string;
     description?: string;
     status?: string;
     timestamp?: string;
-    type: string;
+    type?: string;
   };
   selected?: boolean;
   onClick?: (id: string) => void;
 }
 
-const TriggerNode: React.FC<SimpleNodeProps> = ({ id, data, selected, onClick }) => {
+const TriggerNode: React.FC<SimpleNodeProps> = ({ id, data = {}, selected = false, onClick }) => {
   const handleClick = () => {
     if (onClick) {
       onClick(id);
     }
   };
+
+  // 添加默认值和空值检查
+  const { 
+    name = '触发器', 
+    description = '', 
+    status = '', 
+    timestamp = '', 
+    type = '默认' 
+  } = data || {};
 
   return (
     <div 
@@ -27,19 +36,19 @@ const TriggerNode: React.FC<SimpleNodeProps> = ({ id, data, selected, onClick })
       onClick={handleClick}
     >
       <div className="workflow-node-header">
-        <span className="workflow-node-type">触发器</span>
-        {data.status && (
+        <span className="workflow-node-type">触发器: {type}</span>
+        {status && (
           <span className="workflow-node-status" style={{ backgroundColor: '#2196F3' }}>
-            {data.status}
+            {status}
           </span>
         )}
       </div>
-      <div className="workflow-node-name">{data.name}</div>
-      {data.description && (
-        <div className="workflow-node-description">{data.description}</div>
+      <div className="workflow-node-name">{name}</div>
+      {description && (
+        <div className="workflow-node-description">{description}</div>
       )}
-      {data.timestamp && (
-        <div className="workflow-node-timestamp">上次触发: {data.timestamp}</div>
+      {timestamp && (
+        <div className="workflow-node-timestamp">上次触发: {timestamp}</div>
       )}
     </div>
   );

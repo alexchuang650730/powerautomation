@@ -1,11 +1,22 @@
 import React from 'react';
-import '../styles/WorkflowNodes.css';
+import '../../styles/WorkflowNodes.css';
 import { SimpleNodeProps } from './TriggerNode';
 
-const ConditionNode: React.FC<SimpleNodeProps & { data: { condition?: string } }> = ({ 
+interface ConditionNodeProps extends SimpleNodeProps {
+  data?: {
+    name?: string;
+    description?: string;
+    status?: string;
+    timestamp?: string;
+    type?: string;
+    condition?: string;
+  };
+}
+
+const ConditionNode: React.FC<ConditionNodeProps> = ({ 
   id, 
-  data, 
-  selected, 
+  data = {}, 
+  selected = false, 
   onClick 
 }) => {
   const handleClick = () => {
@@ -14,28 +25,38 @@ const ConditionNode: React.FC<SimpleNodeProps & { data: { condition?: string } }
     }
   };
 
+  // 添加默认值和空值检查
+  const { 
+    name = '条件', 
+    description = '', 
+    status = '', 
+    timestamp = '', 
+    type = '默认',
+    condition = ''
+  } = data || {};
+
   return (
     <div 
       className={`workflow-node workflow-node-condition ${selected ? 'selected' : ''}`}
       onClick={handleClick}
     >
       <div className="workflow-node-header">
-        <span className="workflow-node-type">条件</span>
-        {data.status && (
+        <span className="workflow-node-type">条件: {type}</span>
+        {status && (
           <span className="workflow-node-status" style={{ backgroundColor: '#FF9800' }}>
-            {data.status}
+            {status}
           </span>
         )}
       </div>
-      <div className="workflow-node-name">{data.name}</div>
-      {data.description && (
-        <div className="workflow-node-description">{data.description}</div>
+      <div className="workflow-node-name">{name}</div>
+      {description && (
+        <div className="workflow-node-description">{description}</div>
       )}
-      {data.condition && (
-        <div className="workflow-node-condition-expr">条件表达式: {data.condition}</div>
+      {condition && (
+        <div className="workflow-node-condition-expr">条件表达式: {condition}</div>
       )}
-      {data.timestamp && (
-        <div className="workflow-node-timestamp">评估时间: {data.timestamp}</div>
+      {timestamp && (
+        <div className="workflow-node-timestamp">评估时间: {timestamp}</div>
       )}
     </div>
   );
