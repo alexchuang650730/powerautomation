@@ -19,13 +19,14 @@
 
 .input-field {
   width: 100%;
-  padding: 15px 20px;
+  padding: 18px 25px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 18px;
   outline: none;
   transition: border-color 0.3s;
-  height: 50px;
+  height: 65px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .input-field:focus {
@@ -63,14 +64,36 @@
   font-size: 20px;
 }
 
+.mic-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+  font-size: 20px;
+}
+
+.mic-button:hover {
+  background-color: #e0e0e0;
+}
+
 .submit-button {
-  padding: 8px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   background-color: #2196F3;
   color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
   transition: background-color 0.3s;
 }
 

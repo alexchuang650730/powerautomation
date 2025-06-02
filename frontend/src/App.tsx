@@ -130,7 +130,7 @@ function App() {
     }
   ];
 
-  const [selectedAgentType, setSelectedAgentType] = useState('code');
+  const [selectedAgentType, setSelectedAgentType] = useState('general');
   const [inputText, setInputText] = useState('');
 
   const handleAgentSelect = (agentId: string) => {
@@ -186,7 +186,7 @@ function App() {
           />
           
           <div className="workflow-section">
-            <h2 className="section-title">工作平台</h2>
+            <h2 className="section-title">工作流节点及工作流</h2>
             <IntegratedWorkflowView>
               <N8nWorkflowVisualizer nodes={nodes} connections={connections} />
             </IntegratedWorkflowView>
