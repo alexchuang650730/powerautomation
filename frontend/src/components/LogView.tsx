@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useWorkflowContext } from '../../App';
+import { useWorkflowContext } from '../App';
 import '../styles/LogView.css';
 
 interface LogEntry {
