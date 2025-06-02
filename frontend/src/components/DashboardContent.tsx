@@ -85,27 +85,32 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
               <h3 className="subsection-title">通用智能体五大核心治理原则</h3>
               <div className="governance-cards">
                 <div className="governance-card">
-                  <h4>1. 结构保护原则</h4>
+                  <div className="governance-icon">🛡️</div>
+                  <h4>结构保护原则</h4>
                   <p>所有扩展基于原有文件结构，未修改现有结构</p>
                 </div>
                 
                 <div className="governance-card">
-                  <h4>2. 兼容性原则</h4>
+                  <div className="governance-icon">⚙️</div>
+                  <h4>兼容性原则</h4>
                   <p>新功能与现有功能保持向后兼容</p>
                 </div>
                 
                 <div className="governance-card">
-                  <h4>3. 空间利用原则</h4>
+                  <div className="governance-icon">📐</div>
+                  <h4>空间利用原则</h4>
                   <p>UI扩展只在空白区域进行，不影响原有控件</p>
                 </div>
                 
                 <div className="governance-card">
-                  <h4>4. 模块化原则</h4>
+                  <div className="governance-icon">🧩</div>
+                  <h4>模块化原则</h4>
                   <p>所有新功能作为独立模块添加，不修改现有代码逻辑</p>
                 </div>
                 
                 <div className="governance-card">
-                  <h4>5. 一致性原则</h4>
+                  <div className="governance-icon">🔄</div>
+                  <h4>一致性原则</h4>
                   <p>保持与现有代码风格和架构的一致性</p>
                 </div>
               </div>

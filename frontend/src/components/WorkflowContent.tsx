@@ -239,11 +239,13 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                   <p>该工作流展示了通用智能体如何通过多个子系统协同工作。</p>
                   <div className="submodules">
                     <div className="submodule">
-                      <h4>2.2.1 问题解决流程</h4>
+                      <div className="submodule-icon">🔍</div>
+                      <h4>问题解决流程</h4>
                       <p>通过general agent和mcpcoordinator传给mcpplanner和mcpbrainstorm，驱动agentproblemsovler将问题传递给manus.im</p>
                     </div>
                     <div className="submodule">
-                      <h4>2.2.2 思维行为记录</h4>
+                      <div className="submodule-icon">📝</div>
+                      <h4>思维行为记录</h4>
                       <p>通过ThoughtActionRecorder记录：</p>
                       <ul>
                         <li>任务进度</li>
@@ -253,7 +255,8 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                       </ul>
                     </div>
                     <div className="submodule">
-                      <h4>2.2.3 发布管理</h4>
+                      <div className="submodule-icon">🚀</div>
+                      <h4>发布管理</h4>
                       <p>通过ReleaseManager实现：</p>
                       <ul>
                         <li>检查GitHub上是否有新的release</li>
@@ -263,7 +266,8 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                       </ul>
                     </div>
                     <div className="submodule">
-                      <h4>2.2.4 测试与问题收集</h4>
+                      <div className="submodule-icon">🧪</div>
+                      <h4>测试与问题收集</h4>
                       <p>通过TestAndIssueCollector执行视觉自动化测试，收集问题并更新README文件</p>
                     </div>
                   </div>
