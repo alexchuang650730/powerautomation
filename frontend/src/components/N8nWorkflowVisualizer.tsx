@@ -134,6 +134,10 @@ const N8nWorkflowVisualizer: React.FC<N8nWorkflowVisualizerProps> = ({ nodes, co
       const labelX = sourceX + (targetX - sourceX) * 0.5;
       const labelY = sourceY + (targetY - sourceY) * 0.5 - 10;
 
+      // 计算连接点位置
+      const midX = sourceX + (targetX - sourceX) * 0.5;
+      const midY = sourceY + (targetY - sourceY) * 0.5;
+
       return (
         <g key={connection.id} className="workflow-connection">
           <path
@@ -141,8 +145,33 @@ const N8nWorkflowVisualizer: React.FC<N8nWorkflowVisualizerProps> = ({ nodes, co
             stroke="#999"
             strokeWidth="2"
             fill="none"
-            markerEnd="url(#arrowhead)"
+            className="connection-path"
           />
+          
+          {/* 起点连接点 */}
+          <circle 
+            cx={sourceX} 
+            cy={sourceY} 
+            r="4" 
+            className="connection-dot output"
+          />
+          
+          {/* 终点连接点 */}
+          <circle 
+            cx={targetX} 
+            cy={targetY} 
+            r="4" 
+            className="connection-dot input"
+          />
+          
+          {/* 中间连接点 */}
+          <circle 
+            cx={midX} 
+            cy={midY} 
+            r="3" 
+            className="connection-dot"
+          />
+          
           {connection.label && (
             <text
               x={labelX}
@@ -158,8 +187,25 @@ const N8nWorkflowVisualizer: React.FC<N8nWorkflowVisualizerProps> = ({ nodes, co
     });
   };
 
+  // 渲染工作流状态指示器
+  const renderWorkflowStatus = () => {
+    const statusColors = ['blue', 'green', 'gray', 'red'];
+    
+    return (
+      <div className="workflow-status">
+        {statusColors.map((color, index) => (
+          <React.Fragment key={color}>
+            <div className={`status-dot ${color}`}></div>
+            {index < statusColors.length - 1 && <div className="status-line"></div>}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="n8n-workflow-visualizer">
+      {renderWorkflowStatus()}
       <svg className="connections-layer">
         <defs>
           <marker
