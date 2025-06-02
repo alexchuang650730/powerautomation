@@ -78,6 +78,14 @@ powerautomation/
     └── workflow_driver.py      # 工作流驱动实现
 ```
 
+## 系统架构图
+
+下图展示了PowerAutomation系统的分层架构设计：
+
+![PowerAutomation系统架构图](docs/images/powerautomation_layered_architecture.png)
+
+*图2: PowerAutomation系统架构图，展示了系统的分层结构、组件关系和数据流转路径*
+
 ## 核心功能
 
 ### 1. 多智能体路由
