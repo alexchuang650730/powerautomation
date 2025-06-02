@@ -1,62 +1,100 @@
-.app {
+.app-container {
   display: flex;
-  height: 100vh;
-  background-color: #f9f9f9;
-}
-
-.sidebar {
-  width: 250px;
-  background-color: #2c3e50;
-  color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-.nav-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  flex-grow: 1;
-}
-
-.nav-item {
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.nav-item:hover, .nav-item.active {
-  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Arial', sans-serif;
 }
 
 .main-content {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  flex: 4;
+  padding: 0;
+  background-color: #f5f7fa;
 }
 
-.header {
+.app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 15px 30px;
+  background-color: #fff;
+  border-bottom: 1px solid #eaeaea;
 }
 
-.header h1 {
+.app-header h1 {
   margin: 0;
   font-size: 2.8rem;
   font-weight: 700;
   color: #2c3e50;
+}
+
+.app-header h1 .platform-title {
+  color: #2196F3;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 20px;
+  width: 30px;
+  padding: 0;
+}
+
+.menu-button span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: #333;
+  border-radius: 3px;
+}
+
+.content-area {
+  padding: 20px 30px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+
+.upload-button, .source-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  margin-left: 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.upload-button:hover, .source-button:hover {
+  background-color: #1976D2;
+}
+
+.icon {
+  margin-right: 5px;
+}
+
+.section-title {
+  font-size: 20px;
+  margin: 30px 0 15px 0;
+  color: #333;
+}
+
+.workflow-section {
+  margin-top: 30px;
 }
 
 .user-controls {
@@ -99,10 +137,6 @@
   flex: 1;
 }
 
-.workflow-section {
-  flex: 1;
-}
-
 .messages-container {
   flex: 1;
   display: flex;
@@ -135,69 +169,12 @@
   color: #333;
 }
 
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-  font-size: 0.8rem;
-}
-
-.message-sender {
-  font-weight: 600;
-}
-
-.message-time {
-  color: inherit;
-  opacity: 0.8;
-}
-
-.message-content {
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.message-files {
-  margin-top: 8px;
-  font-size: 0.85rem;
-}
-
-.files-header {
-  font-weight: 600;
-  margin-bottom: 3px;
-}
-
-.file-item {
-  padding: 3px 8px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  display: inline-block;
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
-
-/* 响应式设计 */
 @media (max-width: 768px) {
-  .app {
+  .app-container {
     flex-direction: column;
   }
   
-  .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 10px;
-  }
-  
-  .nav-menu {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 10px;
-  }
-  
-  .agent-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  .workflow-integration {
-    flex-direction: column;
+  .action-buttons {
+    justify-content: center;
   }
 }

@@ -1,0 +1,79 @@
+.input-area {
+  width: 100%;
+  margin: 20px 0;
+  position: relative;
+}
+
+.selected-agent-status {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.selected-agent-status .agent-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+  height: 50px;
+}
+
+.input-field:focus {
+  border-color: #2196F3;
+}
+
+.input-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.file-upload-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+.file-upload-label:hover {
+  background-color: #e0e0e0;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-icon {
+  font-size: 20px;
+}
+
+.submit-button {
+  padding: 8px 20px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #1976D2;
+}

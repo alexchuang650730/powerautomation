@@ -1,168 +1,204 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import InputBox from './components/input-area/InputBox';
-import AgentCard from './components/agent-cards/AgentCard';
-import WorkNodeTimeline from './components/work-node-timeline/WorkNodeTimeline';
-import N8nWorkflowVisualizer from './components/N8nWorkflowVisualizer';
+import N8nWorkflowVisualizer, { WorkflowNode, WorkflowConnection } from './components/N8nWorkflowVisualizer';
+import Sidebar from './components/Sidebar';
+import InputArea from './components/InputArea';
+import AgentCards from './components/AgentCards';
+import IntegratedWorkflowView from './components/IntegratedWorkflowView';
 
-type AgentType = 'code' | 'ppt' | 'web' | 'general';
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: string;
-  files?: string[];
-}
-
-const App: React.FC = () => {
-  const [selectedAgent, setSelectedAgent] = useState<AgentType>('general');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedNode, setSelectedNode] = useState<string | null>(null);
-
-  // 模拟消息处理
-  const handleSendMessage = (message: string, files?: File[]) => {
-    // 添加用户消息
-    const userMessage: Message = {
-      id: `msg_${Date.now()}`,
-      text: message,
-      isUser: true,
-      timestamp: new Date().toLocaleTimeString(),
-      files: files?.map(file => file.name)
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
-    
-    // 模拟智能体响应
-    setTimeout(() => {
-      const agentMessage: Message = {
-        id: `msg_${Date.now()}`,
-        text: `您选择了${getAgentName(selectedAgent)}，正在处理您的请求...`,
-        isUser: false,
-        timestamp: new Date().toLocaleTimeString()
-      };
-      
-      setMessages(prev => [...prev, agentMessage]);
-    }, 1000);
-  };
-
-  const getAgentName = (type: AgentType): string => {
-    switch (type) {
-      case 'code':
-        return '代码智能体';
-      case 'ppt':
-        return 'PPT智能体';
-      case 'web':
-        return '网页智能体';
-      case 'general':
-        return '通用智能体';
-      default:
-        return '智能体';
+function App() {
+  // 示例工作流节点数据
+  const nodes: WorkflowNode[] = [
+    {
+      id: 'trigger1',
+      type: 'trigger',
+      position: { x: 100, y: 100 },
+      data: {
+        name: '新邮件触发器',
+        description: '当收到新邮件时触发',
+        status: '活跃',
+        timestamp: '2025-06-02 10:30',
+        type: 'email'
+      }
+    },
+    {
+      id: 'condition1',
+      type: 'condition',
+      position: { x: 100, y: 250 },
+      data: {
+        name: '邮件过滤器',
+        description: '检查邮件是否来自重要联系人',
+        status: '已评估',
+        condition: 'sender IN importantContacts',
+        timestamp: '2025-06-02 10:31',
+        type: 'filter'
+      }
+    },
+    {
+      id: 'action1',
+      type: 'action',
+      position: { x: 400, y: 250 },
+      data: {
+        name: '标记为重要',
+        description: '将邮件标记为重要并通知用户',
+        status: '已执行',
+        timestamp: '2025-06-02 10:32',
+        type: 'mark'
+      }
+    },
+    {
+      id: 'action2',
+      type: 'action',
+      position: { x: 100, y: 400 },
+      data: {
+        name: '归档邮件',
+        description: '将邮件移动到归档文件夹',
+        status: '已执行',
+        timestamp: '2025-06-02 10:33',
+        type: 'archive'
+      }
+    },
+    {
+      id: 'error1',
+      type: 'error',
+      position: { x: 400, y: 400 },
+      data: {
+        name: '通知错误',
+        description: '发送通知失败',
+        status: '失败',
+        errorType: 'API错误',
+        errorMessage: '通知服务暂时不可用',
+        timestamp: '2025-06-02 10:34',
+        type: 'notification'
+      }
     }
+  ];
+
+  // 示例工作流连接数据
+  const connections: WorkflowConnection[] = [
+    {
+      id: 'conn1',
+      source: 'trigger1',
+      target: 'condition1',
+      label: '触发'
+    },
+    {
+      id: 'conn2',
+      source: 'condition1',
+      target: 'action1',
+      label: '是'
+    },
+    {
+      id: 'conn3',
+      source: 'condition1',
+      target: 'action2',
+      label: '否'
+    },
+    {
+      id: 'conn4',
+      source: 'action1',
+      target: 'error1',
+      label: '失败'
+    }
+  ];
+
+  // 智能体类型
+  const agentTypes = [
+    {
+      id: 'code',
+      name: '代码智能体',
+      icon: '⌨️',
+      description: '专注于代码开发和调试的智能体'
+    },
+    {
+      id: 'ppt',
+      name: 'PPT 智能体',
+      icon: '📊',
+      description: '专注于PPT生成和编辑的智能体'
+    },
+    {
+      id: 'web',
+      name: '网页智能体',
+      icon: '🌐',
+      description: '专注于网页开发和设计的智能体'
+    },
+    {
+      id: 'general',
+      name: '通用智能体',
+      icon: '👤',
+      description: '支持多种任务处理的通用型智能体'
+    }
+  ];
+
+  const [selectedAgentType, setSelectedAgentType] = useState('code');
+  const [inputText, setInputText] = useState('');
+
+  const handleAgentSelect = (agentId: string) => {
+    setSelectedAgentType(agentId);
   };
 
-  const handleWorkNodeSelect = (node: any) => {
-    setSelectedNode(node.id);
-    // 这里可以添加更多处理逻辑，如显示节点详情等
+  const handleInputChange = (text: string) => {
+    setInputText(text);
+  };
+
+  const handleSubmit = () => {
+    console.log(`提交到${selectedAgentType}智能体: ${inputText}`);
+    // 实际应用中这里会调用API发送到后端
+  };
+
+  const handleFileUpload = (files: FileList) => {
+    console.log('上传文件:', files);
+    // 实际应用中这里会处理文件上传
   };
 
   return (
-    <div className="app">
-      <div className="sidebar">
-        <div className="logo">PowerAutomation</div>
-        <nav className="nav-menu">
-          <div className="nav-item active">首页</div>
-          <div className="nav-item">智能体</div>
-          <div className="nav-item">工作节点</div>
-          <div className="nav-item">工作流</div>
-          <div className="nav-item">设置</div>
-          <div className="nav-item">帮助</div>
-        </nav>
-      </div>
+    <div className="app-container">
+      <Sidebar />
       
       <div className="main-content">
-        <header className="header">
-          <h1>PowerAutomation</h1>
-          <div className="user-controls">
-            <button className="search-button">🔍</button>
-            <button className="notifications-button">🔔</button>
-            <button className="user-profile">👤</button>
+        <header className="app-header">
+          <h1><span className="platform-title">企业多智能体协同平台</span> PowerAutomation</h1>
+          <div className="header-controls">
+            <button className="menu-button">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
           </div>
         </header>
         
-        {/* 输入框区域 - 新增 */}
-        <div className="input-area">
-          <InputBox onSend={handleSendMessage} agentType={selectedAgent} />
-        </div>
-        
-        {/* 智能体卡片区域 */}
-        <div className="agent-cards">
-          <AgentCard 
-            type="code" 
-            name="代码智能体" 
-            description="处理代码相关任务，包括代码生成、调试和优化" 
-            isSelected={selectedAgent === 'code'}
-            onClick={() => setSelectedAgent('code')}
+        <div className="content-area">
+          <InputArea 
+            onInputChange={handleInputChange} 
+            onSubmit={handleSubmit} 
+            onFileUpload={handleFileUpload}
+            selectedAgentType={selectedAgentType}
+            selectedAgentName={agentTypes.find(agent => agent.id === selectedAgentType)?.name}
+            selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
           />
-          <AgentCard 
-            type="ppt" 
-            name="PPT智能体" 
-            description="创建和编辑演示文稿，支持多种主题和布局" 
-            isSelected={selectedAgent === 'ppt'}
-            onClick={() => setSelectedAgent('ppt')}
-          />
-          <AgentCard 
-            type="web" 
-            name="网页智能体" 
-            description="网页设计与开发，支持响应式布局和交互功能" 
-            isSelected={selectedAgent === 'web'}
-            onClick={() => setSelectedAgent('web')}
-          />
-          <AgentCard 
-            type="general" 
-            name="通用智能体" 
-            description="通用智能助手，可处理各种任务和问题" 
-            isSelected={selectedAgent === 'general'}
-            onClick={() => setSelectedAgent('general')}
-          />
-        </div>
-        
-        {/* 工作节点与工作流整合区域 - 新增 */}
-        <div className="workflow-integration">
-          {/* 工作节点时间线 */}
-          <div className="work-node-section">
-            <WorkNodeTimeline onNodeSelect={handleWorkNodeSelect} />
+          
+          <div className="action-buttons">
+            <button className="upload-button">
+              <span className="icon">⬆️</span>
+            </button>
           </div>
           
-          {/* 工作流可视化 */}
+          <AgentCards 
+            agents={agentTypes} 
+            selectedAgentId={selectedAgentType} 
+            onSelect={handleAgentSelect} 
+          />
+          
           <div className="workflow-section">
-            <N8nWorkflowVisualizer />
+            <h2 className="section-title">工作平台</h2>
+            <IntegratedWorkflowView>
+              <N8nWorkflowVisualizer nodes={nodes} connections={connections} />
+            </IntegratedWorkflowView>
           </div>
-        </div>
-        
-        {/* 消息历史区域 */}
-        <div className="messages-container">
-          {messages.map((msg) => (
-            <div key={msg.id} className={`message ${msg.isUser ? 'user' : 'agent'}`}>
-              <div className="message-header">
-                <span className="message-sender">{msg.isUser ? '您' : getAgentName(selectedAgent)}</span>
-                <span className="message-time">{msg.timestamp}</span>
-              </div>
-              <div className="message-content">{msg.text}</div>
-              {msg.files && msg.files.length > 0 && (
-                <div className="message-files">
-                  <div className="files-header">附件:</div>
-                  {msg.files.map((file, index) => (
-                    <div key={index} className="file-item">{file}</div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default App;
