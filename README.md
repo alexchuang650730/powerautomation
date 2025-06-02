@@ -4,13 +4,13 @@
 
 PowerAutomation是一个企业多智能体协同平台，集成了代码、PPT、网页和通用四种智能体，通过六大特性定义和MCP组件实现高效的任务处理和智能体协作。本项目实现了多智能体路由、六特性存储、自动化测试、RL Factory能力对齐等核心功能，并增强了版本回滚能力、工作节点可视化功能和工作流整合能力。
 
-## 系统架构图
+## 用户交互设计图
 
-下图展示了PowerAutomation系统的整体架构和用户界面设计：
+下图展示了PowerAutomation系统的用户界面设计：
 
-![PowerAutomation系统架构图](docs/images/powerautomation_ui_mockup.png)
+![PowerAutomation用户交互设计图](docs/images/powerautomation_ui_design.png)
 
-*图1: PowerAutomation系统架构图，展示了两栏式布局、智能体卡片、工作节点时间线和工作流可视化等核心UI组件*
+*图1: PowerAutomation用户交互设计图，展示了两栏式布局、智能体卡片、工作节点时间线和工作流可视化等核心UI组件*
 
 ## 目录结构
 
@@ -77,10 +77,6 @@ powerautomation/
 └── workflow_driver/            # 工作流驱动器
     └── workflow_driver.py      # 工作流驱动实现
 ```
-
-## 系统架构图
-
-![企业多智能体协同平台 PowerAutomation](powerautomation_ui_mockup_chinese.png)
 
 ## 核心功能
 
