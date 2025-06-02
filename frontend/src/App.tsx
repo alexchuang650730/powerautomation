@@ -4,104 +4,11 @@ import N8nWorkflowVisualizer, { WorkflowNode, WorkflowConnection } from './compo
 import Sidebar from './components/Sidebar';
 import InputArea from './components/InputArea';
 import AgentCards from './components/AgentCards';
-import IntegratedWorkflowView from './components/IntegratedWorkflowView';
+import DashboardContent from './components/DashboardContent';
+import WorkflowContent from './components/WorkflowContent';
+import AutomationAgentDesignContent from './components/AutomationAgentDesignContent';
 
 function App() {
-  // 示例工作流节点数据
-  const nodes: WorkflowNode[] = [
-    {
-      id: 'trigger1',
-      type: 'trigger',
-      position: { x: 100, y: 100 },
-      data: {
-        name: '新邮件触发器',
-        description: '当收到新邮件时触发',
-        status: '活跃',
-        timestamp: '2025-06-02 10:30',
-        type: 'email'
-      }
-    },
-    {
-      id: 'condition1',
-      type: 'condition',
-      position: { x: 100, y: 250 },
-      data: {
-        name: '邮件过滤器',
-        description: '检查邮件是否来自重要联系人',
-        status: '已评估',
-        condition: 'sender IN importantContacts',
-        timestamp: '2025-06-02 10:31',
-        type: 'filter'
-      }
-    },
-    {
-      id: 'action1',
-      type: 'action',
-      position: { x: 400, y: 250 },
-      data: {
-        name: '标记为重要',
-        description: '将邮件标记为重要并通知用户',
-        status: '已执行',
-        timestamp: '2025-06-02 10:32',
-        type: 'mark'
-      }
-    },
-    {
-      id: 'action2',
-      type: 'action',
-      position: { x: 100, y: 400 },
-      data: {
-        name: '归档邮件',
-        description: '将邮件移动到归档文件夹',
-        status: '已执行',
-        timestamp: '2025-06-02 10:33',
-        type: 'archive'
-      }
-    },
-    {
-      id: 'error1',
-      type: 'error',
-      position: { x: 400, y: 400 },
-      data: {
-        name: '通知错误',
-        description: '发送通知失败',
-        status: '失败',
-        errorType: 'API错误',
-        errorMessage: '通知服务暂时不可用',
-        timestamp: '2025-06-02 10:34',
-        type: 'notification'
-      }
-    }
-  ];
-
-  // 示例工作流连接数据
-  const connections: WorkflowConnection[] = [
-    {
-      id: 'conn1',
-      source: 'trigger1',
-      target: 'condition1',
-      label: '触发'
-    },
-    {
-      id: 'conn2',
-      source: 'condition1',
-      target: 'action1',
-      label: '是'
-    },
-    {
-      id: 'conn3',
-      source: 'condition1',
-      target: 'action2',
-      label: '否'
-    },
-    {
-      id: 'conn4',
-      source: 'action1',
-      target: 'error1',
-      label: '失败'
-    }
-  ];
-
   // 智能体类型
   const agentTypes = [
     {
@@ -130,8 +37,9 @@ function App() {
     }
   ];
 
-  const [selectedAgentType, setSelectedAgentType] = useState('code');
+  const [selectedAgentType, setSelectedAgentType] = useState('general');
   const [inputText, setInputText] = useState('');
+  const [activeMenu, setActiveMenu] = useState('dashboard'); // 默认显示仪表盘内容
 
   const handleAgentSelect = (agentId: string) => {
     setSelectedAgentType(agentId);
@@ -151,9 +59,50 @@ function App() {
     // 实际应用中这里会处理文件上传
   };
 
+  const handleMenuSelect = (menuId: string) => {
+    setActiveMenu(menuId);
+  };
+
+  // 根据当前选中的菜单渲染对应内容
+  const renderContent = () => {
+    switch (activeMenu) {
+      case 'dashboard':
+        return <DashboardContent agentType={selectedAgentType} />;
+      case 'agents':
+        return (
+          <>
+            <InputArea 
+              onInputChange={handleInputChange} 
+              onSubmit={handleSubmit} 
+              onFileUpload={handleFileUpload}
+              selectedAgentType={selectedAgentType}
+              selectedAgentName={agentTypes.find(agent => agent.id === selectedAgentType)?.name}
+              selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
+            />
+            <AgentCards 
+              agents={agentTypes} 
+              selectedAgentId={selectedAgentType} 
+              onSelect={handleAgentSelect} 
+            />
+          </>
+        );
+      case 'workflows':
+        return <WorkflowContent agentType={selectedAgentType} />;
+      case 'settings':
+        return (
+          <div className="settings-section">
+            <h2 className="section-title">设置</h2>
+            <p>系统设置内容将在此显示</p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="app-container">
-      <Sidebar />
+      <Sidebar activeMenu={activeMenu} onMenuSelect={handleMenuSelect} />
       
       <div className="main-content">
         <header className="app-header">
@@ -168,27 +117,7 @@ function App() {
         </header>
         
         <div className="content-area">
-          <InputArea 
-            onInputChange={handleInputChange} 
-            onSubmit={handleSubmit} 
-            onFileUpload={handleFileUpload}
-            selectedAgentType={selectedAgentType}
-            selectedAgentName={agentTypes.find(agent => agent.id === selectedAgentType)?.name}
-            selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
-          />
-          
-          <AgentCards 
-            agents={agentTypes} 
-            selectedAgentId={selectedAgentType} 
-            onSelect={handleAgentSelect} 
-          />
-          
-          <div className="workflow-section">
-            <h2 className="section-title">工作平台</h2>
-            <IntegratedWorkflowView>
-              <N8nWorkflowVisualizer nodes={nodes} connections={connections} />
-            </IntegratedWorkflowView>
-          </div>
+          {renderContent()}
         </div>
       </div>
     </div>
