@@ -2,57 +2,59 @@
 
 ## 项目概述
 
-PowerAutomation是一个多智能体协作平台，集成了代码、PPT、网页和通用四种智能体，通过六大特性定义和MCP组件实现高效的任务处理和智能体协作。本项目实现了多智能体路由、六特性存储、自动化测试、RL Factory能力对齐等核心功能。
+PowerAutomation是一个多智能体协作平台，集成了代码、PPT、网页和通用四种智能体，通过六大特性定义和MCP组件实现高效的任务处理和智能体协作。本项目实现了多智能体路由、六特性存储、自动化测试、RL Factory能力对齐等核心功能，并增强了版本回滚能力和工作节点可视化功能。
 
 ## 目录结构
 
 ```
-powerautomation_integration/
+powerautomation/
 ├── agents/                     # 智能体目录
-│   ├── base/                   # 基础智能体
-│   ├── code/                   # 代码智能体
-│   ├── features/               # 六大特性定义
-│   ├── general/                # 通用智能体
-│   ├── ppt/                    # PPT智能体
-│   └── web/                    # 网页智能体
+│   ├── code_agent/             # 代码智能体
+│   ├── general_agent/          # 通用智能体
+│   ├── ppt_agent/              # PPT智能体
+│   ├── web_agent/              # 网页智能体
+│   └── workflow_driver/        # 工作流驱动智能体
 ├── backend/                    # 后端目录
 │   ├── routes/                 # API路由
-│   └── services/               # 服务层
+│   ├── services/               # 服务层
+│   └── main.py                 # 后端入口文件
+├── config/                     # 配置文件目录
+│   ├── agent_problem_solver.json  # 问题解决器配置
+│   ├── release_manager.json       # 发布管理器配置
+│   ├── rollback_history.json      # 回滚历史记录
+│   ├── savepoints.json            # 保存点配置
+│   └── work_nodes.json            # 工作节点配置
 ├── development_tools/          # 开发工具
-│   ├── agent_problem_solver.py # 问题解决驱动器
-│   └── test_and_issue_collector.py # 测试收集器
+│   ├── agent_problem_solver.py    # 问题解决驱动器
+│   ├── proactive_problem_solver.py # 主动问题解决器
+│   └── release_manager.py         # 发布管理器
 ├── docs/                       # 文档目录
-│   ├── delivery_summary.md     # 交付总结
-│   ├── supermemory_integration_guide.md # 无限记忆API集成指南
-│   ├── system_guide.md         # 系统指南
-│   ├── validation_report.md    # 验证报告
-│   └── visual_test_guide.md    # 视觉测试指南
+│   └── images/                 # 文档图片
 ├── frontend/                   # 前端目录
 │   └── src/                    # 源代码
 │       ├── components/         # 组件
-│       ├── pages/              # 页面
-│       └── utils/              # 工具类
+│       │   └── workflow-nodes/ # 工作流节点组件
+│       └── styles/             # 样式文件
 ├── mcptool/                    # MCP工具
 │   ├── adapters/               # 外部工具适配器
 │   ├── core/                   # 核心组件
-│   └── enhancers/              # 增强组件
+│   ├── enhancers/              # 增强组件
+│   └── mcp/                    # MCP实现
+├── releases/                   # 发布目录
+│   └── test_release/           # 测试发布
 ├── rl_factory/                 # RL Factory
 │   ├── adapters/               # 适配器
-│   └── core/                   # 核心组件
-├── test/                       # 端到端测试
+│   ├── core/                   # 核心组件
+│   │   ├── learning/           # 学习模块
+│   │   └── thought/            # 思考模块
+│   └── tests/                  # RL Factory测试
+├── test/                       # 测试目录
+│   ├── end_to_end/             # 端到端测试
+│   ├── integration/            # 集成测试
 │   └── visual_test/            # 视觉自动化测试
-│       ├── baseline/           # 基准图像
-│       ├── pages/              # 页面对象
-│       ├── scenarios/          # 测试场景
-│       └── utils/              # 测试工具
-└── tests/                      # 单元和集成测试
-    ├── integration/            # 集成测试
-    └── unit/                   # 单元测试
+└── workflow_driver/            # 工作流驱动器
+    └── workflow_driver.py      # 工作流驱动实现
 ```
-
-## 系统分层架构图
-
-![PowerAutomation 分层架构图](docs/images/layered_architecture.png)
 
 ## 核心功能
 
@@ -73,21 +75,29 @@ powerautomation_integration/
 - 内容：定义智能体生成的内容类型和质量
 - 记忆长度：定义智能体的上下文记忆能力
 
-### 3. 无限上下文记忆
+### 3. 版本回滚能力
 
-系统集成了supermemory.ai的API，实现无限上下文记忆功能：
-- 存储用户查询和系统思考过程
-- 结构化存储六大特性
-- 高效检索相关上下文
+系统增强了AgentProblemSolver的版本回滚能力：
+- 回滚历史记录和统计功能
+- 回滚前后对比验证
+- 工作节点记录和管理
+- 检查点管理
 
-### 4. 自动化测试
+### 4. 工作节点可视化
+
+系统实现了前端工作节点可视化组件：
+- WorkNodeVisualizer组件，支持三种视图：工作节点时间线、保存点列表和回滚历史
+- 响应式布局，适配不同设备
+- 状态指示和自动刷新功能
+
+### 5. 自动化测试
 
 系统实现了完整的自动化测试框架：
 - 单元测试：测试各组件的独立功能
 - 集成测试：测试组件间的交互
-- 端到端视觉测试：测试用户界面和交互流程
+- 端到端测试：测试完整工作流程
 
-### 5. RL Factory能力对齐
+### 6. RL Factory能力对齐
 
 RL Factory实现了与MCPPlanner和MCPBrainstorm的能力对齐：
 - 以MCPPlanner和MCPBrainstorm的输入作为学习者
@@ -109,13 +119,15 @@ cd powerautomation
 cd backend
 python -m venv venv
 source venv/bin/activate  # 在Windows上使用 venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
 3. 安装前端依赖
 ```bash
 cd ../frontend
-npm install
+npm install --legacy-peer-deps  # 使用legacy-peer-deps解决依赖冲突
+# 或者降级date-fns到兼容版本
+# npm install date-fns@3.0.0
 ```
 
 ### 运行
@@ -123,7 +135,7 @@ npm install
 1. 启动后端
 ```bash
 cd backend
-python app.py
+python main.py  # 注意：入口文件是main.py，不是app.py
 ```
 
 2. 启动前端
@@ -139,40 +151,52 @@ npm run dev
 
 1. 运行单元测试
 ```bash
-cd tests
-python -m pytest unit/
+python -m pytest test/unit/
 ```
 
 2. 运行集成测试
 ```bash
-cd tests
-python -m pytest integration/
+python -m pytest test/integration/
 ```
 
-3. 运行端到端视觉测试
+3. 运行端到端测试
 ```bash
-cd test/visual_test
-python run_tests.py
+python -m pytest test/end_to_end/
+```
+
+## 常见问题
+
+### 后端依赖问题
+
+如果遇到缺少依赖的错误（如 `ModuleNotFoundError: No module named 'flask_cors'`），请确保已安装所有必要的依赖：
+
+```bash
+pip install -r requirements.txt
+```
+
+如果仍有缺失的依赖，可以单独安装：
+
+```bash
+pip install flask-cors
+```
+
+### 前端依赖冲突
+
+如果在安装前端依赖时遇到冲突（如date-fns与react-day-picker的版本冲突），可以：
+
+1. 使用`--legacy-peer-deps`参数：
+```bash
+npm install --legacy-peer-deps
+```
+
+2. 或降级date-fns到兼容版本：
+```bash
+npm install date-fns@3.0.0
 ```
 
 ## 文档
 
-详细文档请参阅docs目录：
-- [交付总结](docs/delivery_summary.md)
-- [无限记忆API集成指南](docs/supermemory_integration_guide.md)
-- [系统指南](docs/system_guide.md)
-- [验证报告](docs/validation_report.md)
-- [视觉测试指南](docs/visual_test_guide.md)
-
-## GitHub Actions集成
-
-本项目已配置GitHub Actions工作流，用于自动化测试和部署：
-- 单元测试和集成测试
-- 端到端视觉自动化测试
-- 代码质量检查
-- 自动部署
-
-详细配置请参阅`.github/workflows/`目录下的工作流文件。
+详细文档请参阅docs目录。
 
 ## 贡献指南
 
