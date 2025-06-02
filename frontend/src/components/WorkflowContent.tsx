@@ -13,36 +13,36 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
   // 自动化测试工作流节点数据
   const automationTestNodes: WorkflowNode[] = [
     {
-      id: 'unit-test',
+      id: 'integration-test',
       type: 'trigger',
       position: { x: 100, y: 100 },
       data: {
-        name: '单元测试',
-        description: '测试各组件的独立功能',
+        name: '集成测试',
+        description: '测试组件间的交互',
         status: '活跃',
         timestamp: '2025-06-02 10:30',
         type: 'test'
       }
     },
     {
-      id: 'integration-test',
+      id: 'e2e-test',
       type: 'action',
       position: { x: 100, y: 250 },
       data: {
-        name: '集成测试',
-        description: '测试组件间的交互',
+        name: '端到端测试',
+        description: '测试完整工作流程',
         status: '已执行',
         timestamp: '2025-06-02 10:32',
         type: 'test'
       }
     },
     {
-      id: 'e2e-test',
+      id: 'visual-test',
       type: 'action',
       position: { x: 100, y: 400 },
       data: {
-        name: '端到端测试',
-        description: '测试完整工作流程',
+        name: '视觉自动化测试',
+        description: '测试UI界面和视觉元素',
         status: '已执行',
         timestamp: '2025-06-02 10:33',
         type: 'test'
@@ -54,14 +54,14 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
   const automationTestConnections: WorkflowConnection[] = [
     {
       id: 'conn1',
-      source: 'unit-test',
-      target: 'integration-test',
+      source: 'integration-test',
+      target: 'e2e-test',
       label: '通过'
     },
     {
       id: 'conn2',
-      source: 'integration-test',
-      target: 'e2e-test',
+      source: 'e2e-test',
+      target: 'visual-test',
       label: '通过'
     }
   ];
@@ -221,9 +221,9 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                   <h3>自动化测试工作流 (预设)</h3>
                   <p>该工作流包含三个主要测试阶段，确保系统各部分功能正常运行。</p>
                   <ul>
-                    <li><strong>单元测试</strong>：测试各组件的独立功能</li>
                     <li><strong>集成测试</strong>：测试组件间的交互</li>
                     <li><strong>端到端测试</strong>：测试完整工作流程</li>
+                    <li><strong>视觉自动化测试</strong>：测试UI界面和视觉元素</li>
                   </ul>
                 </div>
                 <IntegratedWorkflowView>
