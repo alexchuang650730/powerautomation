@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import '../styles/N8nWorkflowVisualizer.css';
-import TriggerNode from './workflow-nodes/TriggerNode';
-import ActionNode from './workflow-nodes/ActionNode';
-import ConditionNode from './workflow-nodes/ConditionNode';
-import ErrorNode from './workflow-nodes/ErrorNode';
+import '../styles/WorkflowNodes.css';
 
+// 简化版本，移除对reactflow的直接依赖，使用自定义节点渲染
 interface Node {
   id: string;
   type: 'trigger' | 'action' | 'condition' | 'error';
@@ -27,175 +25,264 @@ interface WorkflowData {
   connections: Connection[];
 }
 
+// 简化的节点props接口
+interface SimpleNodeProps {
+  node: Node;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
 const N8nWorkflowVisualizer: React.FC = () => {
-  const [workflow, setWorkflow] = useState<WorkflowData>({
+  const [workflow, setWorkflow] = React.useState<WorkflowData>({
     nodes: [],
     connections: []
   });
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = React.useState<string | null>(null);
 
-  useEffect(() => {
-    // 模拟从API获取工作流数据
-    const fetchWorkflowData = async () => {
-      try {
-        setLoading(true);
-        // 实际项目中，这里应该是从API获取数据
-        // const response = await fetch('/api/workflow');
-        // const data = await response.json();
-        
-        // 模拟数据
-        const mockData: WorkflowData = {
-          nodes: [
-            {
-              id: 'node_1',
-              type: 'trigger',
-              name: 'GitHub Release',
-              description: '检测到新版本 v1.0.0',
-              status: 'success',
-              position: { x: 100, y: 100 },
-              data: {
-                release_version: 'v1.0.0',
-                release_url: 'https://github.com/example/repo/releases/tag/v1.0.0'
-              }
-            },
-            {
-              id: 'node_2',
-              type: 'action',
-              name: '下载代码',
-              description: '从GitHub下载代码',
-              status: 'success',
-              position: { x: 100, y: 250 },
-              data: {
-                path: '/home/user/downloads/v1.0.0'
-              }
-            },
-            {
-              id: 'node_3',
-              type: 'action',
-              name: '运行测试',
-              description: '执行单元测试',
-              status: 'running',
-              position: { x: 100, y: 400 },
-              data: {
-                test_type: 'unit',
-                test_path: 'src/main.py'
-              }
-            },
-            {
-              id: 'node_4',
-              type: 'condition',
-              name: '测试结果',
-              description: '检查测试结果',
-              status: 'pending',
-              position: { x: 100, y: 550 },
-              data: {
-                condition: 'test_success == true'
-              }
-            },
-            {
-              id: 'node_5',
-              type: 'action',
-              name: '创建保存点',
-              description: '创建代码保存点',
-              status: 'pending',
-              position: { x: 300, y: 700 },
-              data: {
-                savepoint_id: 'sp_1234',
-                description: '测试通过的版本'
-              }
-            },
-            {
-              id: 'node_6',
-              type: 'error',
-              name: '问题分析',
-              description: '分析测试失败原因',
-              status: 'pending',
-              position: { x: -100, y: 700 },
-              data: {
-                error_type: 'test_failure',
-                error_message: '测试失败'
-              }
+  // 使用useCallback替代useEffect，避免未使用警告
+  const fetchWorkflowData = React.useCallback(() => {
+    try {
+      setLoading(true);
+      
+      // 模拟数据
+      const mockData: WorkflowData = {
+        nodes: [
+          {
+            id: 'node_1',
+            type: 'trigger',
+            name: 'GitHub Release',
+            description: '检测到新版本 v1.0.0',
+            status: 'success',
+            position: { x: 100, y: 100 },
+            data: {
+              release_version: 'v1.0.0',
+              release_url: 'https://github.com/example/repo/releases/tag/v1.0.0',
+              timestamp: new Date().toISOString()
             }
-          ],
-          connections: [
-            {
-              id: 'conn_1',
-              source: 'node_1',
-              target: 'node_2',
-              type: 'success'
-            },
-            {
-              id: 'conn_2',
-              source: 'node_2',
-              target: 'node_3',
-              type: 'success'
-            },
-            {
-              id: 'conn_3',
-              source: 'node_3',
-              target: 'node_4',
-              type: 'success'
-            },
-            {
-              id: 'conn_4',
-              source: 'node_4',
-              target: 'node_5',
-              type: 'success'
-            },
-            {
-              id: 'conn_5',
-              source: 'node_4',
-              target: 'node_6',
-              type: 'error'
+          },
+          {
+            id: 'node_2',
+            type: 'action',
+            name: '下载代码',
+            description: '从GitHub下载代码',
+            status: 'success',
+            position: { x: 100, y: 250 },
+            data: {
+              path: '/home/user/downloads/v1.0.0',
+              timestamp: new Date().toISOString()
             }
-          ]
-        };
-        
-        setWorkflow(mockData);
-        setLoading(false);
-      } catch (err) {
-        setError('加载工作流数据失败');
-        setLoading(false);
-        console.error('Error fetching workflow data:', err);
-      }
-    };
+          },
+          {
+            id: 'node_3',
+            type: 'action',
+            name: '运行测试',
+            description: '执行单元测试',
+            status: 'running',
+            position: { x: 100, y: 400 },
+            data: {
+              test_type: 'unit',
+              test_path: 'src/main.py',
+              timestamp: new Date().toISOString()
+            }
+          },
+          {
+            id: 'node_4',
+            type: 'condition',
+            name: '测试结果',
+            description: '检查测试结果',
+            status: 'pending',
+            position: { x: 100, y: 550 },
+            data: {
+              condition: 'test_success == true',
+              timestamp: new Date().toISOString()
+            }
+          },
+          {
+            id: 'node_5',
+            type: 'action',
+            name: '创建保存点',
+            description: '创建代码保存点',
+            status: 'pending',
+            position: { x: 300, y: 700 },
+            data: {
+              savepoint_id: 'sp_1234',
+              description: '测试通过的版本',
+              timestamp: new Date().toISOString()
+            }
+          },
+          {
+            id: 'node_6',
+            type: 'error',
+            name: '问题分析',
+            description: '分析测试失败原因',
+            status: 'pending',
+            position: { x: -100, y: 700 },
+            data: {
+              error_type: 'test_failure',
+              error_message: '测试失败',
+              timestamp: new Date().toISOString()
+            }
+          }
+        ],
+        connections: [
+          {
+            id: 'conn_1',
+            source: 'node_1',
+            target: 'node_2',
+            type: 'success'
+          },
+          {
+            id: 'conn_2',
+            source: 'node_2',
+            target: 'node_3',
+            type: 'success'
+          },
+          {
+            id: 'conn_3',
+            source: 'node_3',
+            target: 'node_4',
+            type: 'success'
+          },
+          {
+            id: 'conn_4',
+            source: 'node_4',
+            target: 'node_5',
+            type: 'success'
+          },
+          {
+            id: 'conn_5',
+            source: 'node_4',
+            target: 'node_6',
+            type: 'error'
+          }
+        ]
+      };
+      
+      setWorkflow(mockData);
+      setLoading(false);
+    } catch (err) {
+      setError('加载工作流数据失败');
+      setLoading(false);
+      console.error('Error fetching workflow data:', err);
+    }
+  }, []);
 
+  // 初始化数据
+  React.useEffect(() => {
     fetchWorkflowData();
-
+    
     // 设置定时刷新
     const intervalId = setInterval(() => {
       fetchWorkflowData();
     }, 30000); // 每30秒刷新一次
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [fetchWorkflowData]);
 
   const handleNodeClick = (nodeId: string) => {
     setSelectedNode(nodeId === selectedNode ? null : nodeId);
   };
 
+  // 简化的节点渲染函数，使用自定义props
   const renderNode = (node: Node) => {
-    const props = {
-      key: node.id,
+    const props: SimpleNodeProps = {
       node,
       isSelected: node.id === selectedNode,
       onClick: () => handleNodeClick(node.id)
     };
 
-    switch (node.type) {
-      case 'trigger':
-        return <TriggerNode {...props} />;
-      case 'action':
-        return <ActionNode {...props} />;
-      case 'condition':
-        return <ConditionNode {...props} />;
-      case 'error':
-        return <ErrorNode {...props} />;
-      default:
-        return null;
-    }
+    // 根据节点类型渲染不同组件
+    const style = {
+      position: 'absolute' as const,
+      left: `${node.position.x}px`,
+      top: `${node.position.y}px`,
+    };
+
+    return (
+      <div key={node.id} style={style}>
+        {node.type === 'trigger' && (
+          <div className={`workflow-node workflow-node-trigger ${props.isSelected ? 'selected' : ''}`} onClick={props.onClick}>
+            <div className="workflow-node-header">
+              <div className="workflow-node-type">触发器</div>
+              <div className="workflow-node-status" style={{ 
+                backgroundColor: node.status === 'success' ? '#4CAF50' : 
+                                node.status === 'error' ? '#F44336' : 
+                                node.status === 'running' ? '#FFC107' : '#9e9e9e'
+              }}>
+                {node.status === 'success' ? '成功' : 
+                 node.status === 'error' ? '失败' : 
+                 node.status === 'running' ? '运行中' : '等待中'}
+              </div>
+            </div>
+            <div className="workflow-node-name">{node.name}</div>
+            <div className="workflow-node-description">{node.description}</div>
+          </div>
+        )}
+        
+        {node.type === 'action' && (
+          <div className={`workflow-node workflow-node-action ${props.isSelected ? 'selected' : ''}`} onClick={props.onClick}>
+            <div className="workflow-node-header">
+              <div className="workflow-node-type">动作</div>
+              <div className="workflow-node-status" style={{ 
+                backgroundColor: node.status === 'success' ? '#4CAF50' : 
+                                node.status === 'error' ? '#F44336' : 
+                                node.status === 'running' ? '#FFC107' : '#9e9e9e'
+              }}>
+                {node.status === 'success' ? '成功' : 
+                 node.status === 'error' ? '失败' : 
+                 node.status === 'running' ? '运行中' : '等待中'}
+              </div>
+            </div>
+            <div className="workflow-node-name">{node.name}</div>
+            <div className="workflow-node-description">{node.description}</div>
+          </div>
+        )}
+        
+        {node.type === 'condition' && (
+          <div className={`workflow-node workflow-node-condition ${props.isSelected ? 'selected' : ''}`} onClick={props.onClick}>
+            <div className="workflow-node-header">
+              <div className="workflow-node-type">条件</div>
+              <div className="workflow-node-status" style={{ 
+                backgroundColor: node.status === 'success' ? '#4CAF50' : 
+                                node.status === 'error' ? '#F44336' : 
+                                node.status === 'running' ? '#FFC107' : '#9e9e9e'
+              }}>
+                {node.status === 'success' ? '成功' : 
+                 node.status === 'error' ? '失败' : 
+                 node.status === 'running' ? '运行中' : '等待中'}
+              </div>
+            </div>
+            <div className="workflow-node-name">{node.name}</div>
+            <div className="workflow-node-description">{node.description}</div>
+            {node.data && node.data.condition && (
+              <div className="workflow-node-condition-expr">
+                条件: {node.data.condition}
+              </div>
+            )}
+          </div>
+        )}
+        
+        {node.type === 'error' && (
+          <div className={`workflow-node workflow-node-error ${props.isSelected ? 'selected' : ''}`} onClick={props.onClick}>
+            <div className="workflow-node-header">
+              <div className="workflow-node-type">错误</div>
+              <div className="workflow-node-status" style={{ backgroundColor: '#F44336' }}>
+                失败
+              </div>
+            </div>
+            <div className="workflow-node-name">{node.name}</div>
+            <div className="workflow-node-description">{node.description}</div>
+            {node.data && node.data.error_message && (
+              <div className="workflow-node-error-message">
+                错误信息: {node.data.error_message}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const renderConnection = (connection: Connection) => {
@@ -274,12 +361,12 @@ const N8nWorkflowVisualizer: React.FC = () => {
       <div className="workflow-header">
         <h2>工作流可视化</h2>
         <div className="workflow-controls">
-          <button className="refresh-button" onClick={() => setWorkflow({ ...workflow })}>
+          <button className="refresh-button" onClick={() => fetchWorkflowData()}>
             刷新
           </button>
         </div>
       </div>
-      <div className="workflow-canvas">
+      <div className="workflow-canvas" style={{ position: 'relative', height: '600px', border: '1px solid #eee', overflow: 'auto' }}>
         {workflow.connections.map(renderConnection)}
         {workflow.nodes.map(renderNode)}
       </div>
