@@ -114,6 +114,89 @@
   margin-bottom: 5px;
 }
 
+/* SuperMemory记忆检查样式 */
+.memory-check {
+  background-color: #f0f8ff;
+  border: 1px solid #d0e6ff;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.memory-check-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d0e6ff;
+}
+
+.memory-check-title {
+  font-weight: 500;
+  color: #333;
+}
+
+.memory-check-status {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.memory-check-status.success {
+  background-color: #e6f7e6;
+  color: #28a745;
+}
+
+.memory-check-details {
+  margin-bottom: 10px;
+}
+
+.memory-check-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.check-label {
+  font-weight: 500;
+  color: #666;
+  width: 90px;
+}
+
+.check-value {
+  color: #333;
+}
+
+.check-status {
+  margin-left: auto;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.check-status.active {
+  background-color: #e3f2fd;
+  color: #2196F3;
+}
+
+.memory-link {
+  display: block;
+  text-align: right;
+  color: #2196F3;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 5px;
+}
+
+.memory-link:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .workflow-tabs {
     flex-direction: column;

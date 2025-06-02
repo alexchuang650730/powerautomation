@@ -255,6 +255,33 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                       </ul>
                     </div>
                     <div className="submodule">
+                      <div className="submodule-icon">🧠</div>
+                      <h4>SuperMemory记忆检查</h4>
+                      <p>智能体能力与治理能力检查：</p>
+                      <div className="memory-check">
+                        <div className="memory-check-header">
+                          <span className="memory-check-title">SuperMemory.ai 记忆状态</span>
+                          <span className="memory-check-status success">完整记忆成功</span>
+                        </div>
+                        <div className="memory-check-details">
+                          <div className="memory-check-item">
+                            <span className="check-label">触发器:</span>
+                            <span className="check-value">AGENT</span>
+                            <span className="check-status active">活跃</span>
+                          </div>
+                          <div className="memory-check-item">
+                            <span className="check-label">通用智能体:</span>
+                            <span className="check-value">接收用户输入</span>
+                          </div>
+                          <div className="memory-check-item">
+                            <span className="check-label">上次触发:</span>
+                            <span className="check-value">2025-06-02 10:30</span>
+                          </div>
+                        </div>
+                        <a href="https://supermemory.ai/" target="_blank" className="memory-link">查看完整记忆 →</a>
+                      </div>
+                    </div>
+                    <div className="submodule">
                       <div className="submodule-icon">🚀</div>
                       <h4>发布管理</h4>
                       <p>通过ReleaseManager实现：</p>
