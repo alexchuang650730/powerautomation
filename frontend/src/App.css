@@ -66,7 +66,7 @@
   margin: 10px 0;
 }
 
-.upload-button, .source-button {
+.source-button {
   display: flex;
   align-items: center;
   padding: 8px 15px;
@@ -79,12 +79,8 @@
   transition: background-color 0.3s;
 }
 
-.upload-button:hover, .source-button:hover {
+.source-button:hover {
   background-color: #1976D2;
-}
-
-.icon {
-  margin-right: 5px;
 }
 
 .section-title {

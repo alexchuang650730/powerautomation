@@ -177,11 +177,7 @@ function App() {
             selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
           />
           
-          <div className="action-buttons">
-            <button className="upload-button">
-              <span className="icon">⬆️</span>
-            </button>
-          </div>
+          {/* 上传按钮已移除 */}
           
           <AgentCards 
             agents={agentTypes} 
