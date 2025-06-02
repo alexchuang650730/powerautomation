@@ -1,7 +1,7 @@
 """
 通用智能体六大特性定义文档
-更新日期：2025-06-01
-版本：1.1
+更新日期：2025-06-02
+版本：1.3
 
 核心治理原则：所有功能扩展将严格基于原本的文件结构进行，不会更改现有结构
 """
@@ -114,7 +114,9 @@ class GeneralAgentFeatures:
             "automated_testing",
             "version_rollback",
             "agent_manufacturing",
-            "structure_based_extension"
+            "structure_based_extension",
+            "integrated_workflow_management",
+            "unified_interface_experience"
         ]
     
     def get_ui_features(self):
@@ -130,7 +132,10 @@ class GeneralAgentFeatures:
             "theme_customization",
             "agent_card_layout",
             "work_node_visualizer",
-            "n8n_style_workflow_visualization"
+            "n8n_style_workflow_visualization",
+            "integrated_input_area",
+            "unified_work_node_workflow_view",
+            "message_history_display"
         ]
     
     def get_memory_features(self):
@@ -144,7 +149,9 @@ class GeneralAgentFeatures:
             "checkpoint_management",
             "historical_data_analysis",
             "knowledge_graph_integration",
-            "context_persistence"
+            "context_persistence",
+            "workflow_state_persistence",
+            "message_history_management"
         ]
     
     def _init_platform_features(self):
@@ -218,6 +225,39 @@ class GeneralAgentFeatures:
                         "follow_existing_patterns": True,
                         "document_all_extensions": True
                     }
+                }
+            },
+            "integrated_workflow_management": {
+                "name": "集成工作流管理",
+                "description": "将工作节点和工作流程整合在统一界面，提供一致的用户体验",
+                "enabled": True,
+                "config": {
+                    "unified_interface": True,
+                    "real_time_status_updates": True,
+                    "workflow_node_correlation": True,
+                    "context_preservation": True,
+                    "agent_mode_awareness": True,
+                    "independent_module_implementation": True,
+                    "style_isolation": True,
+                    "state_management": {
+                        "use_context_api": True,
+                        "redux_integration": True,
+                        "local_state_isolation": True
+                    }
+                }
+            },
+            "unified_interface_experience": {
+                "name": "统一界面体验",
+                "description": "提供一致的用户界面体验，整合输入区域、智能体选择、工作节点和工作流可视化",
+                "enabled": True,
+                "config": {
+                    "component_integration": True,
+                    "state_synchronization": True,
+                    "visual_consistency": True,
+                    "interaction_patterns": True,
+                    "responsive_behavior": True,
+                    "accessibility_compliance": True,
+                    "theme_consistency": True
                 }
             }
         }
@@ -339,6 +379,81 @@ class GeneralAgentFeatures:
                     "extension_only": True,
                     "preserve_existing_layout": True
                 }
+            },
+            "integrated_input_area": {
+                "name": "集成输入区域",
+                "description": "在智能体卡片上方添加输入框，支持文本输入、文件上传和消息发送功能",
+                "enabled": True,
+                "config": {
+                    "multi_line_input": True,
+                    "file_upload": {
+                        "enabled": True,
+                        "max_file_size": 10, # MB
+                        "allowed_file_types": ["*"],
+                        "drag_drop_support": True
+                    },
+                    "send_button": True,
+                    "adaptive_placeholder": True,
+                    "agent_mode_awareness": True,
+                    "placeholder_texts": {
+                        "code_agent": "请输入代码需求或上传文件，代码智能体将帮您实现...",
+                        "ppt_agent": "请输入PPT的主题和需求，或上传文件，PPT智能体将帮您制作...",
+                        "web_agent": "请输入网页需求或上传设计稿，网页智能体将帮您创建...",
+                        "general_agent": "请输入您的问题或需求，通用智能体将为您提供帮助..."
+                    },
+                    "style_isolation": {
+                        "use_css_modules": True,
+                        "namespace_prefix": "input-area-",
+                        "scoped_styles": True
+                    }
+                }
+            },
+            "unified_work_node_workflow_view": {
+                "name": "统一工作节点与工作流视图",
+                "description": "将工作节点时间线和工作流程图整合在同一界面，提供连贯的任务执行视图",
+                "enabled": True,
+                "config": {
+                    "vertical_layout": True,
+                    "work_node_section": {
+                        "position": "top",
+                        "height_percentage": 40,
+                        "collapsible": True
+                    },
+                    "workflow_section": {
+                        "position": "bottom",
+                        "height_percentage": 60,
+                        "collapsible": True
+                    },
+                    "synchronized_selection": True,
+                    "context_preservation": True,
+                    "real_time_updates": True,
+                    "independent_module": {
+                        "standalone_component": True,
+                        "isolated_state": True,
+                        "style_encapsulation": True
+                    }
+                }
+            },
+            "message_history_display": {
+                "name": "消息历史显示",
+                "description": "在界面底部显示用户与智能体的消息历史记录，支持文本和文件附件",
+                "enabled": True,
+                "config": {
+                    "message_types": ["text", "file", "image", "code"],
+                    "message_grouping": True,
+                    "timestamp_display": True,
+                    "sender_identification": True,
+                    "message_styling": {
+                        "user_message_color": "#3498db",
+                        "agent_message_color": "#f5f5f5",
+                        "text_contrast": True,
+                        "bubble_style": True
+                    },
+                    "file_attachment_preview": True,
+                    "scrollable_container": True,
+                    "max_displayed_messages": 50,
+                    "load_more_functionality": True
+                }
             }
         }
     
@@ -365,14 +480,32 @@ class GeneralAgentFeatures:
                     "translation_quality": 0.95
                 }
             },
-            "technical_term_recognition": {
-                "name": "技术术语识别",
-                "description": "准确识别并解释测试和开发领域的专业术语",
+            "template_based_generation": {
+                "name": "基于模板生成",
+                "description": "使用预定义模板生成标准化提示和报告",
                 "enabled": True,
                 "config": {
-                    "term_database_size": 5000,
-                    "context_based_disambiguation": True,
-                    "explanation_generation": True
+                    "template_categories": ["test", "report", "analysis", "recommendation"],
+                    "template_customization": True,
+                    "variable_substitution": True
+                }
+            },
+            "agent_mode_adaptive_prompts": {
+                "name": "智能体模式自适应提示",
+                "description": "根据选择的智能体模式自动调整输入框提示文本",
+                "enabled": True,
+                "config": {
+                    "mode_detection": True,
+                    "context_preservation": True,
+                    "dynamic_placeholder_text": True,
+                    "suggestion_generation": True,
+                    "history_awareness": True,
+                    "agent_specific_templates": {
+                        "code_agent": ["代码生成", "代码优化", "代码调试", "代码解释"],
+                        "ppt_agent": ["演示文稿创建", "幻灯片设计", "内容组织", "视觉效果"],
+                        "web_agent": ["网页设计", "前端开发", "响应式布局", "交互功能"],
+                        "general_agent": ["问题解答", "任务规划", "信息检索", "创意生成"]
+                    }
                 }
             }
         }
@@ -380,93 +513,57 @@ class GeneralAgentFeatures:
     def _init_thinking_features(self):
         """初始化思维特性"""
         return {
-            "test_strategy_planning": {
-                "name": "测试策略规划",
-                "description": "自动分析代码结构，制定最优测试策略",
+            "thought_action_recorder": {
+                "name": "思考行动记录器",
+                "description": "记录智能体的思考过程和行动步骤，支持回溯和分析",
                 "enabled": True,
                 "config": {
-                    "code_structure_analysis": True,
-                    "test_coverage_optimization": True,
-                    "risk_based_prioritization": True
+                    "thought_recording": True,
+                    "action_recording": True,
+                    "timestamp_recording": True,
+                    "context_recording": True
                 }
             },
-            "root_cause_analysis": {
-                "name": "问题根因分析",
-                "description": "通过调用Manus能力，深入分析测试失败原因",
-                "enabled": True,
-                "config": {
-                    "log_analysis_depth": "deep",
-                    "pattern_recognition": True,
-                    "historical_comparison": True,
-                    "mcp_integration": {
-                        "use_coordinator": True,
-                        "use_brain": True,
-                        "use_planner": True
-                    }
-                }
-            },
-            "fix_solution_generation": {
-                "name": "修复方案生成",
-                "description": "基于历史数据和最佳实践，提供针对性修复建议",
-                "enabled": True,
-                "config": {
-                    "solution_database_size": 10000,
-                    "context_relevance_threshold": 0.8,
-                    "code_generation_enabled": True
-                }
-            },
-            "priority_sorting": {
-                "name": "优先级排序",
-                "description": "智能评估问题严重性，合理安排修复顺序",
-                "enabled": True,
-                "config": {
-                    "severity_levels": ["critical", "high", "medium", "low"],
-                    "business_impact_assessment": True,
-                    "effort_estimation": True
-                }
-            },
-            "version_rollback_capability": {
+            "version_rollback": {
                 "name": "版本回滚能力",
-                "description": "智能确认版本回滚需求，执行回滚操作并验证回滚结果",
+                "description": "支持回滚到之前的代码版本，确保系统稳定性",
                 "enabled": True,
                 "config": {
-                    "rollback_history_tracking": True,
-                    "rollback_success_rate_analysis": True,
-                    "pre_post_rollback_comparison": True,
-                    "auto_rollback_threshold": 5,
-                    "rollback_verification_steps": [
-                        "代码完整性检查",
-                        "功能测试验证",
-                        "性能影响评估",
-                        "依赖兼容性确认"
-                    ]
+                    "savepoint_creation": True,
+                    "rollback_execution": True,
+                    "version_comparison": True,
+                    "impact_analysis": True
                 }
             },
-            "agent_manufacturing": {
-                "name": "自动化制造智能体",
-                "description": "根据需求自动生成、训练和部署专用智能体，实现智能体的自我复制和进化",
+            "problem_solving_strategies": {
+                "name": "问题解决策略",
+                "description": "根据问题类型选择不同的解决策略，提高解决效率",
                 "enabled": True,
                 "config": {
-                    "agent_blueprint_generation": True,
-                    "component_assembly": True,
-                    "knowledge_transfer": True,
-                    "capability_inheritance": True,
-                    "self_optimization": True,
-                    "manufacturing_stages": [
-                        "需求分析",
-                        "能力规划",
-                        "知识库构建",
-                        "模型训练",
-                        "行为验证",
-                        "部署集成"
-                    ],
-                    "quality_assurance": {
-                        "behavior_testing": True,
-                        "knowledge_validation": True,
-                        "performance_benchmarking": True,
-                        "safety_checks": True
-                    },
-                    "feedback_loop": True
+                    "strategy_selection": True,
+                    "strategy_adaptation": True,
+                    "strategy_evaluation": True,
+                    "strategy_refinement": True
+                }
+            },
+            "workflow_optimization": {
+                "name": "工作流优化",
+                "description": "分析工作流执行效率，识别瓶颈并提供优化建议",
+                "enabled": True,
+                "config": {
+                    "performance_analysis": True,
+                    "bottleneck_identification": True,
+                    "optimization_suggestion": True,
+                    "workflow_simulation": True,
+                    "execution_path_analysis": True,
+                    "resource_utilization_tracking": True,
+                    "parallel_execution_opportunities": True,
+                    "workflow_metrics": {
+                        "execution_time": True,
+                        "resource_usage": True,
+                        "success_rate": True,
+                        "error_frequency": True
+                    }
                 }
             }
         }
@@ -474,35 +571,79 @@ class GeneralAgentFeatures:
     def _init_content_features(self):
         """初始化内容特性"""
         return {
-            "test_report_generation": {
-                "name": "测试报告生成",
-                "description": "自动生成结构化、可视化的测试报告",
+            "code_generation": {
+                "name": "代码生成",
+                "description": "根据需求生成高质量代码，支持多种编程语言",
                 "enabled": True,
                 "config": {
-                    "report_formats": ["html", "pdf", "markdown"],
-                    "visualization_types": ["charts", "tables", "heatmaps"],
-                    "auto_summary": True
+                    "supported_languages": ["Python", "JavaScript", "TypeScript", "Java", "C++", "Go"],
+                    "code_quality_check": True,
+                    "best_practice_adherence": True,
+                    "documentation_generation": True
                 }
             },
-            "code_explanation": {
-                "name": "代码解释",
-                "description": "提供清晰、易懂的代码注释和解释",
+            "report_generation": {
+                "name": "报告生成",
+                "description": "生成测试报告、分析报告和总结报告",
                 "enabled": True,
                 "config": {
-                    "language_support": ["python", "javascript", "java", "c++"],
-                    "explanation_detail_level": "medium",
-                    "include_examples": True
+                    "report_types": ["test", "analysis", "summary"],
+                    "data_visualization": True,
+                    "executive_summary": True,
+                    "detailed_analysis": True
                 }
             },
-            "documentation_generation": {
-                "name": "文档生成",
-                "description": "自动生成API文档、用户手册和开发指南",
+            "documentation_management": {
+                "name": "文档管理",
+                "description": "创建和维护项目文档，包括README、API文档和用户指南",
                 "enabled": True,
                 "config": {
-                    "api_doc_generation": True,
-                    "user_manual_generation": True,
-                    "developer_guide_generation": True,
-                    "multilingual_support": True
+                    "document_types": ["readme", "api", "user_guide"],
+                    "auto_update": True,
+                    "version_control": True,
+                    "format_conversion": True
+                }
+            },
+            "message_history_management": {
+                "name": "消息历史管理",
+                "description": "记录和管理用户与智能体的交互历史",
+                "enabled": True,
+                "config": {
+                    "history_storage": True,
+                    "history_retrieval": True,
+                    "context_preservation": True,
+                    "privacy_protection": True,
+                    "message_categorization": True,
+                    "search_functionality": True,
+                    "export_options": ["json", "csv", "pdf"],
+                    "retention_policy": {
+                        "max_messages": 1000,
+                        "time_period": "30d",
+                        "storage_optimization": True
+                    }
+                }
+            },
+            "file_attachment_handling": {
+                "name": "文件附件处理",
+                "description": "管理用户上传的文件，支持多种文件类型的处理和分析",
+                "enabled": True,
+                "config": {
+                    "supported_file_types": {
+                        "images": ["jpg", "png", "gif", "webp"],
+                        "documents": ["pdf", "docx", "txt", "md"],
+                        "code": ["py", "js", "ts", "html", "css", "java"],
+                        "data": ["csv", "json", "xml", "xlsx"]
+                    },
+                    "file_preview": True,
+                    "content_extraction": True,
+                    "virus_scanning": True,
+                    "file_transformation": True,
+                    "storage_management": {
+                        "compression": True,
+                        "deduplication": True,
+                        "versioning": True,
+                        "expiration": "7d"
+                    }
                 }
             }
         }
@@ -510,49 +651,90 @@ class GeneralAgentFeatures:
     def _init_memory_features(self):
         """初始化记忆特性"""
         return {
+            "checkpoint_management": {
+                "name": "检查点管理",
+                "description": "创建和管理代码检查点，支持版本回滚",
+                "enabled": True,
+                "config": {
+                    "auto_checkpoint": True,
+                    "manual_checkpoint": True,
+                    "checkpoint_metadata": True,
+                    "checkpoint_comparison": True
+                }
+            },
             "historical_data_analysis": {
                 "name": "历史数据分析",
                 "description": "分析历史测试数据，识别趋势和模式",
                 "enabled": True,
                 "config": {
-                    "data_retention_period": 365,
                     "trend_analysis": True,
-                    "pattern_recognition": True
+                    "pattern_recognition": True,
+                    "anomaly_detection": True,
+                    "predictive_analysis": True
                 }
             },
             "knowledge_graph_integration": {
                 "name": "知识图谱集成",
-                "description": "构建测试和开发知识图谱，支持智能查询和推理",
+                "description": "构建和维护项目知识图谱，支持智能查询和推理",
                 "enabled": True,
                 "config": {
-                    "entity_types": ["test", "bug", "fix", "component"],
-                    "relation_types": ["causes", "fixes", "depends_on", "affects"],
-                    "inference_enabled": True
+                    "entity_extraction": True,
+                    "relationship_mapping": True,
+                    "graph_visualization": True,
+                    "semantic_search": True
                 }
             },
             "context_persistence": {
                 "name": "上下文持久化",
-                "description": "保持测试和开发上下文，支持长期任务和多轮对话",
+                "description": "保存和恢复测试和开发上下文，确保连续性",
                 "enabled": True,
                 "config": {
-                    "session_timeout": 3600,
-                    "context_size_limit": 10000,
-                    "priority_based_retention": True
+                    "session_state_saving": True,
+                    "context_restoration": True,
+                    "environment_snapshot": True,
+                    "dependency_tracking": True
                 }
             },
-            "checkpoint_management": {
-                "name": "检查点管理",
-                "description": "创建和管理代码检查点，支持版本回滚和比较",
+            "workflow_state_persistence": {
+                "name": "工作流状态持久化",
+                "description": "保存工作流执行状态和历史记录，支持断点恢复和分析",
                 "enabled": True,
                 "config": {
-                    "auto_checkpoint": True,
-                    "checkpoint_interval": 3600,
-                    "max_checkpoints": 50,
-                    "diff_visualization": True,
-                    "checkpoint_tagging": True,
-                    "checkpoint_search": True,
-                    "checkpoint_comparison": True,
-                    "checkpoint_restoration": True
+                    "state_serialization": True,
+                    "execution_history": True,
+                    "checkpoint_creation": True,
+                    "resume_from_checkpoint": True,
+                    "state_visualization": True,
+                    "audit_logging": True,
+                    "state_comparison": True,
+                    "storage_options": {
+                        "database": True,
+                        "file_system": True,
+                        "distributed_cache": True
+                    }
+                }
+            },
+            "message_history_persistence": {
+                "name": "消息历史持久化",
+                "description": "持久化存储用户与智能体的交互历史，支持会话恢复和上下文理解",
+                "enabled": True,
+                "config": {
+                    "conversation_storage": True,
+                    "session_restoration": True,
+                    "context_awareness": True,
+                    "cross_session_memory": True,
+                    "user_preference_learning": True,
+                    "interaction_patterns": True,
+                    "storage_optimization": {
+                        "compression": True,
+                        "indexing": True,
+                        "sharding": True
+                    },
+                    "privacy_controls": {
+                        "data_anonymization": True,
+                        "user_deletion_rights": True,
+                        "access_controls": True
+                    }
                 }
             }
         }
