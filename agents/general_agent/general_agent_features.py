@@ -1,7 +1,7 @@
 """
 通用智能体六大特性定义文档
 更新日期：2025-06-02
-版本：1.4
+版本：1.5
 
 核心治理原则：所有功能扩展将严格基于原本的文件结构进行，不会更改现有结构
 """
@@ -118,7 +118,8 @@ class GeneralAgentFeatures:
             "integrated_workflow_management",
             "unified_interface_experience",
             "manus_integration",
-            "multi_workflow_automation"
+            "multi_workflow_automation",
+            "code_logic_deviation_detection"
         ]
     
     def get_ui_features(self):
@@ -716,6 +717,47 @@ class GeneralAgentFeatures:
                         "combined_commands": True
                     }
                 }
+            },
+            "code_modification_alerts": {
+                "name": "代码修改提醒",
+                "description": "当修改已有代码时，如果已有逻辑与指令要求有偏差，提供智能提醒和建议",
+                "enabled": True,
+                "config": {
+                    "deviation_detection": {
+                        "enabled": True,
+                        "logic_analysis": True,
+                        "intent_comparison": True,
+                        "requirement_alignment_check": True,
+                        "semantic_understanding": True
+                    },
+                    "alert_generation": {
+                        "enabled": True,
+                        "severity_levels": ["info", "warning", "critical"],
+                        "context_aware_messaging": True,
+                        "actionable_information": True,
+                        "clear_explanation": True
+                    },
+                    "suggestion_provision": {
+                        "enabled": True,
+                        "alternative_approaches": True,
+                        "code_examples": True,
+                        "best_practices": True,
+                        "trade_off_analysis": True
+                    },
+                    "user_interaction": {
+                        "enabled": True,
+                        "confirmation_requests": True,
+                        "clarification_questions": True,
+                        "preference_learning": True,
+                        "decision_support": True
+                    },
+                    "prompt_templates": {
+                        "deviation_alert": "检测到代码修改与指令要求存在偏差：{deviation_description}",
+                        "suggestion": "建议：{suggestion_content}",
+                        "confirmation": "您是否希望继续当前修改方向，还是采纳建议的方法？",
+                        "clarification": "为了更好地理解您的意图，请问您期望的结果是什么？"
+                    }
+                }
             }
         }
     
@@ -874,6 +916,66 @@ class GeneralAgentFeatures:
                         "feature_coverage_metrics": True,
                         "gap_analysis": True,
                         "prioritization_based_on_coverage": True
+                    }
+                }
+            },
+            "code_logic_deviation_detection": {
+                "name": "代码逻辑偏差检测",
+                "description": "在修改已有代码时，检测已有逻辑与指令要求的偏差，提供智能提醒和建议",
+                "enabled": True,
+                "config": {
+                    "static_analysis": {
+                        "enabled": True,
+                        "syntax_checking": True,
+                        "semantic_analysis": True,
+                        "control_flow_analysis": True,
+                        "data_flow_analysis": True,
+                        "type_checking": True
+                    },
+                    "requirement_comparison": {
+                        "enabled": True,
+                        "natural_language_understanding": True,
+                        "intent_extraction": True,
+                        "constraint_identification": True,
+                        "priority_recognition": True
+                    },
+                    "deviation_classification": {
+                        "enabled": True,
+                        "functional_deviations": True,
+                        "performance_deviations": True,
+                        "security_deviations": True,
+                        "maintainability_deviations": True,
+                        "compatibility_deviations": True
+                    },
+                    "impact_assessment": {
+                        "enabled": True,
+                        "severity_evaluation": True,
+                        "scope_analysis": True,
+                        "risk_assessment": True,
+                        "dependency_impact": True
+                    },
+                    "suggestion_generation": {
+                        "enabled": True,
+                        "correction_proposals": True,
+                        "alternative_implementations": True,
+                        "best_practice_recommendations": True,
+                        "trade_off_explanations": True,
+                        "learning_resources": True
+                    },
+                    "interactive_resolution": {
+                        "enabled": True,
+                        "clarification_dialogue": True,
+                        "preference_elicitation": True,
+                        "collaborative_editing": True,
+                        "decision_support": True,
+                        "explanation_provision": True
+                    },
+                    "learning_and_adaptation": {
+                        "enabled": True,
+                        "user_preference_learning": True,
+                        "pattern_recognition": True,
+                        "false_positive_reduction": True,
+                        "context_sensitivity_improvement": True
                     }
                 }
             }
@@ -1063,6 +1165,66 @@ class GeneralAgentFeatures:
                         "user_feedback_collection": True
                     }
                 }
+            },
+            "code_modification_guidance": {
+                "name": "代码修改指导",
+                "description": "在修改已有代码时，提供智能指导和建议，确保修改符合需求和最佳实践",
+                "enabled": True,
+                "config": {
+                    "code_analysis": {
+                        "enabled": True,
+                        "structure_analysis": True,
+                        "pattern_recognition": True,
+                        "dependency_mapping": True,
+                        "complexity_assessment": True,
+                        "quality_metrics": True
+                    },
+                    "requirement_alignment": {
+                        "enabled": True,
+                        "intent_extraction": True,
+                        "constraint_validation": True,
+                        "priority_mapping": True,
+                        "scope_definition": True
+                    },
+                    "modification_planning": {
+                        "enabled": True,
+                        "impact_assessment": True,
+                        "change_strategy_formulation": True,
+                        "risk_mitigation_planning": True,
+                        "testing_strategy": True
+                    },
+                    "implementation_guidance": {
+                        "enabled": True,
+                        "step_by_step_instructions": True,
+                        "code_examples": True,
+                        "best_practice_recommendations": True,
+                        "common_pitfall_warnings": True,
+                        "alternative_approaches": True
+                    },
+                    "deviation_alerts": {
+                        "enabled": True,
+                        "real_time_monitoring": True,
+                        "contextual_notifications": True,
+                        "severity_classification": True,
+                        "actionable_suggestions": True,
+                        "explanation_provision": True
+                    },
+                    "interactive_assistance": {
+                        "enabled": True,
+                        "clarification_dialogue": True,
+                        "decision_support": True,
+                        "collaborative_problem_solving": True,
+                        "learning_resources": True,
+                        "feedback_collection": True
+                    },
+                    "continuous_improvement": {
+                        "enabled": True,
+                        "user_preference_learning": True,
+                        "effectiveness_tracking": True,
+                        "suggestion_refinement": True,
+                        "knowledge_base_expansion": True
+                    }
+                }
             }
         }
     
@@ -1240,5 +1402,57 @@ class GeneralAgentFeatures:
                         "real_time_access": True
                     }
                 }
+            },
+            "code_modification_history": {
+                "name": "代码修改历史",
+                "description": "记录代码修改历史，包括修改原因、偏差提醒和用户决策，支持回溯和学习",
+                "enabled": True,
+                "config": {
+                    "modification_tracking": {
+                        "enabled": True,
+                        "change_recording": True,
+                        "intent_documentation": True,
+                        "context_preservation": True,
+                        "timestamp_logging": True,
+                        "author_attribution": True
+                    },
+                    "deviation_recording": {
+                        "enabled": True,
+                        "alert_history": True,
+                        "suggestion_history": True,
+                        "user_response_tracking": True,
+                        "outcome_documentation": True
+                    },
+                    "decision_tracking": {
+                        "enabled": True,
+                        "choice_recording": True,
+                        "rationale_documentation": True,
+                        "alternative_preservation": True,
+                        "impact_assessment": True
+                    },
+                    "historical_analysis": {
+                        "enabled": True,
+                        "pattern_identification": True,
+                        "trend_analysis": True,
+                        "effectiveness_evaluation": True,
+                        "learning_extraction": True
+                    },
+                    "knowledge_application": {
+                        "enabled": True,
+                        "preference_learning": True,
+                        "suggestion_improvement": True,
+                        "proactive_guidance": True,
+                        "personalized_assistance": True
+                    },
+                    "visualization_and_exploration": {
+                        "enabled": True,
+                        "timeline_view": True,
+                        "diff_visualization": True,
+                        "decision_tree_mapping": True,
+                        "impact_tracing": True,
+                        "search_and_filter": True
+                    }
+                }
             }
         }
+}
