@@ -82,7 +82,7 @@ powerautomation/
 
 下图展示了PowerAutomation系统的分层架构设计：
 
-![PowerAutomation系统架构图](docs/images/powerautomation_layered_architecture.png)
+![PowerAutomation系统架构图](docs/images/layered_architecture.png)
 
 *图2: PowerAutomation系统架构图，展示了系统的分层结构、组件关系和数据流转路径*
 
