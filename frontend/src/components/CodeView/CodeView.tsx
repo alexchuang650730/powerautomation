@@ -1,15 +1,473 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './CodeView.css';
 
 interface CodeViewProps {
   agentType: string;
   testType?: string; // 可选参数，指定测试类型：'integration', 'e2e', 'visual'
+  selectedNodeId?: string; // 选中的节点ID
 }
 
-const CodeView: React.FC<CodeViewProps> = ({ agentType, testType = 'integration' }) => {
+const CodeView: React.FC<CodeViewProps> = ({ agentType, testType = 'integration', selectedNodeId }) => {
+  const [activeTab, setActiveTab] = useState(testType);
+  
+  // 当外部传入testType变化时，更新activeTab
+  useEffect(() => {
+    if (testType) {
+      setActiveTab(testType);
+    }
+  }, [testType]);
+  
+  // 根据选中的节点ID过滤显示相关代码
+  const getNodeRelatedCode = (nodeId?: string) => {
+    if (!nodeId) return null;
+    
+    // 根据节点ID返回相关代码片段
+    // 这里可以实现一个映射关系，将节点ID映射到对应的代码片段
+    const codeMapping: Record<string, { filename: string, content: string }> = {
+      'integration-test': {
+        filename: 'integration_test_node.js',
+        content: `// 集成测试节点代码
+const { test, expect } = require('@playwright/test');
+
+/**
+ * 集成测试节点实现
+ * @param {Object} input - 输入数据
+ * @param {Object} context - 执行上下文
+ * @returns {Object} - 测试结果
+ */
+async function integrationTestNode(input, context) {
+  console.log('开始执行集成测试节点');
+  
+  try {
+    // 初始化测试环境
+    const testEnv = await context.getTestEnvironment();
+    
+    // 执行测试
+    const results = await test.step('组件交互测试', async () => {
+      const componentA = await testEnv.getComponent('ComponentA');
+      const componentB = await testEnv.getComponent('ComponentB');
+      
+      // 测试组件交互
+      await componentA.sendData('测试数据');
+      const receivedData = await componentB.getReceivedData();
+      
+      expect(receivedData).toContain('测试数据');
+      return { success: true, message: '组件交互测试通过' };
+    });
+    
+    console.log('集成测试节点执行成功');
+    return {
+      status: 'success',
+      results: results,
+      executionTime: 1250, // ms
+      memoryUsage: 85, // MB
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('集成测试节点执行失败', error);
+    return {
+      status: 'error',
+      error: error.message,
+      executionTime: 850, // ms
+      timestamp: new Date().toISOString()
+    };
+  }
+}`
+      },
+      'e2e-test': {
+        filename: 'e2e_test_node.js',
+        content: `// 端到端测试节点代码
+const { test, expect } = require('@playwright/test');
+
+/**
+ * 端到端测试节点实现
+ * @param {Object} input - 输入数据
+ * @param {Object} context - 执行上下文
+ * @returns {Object} - 测试结果
+ */
+async function e2eTestNode(input, context) {
+  console.log('开始执行端到端测试节点');
+  
+  try {
+    // 获取浏览器实例
+    const browser = await context.getBrowser();
+    const page = await browser.newPage();
+    
+    // 执行登录流程测试
+    const loginResults = await test.step('用户登录流程测试', async () => {
+      await page.goto('http://localhost:3000/login');
+      await page.fill('#username', 'testuser');
+      await page.fill('#password', 'password123');
+      await page.click('#login-button');
+      
+      // 验证登录成功
+      await expect(page).toHaveURL('http://localhost:3000/dashboard');
+      return { success: true, message: '登录流程测试通过' };
+    });
+    
+    // 执行工作流创建测试
+    const workflowResults = await test.step('工作流创建测试', async () => {
+      await page.click('nav >> text=工作流节点及工作流');
+      await page.click('#create-workflow');
+      await page.fill('#workflow-name', '测试工作流');
+      
+      // 验证工作流创建成功
+      await expect(page.locator('.success-message')).toBeVisible();
+      return { success: true, message: '工作流创建测试通过' };
+    });
+    
+    console.log('端到端测试节点执行成功');
+    return {
+      status: 'success',
+      results: {
+        login: loginResults,
+        workflow: workflowResults
+      },
+      executionTime: 3250, // ms
+      memoryUsage: 120, // MB
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('端到端测试节点执行失败', error);
+    return {
+      status: 'error',
+      error: error.message,
+      executionTime: 1850, // ms
+      timestamp: new Date().toISOString()
+    };
+  }
+}`
+      },
+      'visual-test': {
+        filename: 'visual_test_node.js',
+        content: `// 视觉自动化测试节点代码
+const { test, expect } = require('@playwright/test');
+const { compareScreenshots } = require('../utils/visual-comparison');
+
+/**
+ * 视觉自动化测试节点实现
+ * @param {Object} input - 输入数据
+ * @param {Object} context - 执行上下文
+ * @returns {Object} - 测试结果
+ */
+async function visualTestNode(input, context) {
+  console.log('开始执行视觉自动化测试节点');
+  
+  try {
+    // 获取浏览器实例
+    const browser = await context.getBrowser();
+    const page = await browser.newPage();
+    
+    // 访问组件测试页面
+    await page.goto('http://localhost:3000/component-test');
+    await page.waitForSelector('.component-ready', { state: 'visible' });
+    
+    // 执行组件视觉测试
+    const componentResults = await test.step('组件视觉测试', async () => {
+      // 对不同组件进行截图
+      await page.screenshot({ path: './screenshots/button-component.png', selector: '.button-component' });
+      await page.screenshot({ path: './screenshots/input-component.png', selector: '.input-component' });
+      
+      // 与基准图像进行比较
+      const buttonDiff = await compareScreenshots('./screenshots/button-component.png', './baseline/button-component.png');
+      const inputDiff = await compareScreenshots('./screenshots/input-component.png', './baseline/input-component.png');
+      
+      // 验证视觉差异在可接受范围内
+      expect(buttonDiff.diffPercentage).toBeLessThan(0.1);
+      expect(inputDiff.diffPercentage).toBeLessThan(0.1);
+      
+      return { 
+        success: true, 
+        message: '组件视觉测试通过',
+        diffResults: {
+          button: buttonDiff,
+          input: inputDiff
+        }
+      };
+    });
+    
+    // 执行响应式布局测试
+    const responsiveResults = await test.step('响应式布局测试', async () => {
+      await page.goto('http://localhost:3000/responsive-test');
+      
+      // 测试不同设备布局
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await page.screenshot({ path: './screenshots/desktop-layout.png' });
+      
+      await page.setViewportSize({ width: 768, height: 1024 });
+      await page.screenshot({ path: './screenshots/tablet-layout.png' });
+      
+      await page.setViewportSize({ width: 375, height: 667 });
+      await page.screenshot({ path: './screenshots/mobile-layout.png' });
+      
+      return { success: true, message: '响应式布局测试通过' };
+    });
+    
+    console.log('视觉自动化测试节点执行成功');
+    return {
+      status: 'success',
+      results: {
+        component: componentResults,
+        responsive: responsiveResults
+      },
+      executionTime: 4750, // ms
+      memoryUsage: 180, // MB
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('视觉自动化测试节点执行失败', error);
+    return {
+      status: 'error',
+      error: error.message,
+      executionTime: 2250, // ms
+      timestamp: new Date().toISOString()
+    };
+  }
+}`
+      },
+      'general-agent': {
+        filename: 'general_agent.js',
+        content: `// 通用智能体节点代码
+/**
+ * 通用智能体实现
+ * @param {Object} input - 用户输入
+ * @param {Object} context - 执行上下文
+ * @returns {Object} - 处理结果
+ */
+async function generalAgent(input, context) {
+  console.log('通用智能体开始处理用户输入');
+  
+  try {
+    // 解析用户输入
+    const userInput = input.message || '';
+    if (!userInput) {
+      throw new Error('用户输入为空');
+    }
+    
+    // 记录用户输入
+    await context.recordUserInput(userInput);
+    
+    // 触发SuperMemory记忆检查
+    const memoryCheck = await context.triggerMemoryCheck();
+    console.log('SuperMemory记忆检查结果:', memoryCheck);
+    
+    // 将输入传递给MCP协调器
+    const result = await context.sendToMCP(userInput);
+    
+    return {
+      status: 'success',
+      result: result,
+      memoryStatus: memoryCheck,
+      executionTime: 850, // ms
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('通用智能体处理失败', error);
+    return {
+      status: 'error',
+      error: error.message,
+      executionTime: 450, // ms
+      timestamp: new Date().toISOString()
+    };
+  }
+}`
+      },
+      'mcp-coordinator': {
+        filename: 'mcp_coordinator.js',
+        content: `// MCP协调器节点代码
+/**
+ * MCP协调器实现
+ * @param {Object} input - 输入数据
+ * @param {Object} context - 执行上下文
+ * @returns {Object} - 协调结果
+ */
+async function mcpCoordinator(input, context) {
+  console.log('MCP协调器开始工作');
+  
+  try {
+    // 分析输入
+    const inputData = input.data || input;
+    
+    // 创建任务计划
+    const plan = await context.createTaskPlan(inputData);
+    console.log('任务计划创建成功:', plan);
+    
+    // 分配任务给各子系统
+    const plannerTask = context.assignTask('mcp-planner', plan);
+    const recorderTask = context.assignTask('thought-recorder', { action: 'record', data: inputData });
+    const releaseTask = context.assignTask('release-manager', { action: 'check' });
+    
+    // 等待所有任务完成
+    const [plannerResult, recorderResult, releaseResult] = await Promise.all([
+      plannerTask,
+      recorderTask,
+      releaseTask
+    ]);
+    
+    // 整合结果
+    const result = {
+      planner: plannerResult,
+      recorder: recorderResult,
+      release: releaseResult
+    };
+    
+    return {
+      status: 'success',
+      result: result,
+      executionTime: 1250, // ms
+      memoryUsage: 95, // MB
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('MCP协调器执行失败', error);
+    return {
+      status: 'error',
+      error: error.message,
+      executionTime: 750, // ms
+      timestamp: new Date().toISOString()
+    };
+  }
+}`
+      },
+      'supermemory': {
+        filename: 'supermemory.js',
+        content: `// SuperMemory.ai 集成代码
+const axios = require('axios');
+
+/**
+ * SuperMemory API客户端
+ */
+class SuperMemoryClient {
+  constructor(apiKey, options = {}) {
+    this.apiKey = apiKey;
+    this.baseUrl = options.baseUrl || 'https://api.supermemory.ai/v1';
+    this.timeout = options.timeout || 30000;
+  }
+  
+  /**
+   * 创建HTTP客户端
+   * @returns {Object} - Axios实例
+   */
+  createHttpClient() {
+    return axios.create({
+      baseURL: this.baseUrl,
+      timeout: this.timeout,
+      headers: {
+        'Authorization': \`Bearer \${this.apiKey}\`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+  
+  /**
+   * 记录记忆
+   * @param {Object} memory - 记忆数据
+   * @returns {Promise<Object>} - API响应
+   */
+  async recordMemory(memory) {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.post('/memories', memory);
+      return response.data;
+    } catch (error) {
+      console.error('记录记忆失败:', error.message);
+      throw error;
+    }
+  }
+  
+  /**
+   * 检索记忆
+   * @param {Object} query - 查询条件
+   * @returns {Promise<Object>} - 检索结果
+   */
+  async retrieveMemories(query) {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.get('/memories', { params: query });
+      return response.data;
+    } catch (error) {
+      console.error('检索记忆失败:', error.message);
+      throw error;
+    }
+  }
+  
+  /**
+   * 检查记忆状态
+   * @returns {Promise<Object>} - 记忆状态
+   */
+  async checkMemoryStatus() {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.get('/status');
+      return response.data;
+    } catch (error) {
+      console.error('检查记忆状态失败:', error.message);
+      throw error;
+    }
+  }
+  
+  /**
+   * 触发记忆检查
+   * @param {string} trigger - 触发器名称
+   * @returns {Promise<Object>} - 检查结果
+   */
+  async triggerMemoryCheck(trigger) {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.post('/triggers', { name: trigger });
+      return response.data;
+    } catch (error) {
+      console.error('触发记忆检查失败:', error.message);
+      throw error;
+    }
+  }
+}
+
+module.exports = SuperMemoryClient;`
+      }
+    };
+    
+    return codeMapping[nodeId] || null;
+  };
+  
+  // 获取当前选中节点的相关代码
+  const selectedNodeCode = getNodeRelatedCode(selectedNodeId);
+  
   // 根据测试类型渲染不同的代码内容
   const renderTestCode = () => {
-    switch (testType) {
+    // 如果有选中节点且有对应代码，优先显示节点相关代码
+    if (selectedNodeId && selectedNodeCode) {
+      return (
+        <div className="code-section">
+          <h3 className="code-section-title">节点代码: {selectedNodeId}</h3>
+          
+          <div className="code-block">
+            <div className="code-header">
+              <span className="code-filename">{selectedNodeCode.filename}</span>
+              <div className="code-actions">
+                <button className="code-action-button">
+                  <span className="code-action-icon">📋</span>
+                  复制
+                </button>
+                <button className="code-action-button">
+                  <span className="code-action-icon">▶️</span>
+                  运行
+                </button>
+              </div>
+            </div>
+            
+            <pre className="code-content-block">
+              <code>
+                {selectedNodeCode.content}
+              </code>
+            </pre>
+          </div>
+        </div>
+      );
+    }
+    
+    // 如果没有选中节点或没有对应代码，显示测试类型相关代码
+    switch (activeTab) {
       case 'integration':
         return (
           <>
@@ -516,13 +974,156 @@ module.exports = {
     <div className="code-view">
       <h2 className="section-title">代码视图</h2>
       
+      {selectedNodeId && (
+        <div className="selected-node-info">
+          <span className="selected-node-label">当前选中节点:</span>
+          <span className="selected-node-id">{selectedNodeId}</span>
+        </div>
+      )}
+      
       <div className="code-tabs">
-        <button className={`code-tab ${testType === 'integration' ? 'active' : ''}`}>集成测试</button>
-        <button className={`code-tab ${testType === 'e2e' ? 'active' : ''}`}>端到端测试</button>
-        <button className={`code-tab ${testType === 'visual' ? 'active' : ''}`}>视觉自动化测试</button>
+        <button 
+          className={`code-tab ${activeTab === 'integration' ? 'active' : ''}`}
+          onClick={() => setActiveTab('integration')}
+        >
+          集成测试
+        </button>
+        <button 
+          className={`code-tab ${activeTab === 'e2e' ? 'active' : ''}`}
+          onClick={() => setActiveTab('e2e')}
+        >
+          端到端测试
+        </button>
+        <button 
+          className={`code-tab ${activeTab === 'visual' ? 'active' : ''}`}
+          onClick={() => setActiveTab('visual')}
+        >
+          视觉自动化测试
+        </button>
       </div>
       
       <div className="code-content">
+        {/* SuperMemory程序部分 */}
+        {!selectedNodeId && (
+          <div className="code-section">
+            <h3 className="code-section-title">SuperMemory程序</h3>
+            
+            <div className="code-block">
+              <div className="code-header">
+                <span className="code-filename">supermemory.js</span>
+                <div className="code-actions">
+                  <button className="code-action-button">
+                    <span className="code-action-icon">📋</span>
+                    复制
+                  </button>
+                  <button className="code-action-button">
+                    <span className="code-action-icon">▶️</span>
+                    运行
+                  </button>
+                </div>
+              </div>
+              
+              <pre className="code-content-block">
+                <code>
+{`// SuperMemory.ai 集成代码
+const axios = require('axios');
+
+/**
+ * SuperMemory API客户端
+ */
+class SuperMemoryClient {
+  constructor(apiKey, options = {}) {
+    this.apiKey = apiKey;
+    this.baseUrl = options.baseUrl || 'https://api.supermemory.ai/v1';
+    this.timeout = options.timeout || 30000;
+  }
+  
+  /**
+   * 创建HTTP客户端
+   * @returns {Object} - Axios实例
+   */
+  createHttpClient() {
+    return axios.create({
+      baseURL: this.baseUrl,
+      timeout: this.timeout,
+      headers: {
+        'Authorization': \`Bearer \${this.apiKey}\`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+  
+  /**
+   * 记录记忆
+   * @param {Object} memory - 记忆数据
+   * @returns {Promise<Object>} - API响应
+   */
+  async recordMemory(memory) {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.post('/memories', memory);
+      return response.data;
+    } catch (error) {
+      console.error('记录记忆失败:', error.message);
+      throw error;
+    }
+  }
+  
+  /**
+   * 检索记忆
+   * @param {Object} query - 查询条件
+   * @returns {Promise<Object>} - 检索结果
+   */
+  async retrieveMemories(query) {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.get('/memories', { params: query });
+      return response.data;
+    } catch (error) {
+      console.error('检索记忆失败:', error.message);
+      throw error;
+    }
+  }
+  
+  /**
+   * 检查记忆状态
+   * @returns {Promise<Object>} - 记忆状态
+   */
+  async checkMemoryStatus() {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.get('/status');
+      return response.data;
+    } catch (error) {
+      console.error('检查记忆状态失败:', error.message);
+      throw error;
+    }
+  }
+  
+  /**
+   * 触发记忆检查
+   * @param {string} trigger - 触发器名称
+   * @returns {Promise<Object>} - 检查结果
+   */
+  async triggerMemoryCheck(trigger) {
+    const client = this.createHttpClient();
+    try {
+      const response = await client.post('/triggers', { name: trigger });
+      return response.data;
+    } catch (error) {
+      console.error('触发记忆检查失败:', error.message);
+      throw error;
+    }
+  }
+}
+
+module.exports = SuperMemoryClient;`}
+                </code>
+              </pre>
+            </div>
+          </div>
+        )}
+        
         {renderTestCode()}
       </div>
     </div>

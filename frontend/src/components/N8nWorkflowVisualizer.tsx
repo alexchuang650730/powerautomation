@@ -16,12 +16,18 @@ export interface WorkflowNode {
   data: {
     name: string;
     description?: string;
-    status?: string;
+    status?: 'idle' | 'running' | 'success' | 'error' | 'warning';
+    executionState?: 'pending' | 'active' | 'completed' | 'failed';
     timestamp?: string;
     type: string;
     condition?: string;
     errorType?: string;
     errorMessage?: string;
+    executionTime?: number; // 执行时间（毫秒）
+    memoryUsage?: number; // 内存使用（MB）
+    cpuUsage?: number; // CPU使用率（%）
+    logRefs?: string[]; // 关联的日志ID
+    codeRefs?: string[]; // 关联的代码文件
   };
 }
 

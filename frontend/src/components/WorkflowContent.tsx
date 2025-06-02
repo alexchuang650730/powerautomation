@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/WorkflowContent.css';
 import N8nWorkflowVisualizer, { WorkflowNode, WorkflowConnection } from './N8nWorkflowVisualizer';
 import IntegratedWorkflowView from './IntegratedWorkflowView';
 
 interface WorkflowContentProps {
   agentType: string;
+  onNodeSelect?: (nodeId: string | null) => void;
 }
 
-const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
+const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType, onNodeSelect }) => {
   const [activeWorkflow, setActiveWorkflow] = useState('automation-test');
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   
   // 自动化测试工作流节点数据
   const automationTestNodes: WorkflowNode[] = [
@@ -19,9 +21,15 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '集成测试',
         description: '测试组件间的交互',
-        status: '活跃',
+        status: 'success',
+        executionState: 'completed',
         timestamp: '2025-06-02 10:30',
-        type: 'test'
+        type: 'test',
+        executionTime: 1250,
+        memoryUsage: 85,
+        cpuUsage: 15,
+        logRefs: ['log-001', 'log-002'],
+        codeRefs: ['integration_test.js']
       }
     },
     {
@@ -31,9 +39,15 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '端到端测试',
         description: '测试完整工作流程',
-        status: '已执行',
+        status: 'running',
+        executionState: 'active',
         timestamp: '2025-06-02 10:32',
-        type: 'test'
+        type: 'test',
+        executionTime: 3250,
+        memoryUsage: 120,
+        cpuUsage: 25,
+        logRefs: ['log-003'],
+        codeRefs: ['e2e_test.js']
       }
     },
     {
@@ -43,9 +57,16 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '视觉自动化测试',
         description: '测试UI界面和视觉元素',
-        status: '已执行',
+        status: 'error',
+        executionState: 'failed',
         timestamp: '2025-06-02 10:33',
-        type: 'test'
+        type: 'test',
+        executionTime: 2250,
+        memoryUsage: 180,
+        cpuUsage: 35,
+        errorMessage: '图像比较失败: 差异超过阈值',
+        logRefs: ['log-004', 'log-005'],
+        codeRefs: ['visual_test.js', 'visual-comparison.js']
       }
     }
   ];
@@ -75,9 +96,15 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '通用智能体',
         description: '接收用户输入',
-        status: '活跃',
+        status: 'success',
+        executionState: 'completed',
         timestamp: '2025-06-02 10:30',
-        type: 'agent'
+        type: 'agent',
+        executionTime: 850,
+        memoryUsage: 65,
+        cpuUsage: 10,
+        logRefs: ['log-101', 'log-102'],
+        codeRefs: ['general_agent.js']
       }
     },
     {
@@ -87,9 +114,15 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: 'MCP协调器',
         description: '协调各子系统工作',
-        status: '已执行',
+        status: 'success',
+        executionState: 'completed',
         timestamp: '2025-06-02 10:32',
-        type: 'coordinator'
+        type: 'coordinator',
+        executionTime: 1250,
+        memoryUsage: 95,
+        cpuUsage: 20,
+        logRefs: ['log-103'],
+        codeRefs: ['mcp_coordinator.js']
       }
     },
     {
@@ -99,9 +132,15 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: 'MCP规划器',
         description: '规划问题解决方案',
-        status: '已执行',
+        status: 'running',
+        executionState: 'active',
         timestamp: '2025-06-02 10:33',
-        type: 'planner'
+        type: 'planner',
+        executionTime: 2150,
+        memoryUsage: 110,
+        cpuUsage: 30,
+        logRefs: ['log-104', 'log-105'],
+        codeRefs: ['mcp_planner.js']
       }
     },
     {
@@ -111,9 +150,15 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '思维行为记录器',
         description: '记录任务进度和历史',
-        status: '已执行',
+        status: 'success',
+        executionState: 'completed',
         timestamp: '2025-06-02 10:34',
-        type: 'recorder'
+        type: 'recorder',
+        executionTime: 950,
+        memoryUsage: 75,
+        cpuUsage: 15,
+        logRefs: ['log-106'],
+        codeRefs: ['thought_recorder.js']
       }
     },
     {
@@ -123,9 +168,16 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '发布管理器',
         description: '管理代码发布和部署',
-        status: '已执行',
+        status: 'warning',
+        executionState: 'completed',
         timestamp: '2025-06-02 10:35',
-        type: 'manager'
+        type: 'manager',
+        executionTime: 1850,
+        memoryUsage: 105,
+        cpuUsage: 25,
+        errorMessage: '权限不足，无法推送到主分支',
+        logRefs: ['log-107', 'log-108'],
+        codeRefs: ['release_manager.js']
       }
     },
     {
@@ -135,9 +187,30 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: '问题解决器',
         description: '解决具体问题',
-        status: '已执行',
+        status: 'idle',
+        executionState: 'pending',
         timestamp: '2025-06-02 10:36',
-        type: 'solver'
+        type: 'solver',
+        logRefs: ['log-109'],
+        codeRefs: ['problem_solver.js']
+      }
+    },
+    {
+      id: 'supermemory',
+      type: 'action',
+      position: { x: 700, y: 500 },
+      data: {
+        name: 'SuperMemory',
+        description: '记忆管理与检索',
+        status: 'success',
+        executionState: 'completed',
+        timestamp: '2025-06-02 10:36',
+        type: 'memory',
+        executionTime: 750,
+        memoryUsage: 65,
+        cpuUsage: 10,
+        logRefs: ['log-110'],
+        codeRefs: ['supermemory.js']
       }
     },
     {
@@ -147,9 +220,12 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
       data: {
         name: 'Manus.im',
         description: '执行最终问题解决',
-        status: '已执行',
+        status: 'idle',
+        executionState: 'pending',
         timestamp: '2025-06-02 10:37',
-        type: 'executor'
+        type: 'executor',
+        logRefs: ['log-111'],
+        codeRefs: ['manus_im.js']
       }
     }
   ];
@@ -182,17 +258,42 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
     },
     {
       id: 'conn5',
+      source: 'mcp-coordinator',
+      target: 'supermemory',
+      label: '记忆'
+    },
+    {
+      id: 'conn6',
       source: 'mcp-planner',
       target: 'problem-solver',
       label: '执行'
     },
     {
-      id: 'conn6',
+      id: 'conn7',
       source: 'problem-solver',
       target: 'manus-im',
       label: '解决'
     }
   ];
+
+  // 处理节点选择
+  const handleNodeSelect = (nodeId: string) => {
+    const newSelectedId = nodeId === selectedNodeId ? null : nodeId;
+    setSelectedNodeId(newSelectedId);
+    
+    // 通知父组件节点选择变化
+    if (onNodeSelect) {
+      onNodeSelect(newSelectedId);
+    }
+  };
+
+  // 当工作流切换时，重置选中的节点
+  useEffect(() => {
+    setSelectedNodeId(null);
+    if (onNodeSelect) {
+      onNodeSelect(null);
+    }
+  }, [activeWorkflow, onNodeSelect]);
 
   // 根据不同智能体类型渲染不同的工作流内容
   const renderAgentSpecificWorkflows = () => {
@@ -227,7 +328,10 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                   </ul>
                 </div>
                 <IntegratedWorkflowView>
-                  <N8nWorkflowVisualizer nodes={automationTestNodes} connections={automationTestConnections} />
+                  <N8nWorkflowVisualizer 
+                    nodes={automationTestNodes} 
+                    connections={automationTestConnections} 
+                  />
                 </IntegratedWorkflowView>
               </div>
             )}
@@ -254,7 +358,6 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                         <li>更新以及完成的工作</li>
                       </ul>
                     </div>
-                    {/* SuperMemory记忆检查已移至日志视图 */}
                     <div className="submodule">
                       <div className="submodule-icon">🚀</div>
                       <h4>发布管理</h4>
@@ -274,7 +377,10 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
                   </div>
                 </div>
                 <IntegratedWorkflowView>
-                  <N8nWorkflowVisualizer nodes={agentDesignNodes} connections={agentDesignConnections} />
+                  <N8nWorkflowVisualizer 
+                    nodes={agentDesignNodes} 
+                    connections={agentDesignConnections} 
+                  />
                 </IntegratedWorkflowView>
               </div>
             )}
@@ -319,6 +425,23 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType }) => {
   return (
     <div className="workflow-content">
       <h2 className="section-title">工作流节点及工作流</h2>
+      
+      {selectedNodeId && (
+        <div className="selected-node-info">
+          <span className="selected-node-label">当前选中节点:</span>
+          <span className="selected-node-id">{selectedNodeId}</span>
+          <button 
+            className="clear-selection-button"
+            onClick={() => {
+              setSelectedNodeId(null);
+              if (onNodeSelect) onNodeSelect(null);
+            }}
+          >
+            清除选择
+          </button>
+        </div>
+      )}
+      
       {renderAgentSpecificWorkflows()}
     </div>
   );
