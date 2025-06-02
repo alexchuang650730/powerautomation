@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import './IntegratedWorkflowView.css';
+import '../styles/IntegratedWorkflowView.css';
 
 interface IntegratedWorkflowViewProps {
   children: ReactNode;

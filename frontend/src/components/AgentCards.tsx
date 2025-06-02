@@ -1,5 +1,5 @@
 import React from 'react';
-import './AgentCards.css';
+import '../styles/AgentCards.css';
 
 interface Agent {
   id: string;
