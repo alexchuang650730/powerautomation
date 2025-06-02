@@ -67,7 +67,7 @@ function App() {
   const renderContent = () => {
     switch (activeMenu) {
       case 'dashboard':
-        return <DashboardContent />;
+        return <DashboardContent agentType={selectedAgentType} />;
       case 'agents':
         return (
           <>
@@ -87,7 +87,7 @@ function App() {
           </>
         );
       case 'workflows':
-        return <WorkflowContent />;
+        return <WorkflowContent agentType={selectedAgentType} />;
       case 'settings':
         return (
           <div className="settings-section">
