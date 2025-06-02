@@ -5,9 +5,19 @@ interface InputAreaProps {
   onInputChange: (text: string) => void;
   onSubmit: () => void;
   onFileUpload: (files: FileList) => void;
+  selectedAgentType?: string;
+  selectedAgentName?: string;
+  selectedAgentIcon?: string;
 }
 
-const InputArea: React.FC<InputAreaProps> = ({ onInputChange, onSubmit, onFileUpload }) => {
+const InputArea: React.FC<InputAreaProps> = ({ 
+  onInputChange, 
+  onSubmit, 
+  onFileUpload, 
+  selectedAgentType,
+  selectedAgentName,
+  selectedAgentIcon
+}) => {
   const [inputText, setInputText] = useState('');
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +38,12 @@ const InputArea: React.FC<InputAreaProps> = ({ onInputChange, onSubmit, onFileUp
   
   return (
     <div className="input-area">
+      {selectedAgentName && (
+        <div className="selected-agent-status">
+          <span className="agent-icon">{selectedAgentIcon}</span>
+          <span>{selectedAgentName}</span>
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -46,7 +62,7 @@ const InputArea: React.FC<InputAreaProps> = ({ onInputChange, onSubmit, onFileUp
             />
             <span className="file-icon">📎</span>
           </label>
-          <button type="submit" className="submit-button">发送</button>
+          <button type="submit" className="submit-button">➡️</button>
         </div>
       </form>
     </div>

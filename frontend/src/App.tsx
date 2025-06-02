@@ -157,7 +157,7 @@ function App() {
       
       <div className="main-content">
         <header className="app-header">
-          <h1>企业多智能体协同平台 PowerAutomation</h1>
+          <h1><span className="platform-title">企业多智能体协同平台</span> PowerAutomation</h1>
           <div className="header-controls">
             <button className="menu-button">
               <span></span>
@@ -172,14 +172,14 @@ function App() {
             onInputChange={handleInputChange} 
             onSubmit={handleSubmit} 
             onFileUpload={handleFileUpload}
+            selectedAgentType={selectedAgentType}
+            selectedAgentName={agentTypes.find(agent => agent.id === selectedAgentType)?.name}
+            selectedAgentIcon={agentTypes.find(agent => agent.id === selectedAgentType)?.icon}
           />
           
           <div className="action-buttons">
             <button className="upload-button">
-              <span className="icon">⬆️</span> 上传
-            </button>
-            <button className="source-button">
-              <span className="icon">⚡</span> 资源
+              <span className="icon">⬆️</span>
             </button>
           </div>
           

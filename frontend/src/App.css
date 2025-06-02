@@ -6,7 +6,7 @@
 }
 
 .main-content {
-  flex: 1;
+  flex: 4;
   padding: 0;
   background-color: #f5f7fa;
 }
@@ -24,6 +24,10 @@
   margin: 0;
   font-size: 24px;
   color: #333;
+}
+
+.app-header h1 .platform-title {
+  color: #2196F3;
 }
 
 .header-controls {
