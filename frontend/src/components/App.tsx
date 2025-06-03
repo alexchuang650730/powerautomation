@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './App.css';
-import Sidebar from './components/Sidebar';
-import DashboardContent from './components/DashboardContent';
-import WorkflowContent from './components/WorkflowContent';
-import LogView from './components/LogView';
-import CodeView from './components/CodeView/CodeView';
-import SavepointManager from './components/SavepointManager';
-import InputArea from './components/InputArea';
+import Sidebar from './Sidebar';
+import DashboardContent from './DashboardContent';
+import WorkflowContent from './WorkflowContent';
+import LogView from './LogView';
+import CodeView from './CodeView/CodeView';
+import SavepointManager from './SavepointManager';
+import InputArea from './InputArea';
 
 function App() {
   const [activeSection, setActiveSection] = useState('dashboard');

@@ -42,15 +42,25 @@ export interface WorkflowConnection {
 // 定义组件Props
 interface N8nWorkflowVisualizerProps {
   nodes: WorkflowNode[];
-  connections: WorkflowConnection[];
+  connections?: WorkflowConnection[];
+  selectedNodeId?: string | null;
+  onNodeSelect?: (nodeId: string) => void;
 }
 
-const N8nWorkflowVisualizer: React.FC<N8nWorkflowVisualizerProps> = ({ nodes, connections }) => {
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+const N8nWorkflowVisualizer: React.FC<N8nWorkflowVisualizerProps> = ({ nodes, connections = [], selectedNodeId: propSelectedNodeId, onNodeSelect }) => {
+  const [internalSelectedNodeId, setInternalSelectedNodeId] = useState<string | null>(null);
+  
+  // 使用props中的selectedNodeId或内部状态
+  const selectedNodeId = propSelectedNodeId !== undefined ? propSelectedNodeId : internalSelectedNodeId;
 
   // 处理节点点击事件
   const handleNodeClick = (id: string) => {
-    setSelectedNodeId(id === selectedNodeId ? null : id);
+    const newSelectedId = id === selectedNodeId ? null : id;
+    if (onNodeSelect) {
+      onNodeSelect(id);
+    } else {
+      setInternalSelectedNodeId(newSelectedId);
+    }
   };
 
   // 渲染节点

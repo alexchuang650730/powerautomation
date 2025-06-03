@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useWorkflowContext } from '../App';
-import N8nWorkflowVisualizer from './N8nWorkflowVisualizer';
+import N8nWorkflowVisualizer, { WorkflowNode, NodeType } from './N8nWorkflowVisualizer';
 import '../styles/WorkflowContent.css';
 
 interface WorkflowContentProps {
   agentType?: string;
+  onNodeSelect?: (nodeId: string | null) => void;
+  activeWorkflowType?: string;
+  onWorkflowTypeChange?: (type: string) => void;
 }
 
 const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType = 'general' }) => {
@@ -23,41 +26,44 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType = 'general'
   const automationTestNodes = [
     {
       id: 'integration-test',
-      type: 'action',
-      name: '集成测试',
-      description: '测试组件间的交互',
-      status: 'success',
+      type: 'action' as NodeType,
       position: { x: 100, y: 100 },
-      metrics: {
-        executionTime: '1.5s',
-        memoryUsage: '85MB',
-        cpuUsage: '15%'
+      data: {
+        name: '集成测试',
+        description: '测试组件间的交互',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 1.5,
+        memoryUsage: 85,
+        cpuUsage: 15
       }
     },
     {
       id: 'e2e-test',
-      type: 'action',
-      name: '端到端测试',
-      description: '测试完整工作流程',
-      status: 'success',
+      type: 'action' as NodeType,
       position: { x: 100, y: 250 },
-      metrics: {
-        executionTime: '4.2s',
-        memoryUsage: '120MB',
-        cpuUsage: '25%'
+      data: {
+        name: '端到端测试',
+        description: '测试完整工作流程',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 4.2,
+        memoryUsage: 120,
+        cpuUsage: 25
       }
     },
     {
       id: 'visual-test',
-      type: 'action',
-      name: '视觉自动化测试',
-      description: '测试UI界面和视觉元素',
-      status: 'error',
+      type: 'action' as NodeType,
       position: { x: 100, y: 400 },
-      metrics: {
-        executionTime: '3.7s',
-        memoryUsage: '180MB',
-        cpuUsage: '35%'
+      data: {
+        name: '视觉自动化测试',
+        description: '测试UI界面和视觉元素',
+        status: 'error' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 3.7,
+        memoryUsage: 180,
+        cpuUsage: 35
       }
     }
   ];
@@ -66,91 +72,97 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType = 'general'
   const agentDesignNodes = [
     {
       id: 'general-agent',
-      type: 'trigger',
-      name: '通用智能体',
-      description: '处理用户输入',
-      status: 'success',
+      type: 'trigger' as NodeType,
       position: { x: 100, y: 100 },
-      metrics: {
-        executionTime: '0.8s',
-        memoryUsage: '100MB',
-        cpuUsage: '20%'
+      data: {
+        name: '通用智能体',
+        description: '处理用户输入',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'trigger',
+        executionTime: 0.8,
+        memoryUsage: 100,
+        cpuUsage: 20
       }
     },
     {
       id: 'mcp-coordinator',
-      type: 'action',
-      name: 'MCP协调器',
-      description: '协调多个子系统和组件的工作',
-      status: 'success',
+      type: 'action' as NodeType,
       position: { x: 300, y: 100 },
-      metrics: {
-        executionTime: '1.5s',
-        memoryUsage: '75MB',
-        cpuUsage: '15%'
+      data: {
+        name: 'MCP协调器',
+        description: '协调多个子系统和组件的工作',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 1.5,
+        memoryUsage: 75,
+        cpuUsage: 15
       }
     },
     {
       id: 'mcp-planner',
-      type: 'action',
-      name: 'MCP规划器',
-      description: '创建详细的执行计划',
-      status: 'success',
+      type: 'action' as NodeType,
       position: { x: 500, y: 100 },
-      metrics: {
-        executionTime: '2.1s',
-        memoryUsage: '110MB',
-        cpuUsage: '25%'
+      data: {
+        name: 'MCP规划器',
+        description: '创建详细的执行计划',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 2.1,
+        memoryUsage: 110,
+        cpuUsage: 25
       }
     },
     {
       id: 'thought-recorder',
-      type: 'action',
-      name: '思维行为记录器',
-      description: '记录智能体的思考过程',
-      status: 'success',
+      type: 'action' as NodeType,
       position: { x: 300, y: 250 },
-      metrics: {
-        executionTime: '1.2s',
-        memoryUsage: '60MB',
-        cpuUsage: '10%'
+      data: {
+        name: '思维行为记录器',
+        description: '记录智能体的思考过程',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 1.2,
+        memoryUsage: 60,
+        cpuUsage: 10
       }
     },
     {
       id: 'release-manager',
-      type: 'action',
-      name: '发布管理器',
-      description: '管理系统版本发布和更新',
-      status: 'warning',
+      type: 'action' as NodeType,
       position: { x: 500, y: 250 },
-      metrics: {
-        executionTime: '3.5s',
-        memoryUsage: '50MB',
-        cpuUsage: '12%'
+      data: {
+        name: '发布管理器',
+        description: '管理系统版本发布和更新',
+        status: 'warning' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 3.5,
+        memoryUsage: 50,
+        cpuUsage: 12
       }
     },
     {
       id: 'supermemory',
-      type: 'action',
-      name: 'SuperMemory',
-      description: '管理智能体的记忆系统',
-      status: 'success',
+      type: 'action' as NodeType,
       position: { x: 700, y: 250 },
-      metrics: {
-        executionTime: '0.6s',
-        memoryUsage: '120MB',
-        cpuUsage: '18%'
+      data: {
+        name: 'SuperMemory',
+        description: '管理智能体的记忆系统',
+        status: 'success' as 'idle' | 'running' | 'success' | 'error' | 'warning',
+        type: 'action',
+        executionTime: 0.6,
+        memoryUsage: 120,
+        cpuUsage: 18
       }
     }
   ];
 
   // 根据工作流类型获取对应的节点数据
-  const getWorkflowNodes = (type: string) => {
+  const getWorkflowNodes = (type: string): WorkflowNode[] => {
     switch (type) {
       case 'automation-test':
-        return automationTestNodes;
+        return automationTestNodes as WorkflowNode[];
       case 'agent-design':
-        return agentDesignNodes;
+        return agentDesignNodes as WorkflowNode[];
       default:
         return [];
     }
@@ -226,26 +238,26 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType = 'general'
               {getWorkflowNodes(activeWorkflowType).filter(node => node.id === selectedNodeId).map(node => (
                 <div key={node.id} className="node-detail-card">
                   <div className="node-header">
-                    <span className="node-name">{node.name}</span>
-                    <span className={`node-status ${node.status}`}>
-                      {node.status === 'success' ? '成功' : 
-                       node.status === 'error' ? '错误' : 
-                       node.status === 'warning' ? '警告' : '待定'}
+                    <span className="node-name">{node.data.name}</span>
+                    <span className={`node-status ${node.data.status}`}>
+                      {node.data.status === 'success' ? '成功' : 
+                       node.data.status === 'error' ? '错误' : 
+                       node.data.status === 'warning' ? '警告' : '待定'}
                     </span>
                   </div>
-                  <div className="node-description">{node.description}</div>
+                  <div className="node-description">{node.data.description}</div>
                   <div className="node-metrics">
                     <div className="metric">
                       <span className="metric-label">执行时间:</span>
-                      <span className="metric-value">{node.metrics.executionTime}</span>
+                      <span className="metric-value">{node.data.executionTime}s</span>
                     </div>
                     <div className="metric">
                       <span className="metric-label">内存使用:</span>
-                      <span className="metric-value">{node.metrics.memoryUsage}</span>
+                      <span className="metric-value">{node.data.memoryUsage}MB</span>
                     </div>
                     <div className="metric">
                       <span className="metric-label">CPU使用率:</span>
-                      <span className="metric-value">{node.metrics.cpuUsage}</span>
+                      <span className="metric-value">{node.data.cpuUsage}%</span>
                     </div>
                   </div>
                   <div className="node-actions">

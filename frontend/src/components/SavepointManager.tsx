@@ -11,6 +11,8 @@ interface Savepoint {
   deployment_status: 'pending' | 'success' | 'failed';
   created_at: string;
   tags: string[];
+  status: 'stable' | 'unstable';
+  workflowType?: string;
 }
 
 interface RollbackHistory {

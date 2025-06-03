@@ -24,6 +24,8 @@ interface MemoryStatus {
 
 interface LogViewProps {
   agentType?: string;
+  selectedNodeId?: string | null;
+  workflowType?: string;
 }
 
 const LogView: React.FC<LogViewProps> = ({ agentType = 'general' }) => {
@@ -344,7 +346,7 @@ const LogView: React.FC<LogViewProps> = ({ agentType = 'general' }) => {
   };
 
   // 根据工作流类型获取对应的记忆状态
-  const getMemoryStatusForWorkflow = (type: string) => {
+  const getMemoryStatusForWorkflow = (type: string): MemoryStatus => {
     if (type === 'agent-design') {
       return {
         status: 'success',

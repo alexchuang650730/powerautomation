@@ -6,10 +6,16 @@ interface ConditionNodeProps extends SimpleNodeProps {
   data?: {
     name?: string;
     description?: string;
-    status?: string;
+    status?: 'idle' | 'running' | 'success' | 'error' | 'warning';
+    executionState?: 'pending' | 'active' | 'completed' | 'failed';
     timestamp?: string;
     type?: string;
     condition?: string;
+    executionTime?: number;
+    memoryUsage?: number;
+    cpuUsage?: number;
+    logRefs?: string[];
+    codeRefs?: string[];
   };
 }
 

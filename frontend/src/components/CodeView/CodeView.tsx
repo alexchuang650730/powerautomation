@@ -4,6 +4,8 @@ import './CodeView.css';
 
 interface CodeViewProps {
   agentType?: string;
+  selectedNodeId?: string | null;
+  workflowType?: string;
 }
 
 const CodeView: React.FC<CodeViewProps> = ({ agentType = 'general' }) => {
