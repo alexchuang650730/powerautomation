@@ -104,58 +104,7 @@ function App() {
             refreshTrigger,
             triggerRefresh
           }}>
-            <div className="workflow-container">
-              <div className="workflow-tabs">
-                <button 
-                  className={`workflow-tab ${activeWorkflowType === 'automation-test' ? 'active' : ''}`}
-                  onClick={() => handleWorkflowTypeChange('automation-test')}
-                >
-                  自动化测试工作流
-                </button>
-                <button 
-                  className={`workflow-tab ${activeWorkflowType === 'agent-design' ? 'active' : ''}`}
-                  onClick={() => handleWorkflowTypeChange('agent-design')}
-                >
-                  自动化智能体设计工作流
-                </button>
-              </div>
-              <div className="workflow-main">
-                <WorkflowContent agentType={activeAgent} />
-                <SavepointManager />
-              </div>
-              <div className="workflow-sidebar">
-                <LogView agentType={activeAgent} />
-                <CodeView agentType={activeAgent} />
-              </div>
-              <div className="workflow-description">
-                <h3>{activeWorkflowType === 'automation-test' ? '自动化测试工作流' : '自动化智能体设计工作流'}</h3>
-                <p>
-                  {activeWorkflowType === 'automation-test' 
-                    ? '通过自动化测试工作流，系统可以自动执行测试用例、收集结果并生成报告，提高测试效率和准确性。' 
-                    : '自动化智能体设计工作流支持智能体的创建、训练和优化，实现智能体能力的持续迭代和提升。'}
-                </p>
-                <div className="sub-modules">
-                  <h4>子模块</h4>
-                  <ul>
-                    {activeWorkflowType === 'automation-test' ? (
-                      <>
-                        <li>测试用例管理</li>
-                        <li>自动化执行引擎</li>
-                        <li>结果分析与报告</li>
-                        <li>持续集成</li>
-                      </>
-                    ) : (
-                      <>
-                        <li>智能体能力定义</li>
-                        <li>训练数据准备</li>
-                        <li>模型训练与评估</li>
-                        <li>版本管理与部署</li>
-                      </>
-                    )}
-                  </ul>
-                </div>
-              </div>
-            </div>
+            <WorkflowContent agentType={activeAgent} />
           </WorkflowContext.Provider>
         );
       case 'agent':
@@ -189,7 +138,12 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1 className="app-title">企业多智能体协同平台</h1>
+        <div className="logo-container">
+          <h1 className="app-title">
+            <span className="platform-name-blue">企业级多智能体协同平台</span>
+            <span className="platform-name-black">PowerAutomation</span>
+          </h1>
+        </div>
       </header>
       <main className="app-main">
         <Sidebar 

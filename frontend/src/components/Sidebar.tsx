@@ -8,12 +8,45 @@ interface SidebarProps {
   onAgentChange: (agentId: string) => void;
 }
 
+// 智能体数据
+const agentData = [
+  {
+    id: 'code',
+    name: '代码智能体',
+    icon: '💻',
+  },
+  {
+    id: 'ppt',
+    name: 'PPT智能体',
+    icon: '📊',
+  },
+  {
+    id: 'web',
+    name: '网页智能体',
+    icon: '🌐',
+  },
+  {
+    id: 'general',
+    name: '通用智能体',
+    icon: '📋',
+  }
+];
+
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange, activeAgent, onAgentChange }) => {
   // 处理智能体点击，同时切换section和agent
   const handleAgentClick = (agentId: string) => {
     onAgentChange(agentId);
     onSectionChange('agent'); // 添加section切换，确保内容区更新
   };
+
+  // 获取当前选中的智能体信息
+  const getSelectedAgentInfo = () => {
+    const agent = agentData.find(a => a.id === activeAgent);
+    return agent || agentData[3]; // 默认返回通用智能体
+  };
+
+  // 获取当前选中的智能体
+  const selectedAgent = getSelectedAgentInfo();
 
   return (
     <div className="sidebar">
@@ -33,11 +66,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange, activ
           <div className="sidebar-text">工作流</div>
         </div>
         <div 
-          className={`sidebar-item ${activeSection === 'agent' && activeAgent === 'general' ? 'active' : ''}`}
-          onClick={() => handleAgentClick('general')}
+          className={`sidebar-item ${activeSection === 'agent' ? 'active' : ''}`}
+          onClick={() => handleAgentClick(activeAgent)}
         >
-          <div className="sidebar-icon">📋</div>
-          <div className="sidebar-text">通用智能体</div>
+          <div className="sidebar-icon">{selectedAgent.icon}</div>
+          <div className="sidebar-text">{selectedAgent.name}</div>
         </div>
         <div 
           className={`sidebar-item sidebar-bottom ${activeSection === 'settings' ? 'active' : ''}`}

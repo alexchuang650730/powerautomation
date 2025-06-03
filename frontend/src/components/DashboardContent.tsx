@@ -13,7 +13,23 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
         return (
           <div className="dashboard-container">
             <div className="dashboard-left-panel">
-              <div className="feature-section">
+              <div className="dashboard-overview">
+                <h3 className="overview-title">通用智能体概述</h3>
+                <p className="overview-description">
+                  通用智能体是一种多功能AI助手，能够处理各类通用任务，包括但不限于代码测试、文档生成、数据分析和问题排查。
+                  它集成了多种先进能力，可以适应不同场景需求，提供高效、准确的解决方案。
+                </p>
+                <p className="overview-description">
+                  通过六大核心特性和五大治理原则，通用智能体能够在保证质量和安全的前提下，为企业提供全方位的智能化支持。
+                </p>
+                <div className="overview-image">
+                  <div className="agent-icon">📋</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="dashboard-right-panel">
+              <div className="right-panel-section">
                 <h3 className="subsection-title">通用智能体六大特性</h3>
                 <div className="feature-cards">
                   <div className="feature-card">
@@ -46,13 +62,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
                       <li>技术术语识别：准确识别并解释测试和开发领域的专业术语</li>
                     </ul>
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="dashboard-right-panel">
-              <div className="feature-section">
-                <div className="feature-cards">
+                  
                   <div className="feature-card">
                     <div className="feature-icon">🧠</div>
                     <h4>4. 思维特性</h4>
@@ -88,7 +98,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
                 </div>
               </div>
               
-              <div className="feature-section">
+              <div className="right-panel-section">
                 <h3 className="subsection-title">通用智能体五大核心治理原则</h3>
                 <div className="governance-cards">
                   <div className="governance-card">
@@ -129,13 +139,23 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
         return (
           <div className="dashboard-container">
             <div className="dashboard-left-panel">
-              <div className="feature-section">
-                <h3 className="subsection-title">代码智能体特性</h3>
-                <p className="placeholder-text">代码智能体的特性内容将在此显示</p>
+              <div className="dashboard-overview">
+                <h3 className="overview-title">代码智能体概述</h3>
+                <p className="overview-description">
+                  代码智能体专注于代码生成、调试和优化，能够理解多种编程语言和框架，
+                  提供高质量的代码解决方案和技术支持。
+                </p>
+                <div className="overview-image">
+                  <div className="agent-icon">💻</div>
+                </div>
               </div>
             </div>
             <div className="dashboard-right-panel">
-              <div className="feature-section">
+              <div className="right-panel-section">
+                <h3 className="subsection-title">代码智能体特性</h3>
+                <p className="placeholder-text">代码智能体的特性内容将在此显示</p>
+              </div>
+              <div className="right-panel-section">
                 <h3 className="subsection-title">代码智能体治理原则</h3>
                 <p className="placeholder-text">代码智能体的治理原则将在此显示</p>
               </div>
@@ -146,7 +166,20 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
         return (
           <div className="dashboard-container">
             <div className="dashboard-left-panel">
-              <div className="feature-section">
+              <div className="dashboard-overview">
+                <h3 className="overview-title">PPT智能体概述</h3>
+                <p className="overview-description">
+                  PPT智能体专注于创建和编辑专业演示文稿，能够根据用户需求生成结构化、
+                  视觉吸引力强的幻灯片，支持多种模板和风格定制。
+                </p>
+                <div className="overview-image">
+                  <div className="agent-icon">📊</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="dashboard-right-panel">
+              <div className="right-panel-section">
                 <h3 className="subsection-title">PPT智能体六大特性</h3>
                 <div className="feature-cards">
                   <div className="feature-card">
@@ -178,13 +211,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
                       <li>上下文提示：根据用户输入和选择的模板，提供智能化的内容填充和设计建议提示</li>
                     </ul>
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="dashboard-right-panel">
-              <div className="feature-section">
-                <div className="feature-cards">
+                  
                   <div className="feature-card">
                     <div className="feature-icon">🧠</div>
                     <h4>4. 思维与内容生成特性</h4>
@@ -220,7 +247,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
                 </div>
               </div>
               
-              <div className="feature-section">
+              <div className="right-panel-section">
                 <h3 className="subsection-title">PPT智能体五大核心治理原则</h3>
                 <div className="governance-cards">
                   <div className="governance-card">
@@ -261,13 +288,23 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
         return (
           <div className="dashboard-container">
             <div className="dashboard-left-panel">
-              <div className="feature-section">
-                <h3 className="subsection-title">网页智能体特性</h3>
-                <p className="placeholder-text">网页智能体的特性内容将在此显示</p>
+              <div className="dashboard-overview">
+                <h3 className="overview-title">网页智能体概述</h3>
+                <p className="overview-description">
+                  网页智能体专注于设计和开发网页应用，能够根据用户需求创建响应式、
+                  交互性强的网站，支持多种前端框架和设计风格。
+                </p>
+                <div className="overview-image">
+                  <div className="agent-icon">🌐</div>
+                </div>
               </div>
             </div>
             <div className="dashboard-right-panel">
-              <div className="feature-section">
+              <div className="right-panel-section">
+                <h3 className="subsection-title">网页智能体特性</h3>
+                <p className="placeholder-text">网页智能体的特性内容将在此显示</p>
+              </div>
+              <div className="right-panel-section">
                 <h3 className="subsection-title">网页智能体治理原则</h3>
                 <p className="placeholder-text">网页智能体的治理原则将在此显示</p>
               </div>
@@ -278,12 +315,18 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ agentType }) => {
         return (
           <div className="dashboard-container">
             <div className="dashboard-left-panel">
-              <div className="feature-section">
-                <p className="placeholder-text">请选择智能体类型查看详细信息</p>
+              <div className="dashboard-overview">
+                <h3 className="overview-title">智能体概述</h3>
+                <p className="overview-description">
+                  请选择智能体类型查看详细信息
+                </p>
               </div>
             </div>
             <div className="dashboard-right-panel">
-              <div className="feature-section">
+              <div className="right-panel-section">
+                <p className="placeholder-text">选择智能体后将显示相关特性</p>
+              </div>
+              <div className="right-panel-section">
                 <p className="placeholder-text">选择智能体后将显示相关治理原则</p>
               </div>
             </div>
