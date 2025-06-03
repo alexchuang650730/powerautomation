@@ -28,8 +28,12 @@ interface LogViewProps {
   workflowType?: string;
 }
 
-const LogView: React.FC<LogViewProps> = ({ agentType = 'general' }) => {
-  const { selectedNodeId, activeWorkflowType, refreshTrigger } = useWorkflowContext();
+const LogView: React.FC<LogViewProps> = ({ agentType = 'general', selectedNodeId: propSelectedNodeId, workflowType: propWorkflowType }) => {
+  const workflowContext = useWorkflowContext();
+  const selectedNodeId = propSelectedNodeId || (workflowContext ? workflowContext.selectedNodeId : null);
+  const activeWorkflowType = propWorkflowType || (workflowContext ? workflowContext.activeWorkflowType : 'automation-test');
+  const refreshTrigger = workflowContext ? workflowContext.refreshTrigger : 0;
+  
   const [filteredLogs, setFilteredLogs] = useState<LogEntry[]>([]);
   const [memoryStatus, setMemoryStatus] = useState<MemoryStatus>({
     status: 'success',

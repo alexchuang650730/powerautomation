@@ -14,7 +14,6 @@ const InputArea: React.FC<InputAreaProps> = ({
   onInputChange, 
   onSubmit, 
   onFileUpload, 
-  selectedAgentType,
   selectedAgentName,
   selectedAgentIcon
 }) => {

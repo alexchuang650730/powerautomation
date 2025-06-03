@@ -7,6 +7,7 @@ import LogView from './components/LogView';
 import CodeView from './components/CodeView/CodeView';
 import SavepointManager from './components/SavepointManager';
 import InputArea from './components/InputArea';
+import AutomationAgentDesignContent from './components/AutomationAgentDesignContent';
 
 // 创建全局状态上下文
 interface WorkflowContextType {
@@ -80,6 +81,25 @@ function App() {
             </div>
           </WorkflowContext.Provider>
         );
+      case 'agent':
+        return (
+          <WorkflowContext.Provider value={{
+            selectedNodeId,
+            setSelectedNodeId,
+            activeWorkflowType,
+            setActiveWorkflowType,
+            activeSavepoint,
+            setActiveSavepoint,
+            refreshTrigger,
+            triggerRefresh
+          }}>
+            <div className="agent-container">
+              <AutomationAgentDesignContent agentType={activeAgent} />
+            </div>
+          </WorkflowContext.Provider>
+        );
+      case 'settings':
+        return <div className="settings-container">设置页面内容</div>;
       default:
         return <div>选择一个部分查看内容</div>;
     }
@@ -99,11 +119,13 @@ function App() {
         />
         <div className="content-area">
           {renderMainContent()}
-          <InputArea 
-            onInputChange={() => {}} 
-            onSubmit={() => {}} 
-            onFileUpload={() => {}}
-          />
+          {activeSection === 'agent' && (
+            <InputArea 
+              onInputChange={() => {}} 
+              onSubmit={() => {}} 
+              onFileUpload={() => {}}
+            />
+          )}
         </div>
       </main>
     </div>

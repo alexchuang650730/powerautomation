@@ -9,6 +9,12 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange, activeAgent, onAgentChange }) => {
+  // 处理智能体点击，同时切换section和agent
+  const handleAgentClick = (agentId: string) => {
+    onAgentChange(agentId);
+    onSectionChange('agent'); // 添加section切换，确保内容区更新
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-menu">
@@ -27,8 +33,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange, activ
           <div className="sidebar-text">工作流</div>
         </div>
         <div 
-          className={`sidebar-item ${activeAgent === 'general' ? 'active' : ''}`}
-          onClick={() => onAgentChange('general')}
+          className={`sidebar-item ${activeSection === 'agent' && activeAgent === 'general' ? 'active' : ''}`}
+          onClick={() => handleAgentClick('general')}
         >
           <div className="sidebar-icon">📋</div>
           <div className="sidebar-text">通用智能体</div>

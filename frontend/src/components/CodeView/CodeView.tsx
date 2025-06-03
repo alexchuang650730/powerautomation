@@ -8,8 +8,12 @@ interface CodeViewProps {
   workflowType?: string;
 }
 
-const CodeView: React.FC<CodeViewProps> = ({ agentType = 'general' }) => {
-  const { selectedNodeId, activeWorkflowType, refreshTrigger } = useWorkflowContext();
+const CodeView: React.FC<CodeViewProps> = ({ agentType = 'general', selectedNodeId: propSelectedNodeId, workflowType: propWorkflowType }) => {
+  const workflowContext = useWorkflowContext();
+  const selectedNodeId = propSelectedNodeId || (workflowContext ? workflowContext.selectedNodeId : null);
+  const activeWorkflowType = propWorkflowType || (workflowContext ? workflowContext.activeWorkflowType : 'automation-test');
+  const refreshTrigger = workflowContext ? workflowContext.refreshTrigger : 0;
+  
   const [activeTab, setActiveTab] = useState<'code' | 'docs'>('code');
   const [codeContent, setCodeContent] = useState<string>('// 选择一个节点查看代码');
   const [docsUrl, setDocsUrl] = useState<string>('');
@@ -451,280 +455,122 @@ class MCPCoordinator:
         return datetime.datetime.now().isoformat()`;
               githubPath = 'agents/mcp/mcp_coordinator.py';
               break;
-            case 'mcp-planner':
-              code = `# MCP规划器代码
-import os
-import sys
-import json
-import logging
-import networkx as nx
-from typing import Dict, Any, List, Optional
-
-class MCPPlanner:
-    """
-    MCP规划器类
-    为复杂任务创建详细的执行计划，优化执行顺序和资源分配
-    """
-    
-    def __init__(self, config_path: str = None):
-        """
-        初始化MCP规划器
-        
-        Args:
-            config_path: 配置文件路径
-        """
-        self.config_path = config_path or os.path.join(os.path.dirname(__file__), "config", "mcp_planner.json")
-        self.config = self._load_config()
-        self.logger = self._setup_logger()
-        
-        self.logger.info("MCP规划器初始化完成")
-    
-    def _load_config(self) -> Dict[str, Any]:
-        """加载配置文件"""
-        if os.path.exists(self.config_path):
-            try:
-                with open(self.config_path, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            except Exception as e:
-                print(f"加载配置失败: {str(e)}")
-                return {}
-        return {}
-    
-    def _setup_logger(self) -> logging.Logger:
-        """设置日志记录器"""
-        logger = logging.getLogger("MCPPlanner")
-        logger.setLevel(logging.INFO)
-        
-        # 创建控制台处理器
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        
-        # 创建格式化器
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        console_handler.setFormatter(formatter)
-        
-        # 添加处理器到记录器
-        logger.addHandler(console_handler)
-        
-        return logger
-    
-    def create_execution_plan(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        创建执行计划
-        
-        Args:
-            task_data: 任务数据
-            
-        Returns:
-            执行计划
-        """
-        self.logger.info(f"创建执行计划: {task_data}")
-        
-        # 分析任务需求
-        requirements = self._analyze_requirements(task_data)
-        
-        # 创建执行步骤
-        steps = self._create_steps(requirements)
-        
-        # 分析任务依赖关系
-        dependencies = self._analyze_dependencies(steps)
-        
-        # 创建执行图
-        execution_graph = self._create_execution_graph(steps, dependencies)
-        
-        # 优化执行顺序
-        optimized_order = self._optimize_execution_order(execution_graph)
-        
-        return {
-            "plan_id": f"plan_{self._get_timestamp()}",
-            "requirements": requirements,
-            "steps": steps,
-            "dependencies": dependencies,
-            "optimized_order": optimized_order,
-            "status": "success",
-            "timestamp": self._get_timestamp()
-        }
-    
-    def _analyze_requirements(self, task_data: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """分析任务需求"""
-        self.logger.info("分析任务需求")
-        # 实际实现会分析任务数据，提取关键需求
-        return [
-            {"id": "req_1", "type": "data", "description": "需要用户历史数据"},
-            {"id": "req_2", "type": "processing", "description": "需要数据处理能力"},
-            {"id": "req_3", "type": "output", "description": "需要生成响应"}
-        ]
-    
-    def _create_steps(self, requirements: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """创建执行步骤"""
-        self.logger.info("创建执行步骤")
-        # 实际实现会根据需求创建具体的执行步骤
-        return [
-            {"id": "step_1", "name": "获取用户数据", "component": "data_service", "requirement_id": "req_1"},
-            {"id": "step_2", "name": "处理数据", "component": "processing_service", "requirement_id": "req_2"},
-            {"id": "step_3", "name": "生成响应", "component": "response_generator", "requirement_id": "req_3"}
-        ]
-    
-    def _analyze_dependencies(self, steps: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """分析任务依赖关系"""
-        self.logger.info("分析任务依赖关系")
-        # 实际实现会分析步骤间的依赖关系
-        return [
-            {"from": "step_1", "to": "step_2", "type": "data_dependency"},
-            {"from": "step_2", "to": "step_3", "type": "data_dependency"}
-        ]
-    
-    def _create_execution_graph(self, steps: List[Dict[str, Any]], dependencies: List[Dict[str, Any]]) -> nx.DiGraph:
-        """创建执行图"""
-        self.logger.info("创建执行图")
-        # 使用NetworkX创建有向图
-        graph = nx.DiGraph()
-        
-        # 添加节点
-        for step in steps:
-            graph.add_node(step["id"], **step)
-        
-        # 添加边
-        for dep in dependencies:
-            graph.add_edge(dep["from"], dep["to"], type=dep["type"])
-        
-        return graph
-    
-    def _optimize_execution_order(self, execution_graph: nx.DiGraph) -> List[str]:
-        """优化执行顺序"""
-        self.logger.info("优化执行顺序")
-        # 使用拓扑排序获取优化的执行顺序
-        try:
-            return list(nx.topological_sort(execution_graph))
-        except nx.NetworkXUnfeasible:
-            self.logger.error("执行图中存在循环依赖，无法进行拓扑排序")
-            # 返回节点列表作为备选
-            return list(execution_graph.nodes())
-    
-    def _get_timestamp(self) -> str:
-        """获取当前时间戳"""
-        import datetime
-        return datetime.datetime.now().isoformat()`;
-              githubPath = 'agents/mcp/mcp_planner.py';
-              break;
-            case 'thought-recorder':
-              code = `# 思维行为记录器代码`;
-              githubPath = 'agents/thought_recorder/thought_recorder.py';
-              break;
-            case 'release-manager':
-              code = `# 发布管理器代码`;
-              githubPath = 'agents/release_manager/release_manager.py';
-              break;
-            case 'supermemory':
-              code = `# SuperMemory代码`;
-              githubPath = 'agents/supermemory/supermemory.py';
-              break;
             default:
               code = '// 未找到与所选节点对应的代码';
           }
-        }
-
-        // 设置GitHub URL
-        if (githubPath) {
-          setGithubUrl(`https://github.com/yourusername/powerautomation/blob/main/${githubPath}`);
         } else {
-          setGithubUrl('');
-        }
-
-        // 设置文档URL
-        if (activeWorkflowType === 'automation-test') {
-          setDocsUrl('https://github.com/yourusername/powerautomation/blob/main/frontend/src/docs/automation_test_workflow.md');
-        } else if (activeWorkflowType === 'agent-design') {
-          setDocsUrl('https://github.com/yourusername/powerautomation/blob/main/frontend/src/docs/agent_design_workflow.md');
+          code = '// 未找到与所选工作流类型对应的代码';
         }
 
         setCodeContent(code);
+        setGithubUrl(githubPath ? `https://github.com/example/repo/blob/main/${githubPath}` : '');
       } catch (error) {
-        console.error('获取代码失败:', error);
-        setCodeContent('// 加载代码时发生错误');
+        console.error('获取代码内容失败:', error);
+        setCodeContent('// 获取代码内容失败');
       }
     };
 
     fetchCode();
   }, [selectedNodeId, activeWorkflowType, refreshTrigger]);
 
+  // 渲染测试代码内容
+  const renderTestCode = () => {
+    if (activeWorkflowType === 'automation-test') {
+      switch (selectedNodeId) {
+        case 'integration-test':
+          return (
+            <div className="code-section">
+              <h3 className="code-section-title">集成测试代码</h3>
+              
+              <div className="code-block">
+                <div className="code-header">
+                  <span className="code-filename">integration_test.js</span>
+                  <div className="code-actions">
+                    <button className="code-action-button">
+                      <span className="code-action-icon">📋</span>
+                      复制
+                    </button>
+                    <button className="code-action-button">
+                      <span className="code-action-icon">▶️</span>
+                      运行
+                    </button>
+                  </div>
+                </div>
+                
+                <pre className="code-content-block">
+                  <code>
+                    {codeContent}
+                  </code>
+                </pre>
+              </div>
+            </div>
+          );
+        default:
+          return (
+            <div className="code-section">
+              <pre className="code-content-block">
+                <code>
+                  {codeContent}
+                </code>
+              </pre>
+            </div>
+          );
+      }
+    }
+    
+    return (
+      <div className="code-section">
+        <pre className="code-content-block">
+          <code>
+            {codeContent}
+          </code>
+        </pre>
+      </div>
+    );
+  };
+
   return (
     <div className="code-view">
-      <h2 className="section-title">代码视图</h2>
-      
-      {selectedNodeId && (
-        <div className="selected-node-info">
-          <span className="selected-node-label">当前选中节点:</span>
-          <span className="selected-node-id">{selectedNodeId}</span>
+      <div className="code-view-header">
+        <div className="code-view-tabs">
+          <button 
+            className={`code-view-tab ${activeTab === 'code' ? 'active' : ''}`}
+            onClick={() => setActiveTab('code')}
+          >
+            代码
+          </button>
+          <button 
+            className={`code-view-tab ${activeTab === 'docs' ? 'active' : ''}`}
+            onClick={() => setActiveTab('docs')}
+          >
+            文档
+          </button>
         </div>
-      )}
-      
-      <div className="code-tabs">
-        <button 
-          className={`code-tab ${activeTab === 'code' ? 'active' : ''}`}
-          onClick={() => setActiveTab('code')}
-        >
-          代码
-        </button>
-        <button 
-          className={`code-tab ${activeTab === 'docs' ? 'active' : ''}`}
-          onClick={() => setActiveTab('docs')}
-        >
-          文档
-        </button>
+        
+        <div className="code-view-actions">
+          {githubUrl && (
+            <a 
+              href={githubUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="github-link"
+            >
+              <span className="github-icon">GitHub</span>
+            </a>
+          )}
+        </div>
       </div>
       
-      <div className="code-content">
+      <div className="code-view-content">
         {activeTab === 'code' ? (
-          <>
-            <div className="code-actions">
-              <button 
-                className="copy-btn"
-                onClick={() => {
-                  navigator.clipboard.writeText(codeContent);
-                  alert('代码已复制到剪贴板');
-                }}
-              >
-                复制代码
-              </button>
-              {githubUrl && (
-                <a 
-                  href={githubUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="github-link"
-                >
-                  在GitHub上查看
-                </a>
-              )}
-            </div>
-            <pre className="code-display">
-              <code>{codeContent}</code>
-            </pre>
-          </>
+          renderTestCode()
         ) : (
           <div className="docs-content">
-            <div className="docs-actions">
-              {docsUrl && (
-                <a 
-                  href={docsUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="docs-link"
-                >
-                  在GitHub上查看完整文档
-                </a>
-              )}
-            </div>
-            <div className="docs-frame">
-              <iframe 
-                src={activeWorkflowType === 'automation-test' 
-                  ? '/src/docs/automation_test_workflow.md'
-                  : '/src/docs/agent_design_workflow.md'} 
-                title="文档"
-                className="docs-iframe"
-              />
-            </div>
+            <iframe 
+              src={docsUrl || 'about:blank'} 
+              title="Documentation" 
+              className="docs-iframe"
+            />
           </div>
         )}
       </div>

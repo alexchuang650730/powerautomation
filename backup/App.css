@@ -1,0 +1,90 @@
+.app {
+  text-align: center;
+  padding: 20px;
+}
+
+/* 基础样式 */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 主应用容器 */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 主内容区域 */
+.main-content {
+  display: flex;
+  flex: 1;
+}
+
+/* 侧边栏和内容区域布局 */
+.content-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* 通用标题样式 */
+h1, h2, h3 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* 按钮样式 */
+button {
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #e8e8e8;
+}
+
+button.primary {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+}
+
+button.primary:hover {
+  background-color: #1565c0;
+}
+
+/* 输入框样式 */
+input, textarea, select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+}

@@ -1,5 +1,4 @@
-import React from 'react';
-import './frontend_integration_guide.css';
+import '../styles/FrontendIntegrationGuide.css';
 
 /**
  * 前端集成指南组件
