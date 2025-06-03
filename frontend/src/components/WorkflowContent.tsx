@@ -208,120 +208,170 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ agentType = 'general'
       </div>
       
       {activeTab === 'workflow' ? (
-        <>
-          <div className="workflow-type-selector">
-            <button 
-              className={`workflow-type-btn ${activeWorkflowType === 'automation-test' ? 'active' : ''}`}
-              onClick={() => handleWorkflowTypeChange('automation-test')}
-            >
-              自动化测试工作流
-            </button>
-            <button 
-              className={`workflow-type-btn ${activeWorkflowType === 'agent-design' ? 'active' : ''}`}
-              onClick={() => handleWorkflowTypeChange('agent-design')}
-            >
-              自动化智能体设计工作流
-            </button>
-          </div>
-          
-          <div className="workflow-visualizer">
-            <N8nWorkflowVisualizer 
-              nodes={getWorkflowNodes(activeWorkflowType)}
-              selectedNodeId={selectedNodeId}
-              onNodeSelect={handleNodeSelect}
-            />
-          </div>
-          
-          {selectedNodeId && (
-            <div className="node-details">
-              <h3>节点详情</h3>
-              {getWorkflowNodes(activeWorkflowType).filter(node => node.id === selectedNodeId).map(node => (
-                <div key={node.id} className="node-detail-card">
-                  <div className="node-header">
-                    <span className="node-name">{node.data.name}</span>
-                    <span className={`node-status ${node.data.status}`}>
-                      {node.data.status === 'success' ? '成功' : 
-                       node.data.status === 'error' ? '错误' : 
-                       node.data.status === 'warning' ? '警告' : '待定'}
-                    </span>
-                  </div>
-                  <div className="node-description">{node.data.description}</div>
-                  <div className="node-metrics">
-                    <div className="metric">
-                      <span className="metric-label">执行时间:</span>
-                      <span className="metric-value">{node.data.executionTime}s</span>
-                    </div>
-                    <div className="metric">
-                      <span className="metric-label">内存使用:</span>
-                      <span className="metric-value">{node.data.memoryUsage}MB</span>
-                    </div>
-                    <div className="metric">
-                      <span className="metric-label">CPU使用率:</span>
-                      <span className="metric-value">{node.data.cpuUsage}%</span>
-                    </div>
-                  </div>
-                  <div className="node-actions">
-                    <button className="node-action-btn">查看源代码</button>
-                    <button className="node-action-btn">查看日志</button>
-                    {activeWorkflowType === 'automation-test' && (
-                      <a 
-                        href={`https://github.com/yourusername/powerautomation/blob/main/tests/${
-                          node.id === 'integration-test' ? 'integration/component_interaction.test.js' :
-                          node.id === 'e2e-test' ? 'e2e/user_workflow.spec.js' :
-                          'visual/component_visual.spec.js'
-                        }`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="github-link"
-                      >
-                        在GitHub上查看
-                      </a>
-                    )}
-                    {activeWorkflowType === 'agent-design' && (
-                      <a 
-                        href={`https://github.com/yourusername/powerautomation/blob/main/agents/${
-                          node.id === 'general-agent' ? 'general_agent/general_agent.py' :
-                          node.id === 'mcp-coordinator' ? 'mcp/mcp_coordinator.py' :
-                          node.id === 'mcp-planner' ? 'mcp/mcp_planner.py' :
-                          node.id === 'thought-recorder' ? 'thought_recorder/thought_recorder.py' :
-                          node.id === 'release-manager' ? 'release_manager/release_manager.py' :
-                          'supermemory/supermemory.py'
-                        }`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="github-link"
-                      >
-                        在GitHub上查看
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="docs-content">
-          <div className="docs-actions">
-            {docsUrl && (
-              <a 
-                href={docsUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="docs-link"
+        <div className="workflow-container">
+          <div className="workflow-left-panel">
+            <div className="workflow-type-selector">
+              <button 
+                className={`workflow-type-btn ${activeWorkflowType === 'automation-test' ? 'active' : ''}`}
+                onClick={() => handleWorkflowTypeChange('automation-test')}
               >
-                在GitHub上查看完整文档
-              </a>
+                自动化测试工作流
+              </button>
+              <button 
+                className={`workflow-type-btn ${activeWorkflowType === 'agent-design' ? 'active' : ''}`}
+                onClick={() => handleWorkflowTypeChange('agent-design')}
+              >
+                自动化智能体设计工作流
+              </button>
+            </div>
+            
+            <div className="workflow-visualizer">
+              <N8nWorkflowVisualizer 
+                nodes={getWorkflowNodes(activeWorkflowType)}
+                selectedNodeId={selectedNodeId}
+                onNodeSelect={handleNodeSelect}
+              />
+            </div>
+          </div>
+          
+          <div className="workflow-right-panel">
+            {selectedNodeId ? (
+              <div className="workflow-sidebar">
+                <h3>节点详情</h3>
+                {getWorkflowNodes(activeWorkflowType).filter(node => node.id === selectedNodeId).map(node => (
+                  <div key={node.id} className="node-detail-card">
+                    <div className="node-header">
+                      <span className="node-name">{node.data.name}</span>
+                      <span className={`node-status ${node.data.status}`}>
+                        {node.data.status === 'success' ? '成功' : 
+                         node.data.status === 'error' ? '错误' : 
+                         node.data.status === 'warning' ? '警告' : '待定'}
+                      </span>
+                    </div>
+                    <div className="node-description">{node.data.description}</div>
+                    <div className="node-metrics">
+                      <div className="metric">
+                        <span className="metric-label">执行时间:</span>
+                        <span className="metric-value">{node.data.executionTime}s</span>
+                      </div>
+                      <div className="metric">
+                        <span className="metric-label">内存使用:</span>
+                        <span className="metric-value">{node.data.memoryUsage}MB</span>
+                      </div>
+                      <div className="metric">
+                        <span className="metric-label">CPU使用率:</span>
+                        <span className="metric-value">{node.data.cpuUsage}%</span>
+                      </div>
+                    </div>
+                    <div className="node-actions">
+                      <button className="node-action-btn">查看源代码</button>
+                      <button className="node-action-btn">查看日志</button>
+                      {activeWorkflowType === 'automation-test' && (
+                        <a 
+                          href={`https://github.com/yourusername/powerautomation/blob/main/tests/${
+                            node.id === 'integration-test' ? 'integration/component_interaction.test.js' :
+                            node.id === 'e2e-test' ? 'e2e/user_workflow.spec.js' :
+                            'visual/component_visual.spec.js'
+                          }`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="github-link"
+                        >
+                          在GitHub上查看
+                        </a>
+                      )}
+                      {activeWorkflowType === 'agent-design' && (
+                        <a 
+                          href={`https://github.com/yourusername/powerautomation/blob/main/agents/${
+                            node.id === 'general-agent' ? 'general_agent/general_agent.py' :
+                            node.id === 'mcp-coordinator' ? 'mcp/mcp_coordinator.py' :
+                            node.id === 'mcp-planner' ? 'mcp/mcp_planner.py' :
+                            node.id === 'thought-recorder' ? 'thought_recorder/thought_recorder.py' :
+                            node.id === 'release-manager' ? 'release_manager/release_manager.py' :
+                            'supermemory/supermemory.py'
+                          }`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="github-link"
+                        >
+                          在GitHub上查看
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="workflow-description">
+                <h3>工作流描述</h3>
+                {activeWorkflowType === 'automation-test' ? (
+                  <div className="workflow-description-content">
+                    <p>自动化测试工作流用于执行各类测试，确保系统功能正常运行。</p>
+                    <div className="sub-modules">
+                      <h4>主要子模块</h4>
+                      <ul>
+                        <li><strong>集成测试</strong> - 测试组件间的交互</li>
+                        <li><strong>端到端测试</strong> - 测试完整工作流程</li>
+                        <li><strong>视觉自动化测试</strong> - 测试UI界面和视觉元素</li>
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="workflow-description-content">
+                    <p>自动化智能体设计工作流用于构建和管理智能体系统。</p>
+                    <div className="sub-modules">
+                      <h4>主要子模块</h4>
+                      <ul>
+                        <li><strong>通用智能体</strong> - 处理用户输入</li>
+                        <li><strong>MCP协调器</strong> - 协调多个子系统和组件的工作</li>
+                        <li><strong>MCP规划器</strong> - 创建详细的执行计划</li>
+                        <li><strong>思维行为记录器</strong> - 记录智能体的思考过程</li>
+                        <li><strong>发布管理器</strong> - 管理系统版本发布和更新</li>
+                        <li><strong>SuperMemory</strong> - 管理智能体的记忆系统</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
-          <div className="docs-frame">
-            <iframe 
-              src={activeWorkflowType === 'automation-test' 
-                ? '/src/docs/automation_test_workflow.md'
-                : '/src/docs/agent_design_workflow.md'} 
-              title="文档"
-              className="docs-iframe"
-            />
+        </div>
+      ) : (
+        <div className="workflow-container">
+          <div className="workflow-left-panel">
+            <div className="docs-actions">
+              {docsUrl && (
+                <a 
+                  href={docsUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="docs-link"
+                >
+                  在GitHub上查看完整文档
+                </a>
+              )}
+            </div>
+            <div className="docs-frame">
+              <iframe 
+                src={activeWorkflowType === 'automation-test' 
+                  ? '/src/docs/automation_test_workflow.md'
+                  : '/src/docs/agent_design_workflow.md'} 
+                title="文档"
+                className="docs-iframe"
+              />
+            </div>
+          </div>
+          <div className="workflow-right-panel">
+            <div className="workflow-sidebar">
+              <h3>文档目录</h3>
+              <ul className="docs-toc">
+                <li><a href="#overview">概述</a></li>
+                <li><a href="#architecture">架构</a></li>
+                <li><a href="#components">组件</a></li>
+                <li><a href="#usage">使用方法</a></li>
+                <li><a href="#examples">示例</a></li>
+              </ul>
+            </div>
           </div>
         </div>
       )}
