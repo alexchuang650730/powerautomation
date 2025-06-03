@@ -269,7 +269,18 @@ analyze_logs("test_output.log", "issues.json")</code></pre>
                   <h5>将问题信息结构化存储</h5>
                   <p>以结构化格式保存问题信息，便于后续处理</p>
                   <div className="structured-data">
-                    <pre><code>{"{\n  \"issues\": [\n    {\n      \"id\": \"ISSUE-001\",\n      \"type\": \"UI\",\n      \"severity\": \"medium\",\n      \"description\": \"按钮点击无响应\",\n      \"location\": \"HomePage.js:45\",\n      \"screenshot\": \"issue001.png\"\n    }\n  ]\n}"}</code></pre>
+                    <pre><code>{`{
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "type": "UI",
+      "severity": "medium",
+      "description": "按钮点击无响应",
+      "location": "HomePage.js:45",
+      "screenshot": "issue001.png"
+    }
+  ]
+}`}</code></pre>
                   </div>
                 </div>
               </div>
