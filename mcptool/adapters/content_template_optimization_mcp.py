@@ -15,11 +15,8 @@ class ContentTemplateOptimizationMCP(BaseMCP):
     
     def __init__(self):
         """初始化内容模板优化MCP"""
-        super().__init__(
-            mcp_id="content_template_optimization",
-            name="内容模板优化MCP",
-            description="负责PPT智能体的内容模板优化和管理"
-        )
+        super().__init__(name="内容模板优化MCP")
+        self.description = "负责PPT智能体的内容模板优化和管理"
         
     def process(self, input_data: Dict[str, Any], context: Dict[str, Any] = None) -> Dict[str, Any]:
         """

@@ -938,6 +938,375 @@ class IntelligentWorkflowEngineMCP(BaseMCP):
             return False
         
         return True
+    
+    def create_workflow(self, workflow_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        创建智能工作流
+        
+        Args:
+            workflow_config: 工作流配置字典，包含以下字段：
+                - workflow_name: 工作流名称
+                - nodes: 节点列表，每个节点包含id、type、name等
+                - connections: 连接列表，定义节点间的连接关系
+                - metadata: 元数据信息
+                
+        Returns:
+            创建结果字典，包含workflow_id和状态信息
+        """
+        try:
+            # 如果没有提供节点，创建默认节点配置
+            if not workflow_config.get("nodes"):
+                workflow_config = self._add_default_nodes(workflow_config)
+            
+            # 验证工作流配置
+            if not self._validate_workflow_config(workflow_config):
+                return {
+                    "status": "error",
+                    "message": "工作流配置验证失败",
+                    "timestamp": datetime.now().isoformat()
+                }
+            
+            # 生成工作流ID
+            workflow_id = f"workflow_{int(time.time())}_{len(self.workflow_nodes)}"
+            workflow_name = workflow_config.get("workflow_name", f"工作流_{workflow_id}")
+            
+            # 创建工作流节点
+            created_nodes = []
+            node_mapping = {}  # 原始ID到实际ID的映射
+            
+            for node_config in workflow_config.get("nodes", []):
+                node_id = self.create_workflow_node(
+                    node_type=node_config.get("type", "action"),
+                    name=node_config.get("name", "未命名节点"),
+                    description=node_config.get("description", ""),
+                    data=node_config.get("data", {})
+                )
+                
+                created_nodes.append(node_id)
+                node_mapping[node_config.get("id", "")] = node_id
+            
+            # 创建工作流连接
+            created_connections = []
+            for connection_config in workflow_config.get("connections", []):
+                from_id = node_mapping.get(connection_config.get("from", ""))
+                to_id = node_mapping.get(connection_config.get("to", ""))
+                
+                if from_id and to_id:
+                    connection_id = self.create_workflow_connection(
+                        source_id=from_id,
+                        target_id=to_id,
+                        connection_type=connection_config.get("type", "success")
+                    )
+                    created_connections.append(connection_id)
+            
+            # 保存工作流元数据
+            workflow_metadata = {
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "created_time": datetime.now().isoformat(),
+                "nodes": created_nodes,
+                "connections": created_connections,
+                "node_mapping": node_mapping,
+                "config": workflow_config,
+                "status": "created"
+            }
+            
+            # 触发工作流创建事件
+            self.trigger_event("workflow_created", {
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "node_count": len(created_nodes),
+                "connection_count": len(created_connections)
+            })
+            
+            logger.info(f"工作流创建成功: {workflow_name} (ID: {workflow_id})")
+            
+            return {
+                "status": "success",
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "nodes_created": len(created_nodes),
+                "connections_created": len(created_connections),
+                "metadata": workflow_metadata,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"创建工作流失败: {e}")
+            return {
+                "status": "error",
+                "message": f"创建工作流失败: {str(e)}",
+                "timestamp": datetime.now().isoformat()
+            }
+    
+    def execute_workflow(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        执行工作流
+        
+        Args:
+            execution_data: 执行数据字典，包含：
+                - workflow_id: 工作流ID
+                - input_data: 输入数据
+                - execution_mode: 执行模式 (sync/async)
+                
+        Returns:
+            执行结果字典
+        """
+        try:
+            workflow_id = execution_data.get("workflow_id", "")
+            input_data = execution_data.get("input_data", {})
+            execution_mode = execution_data.get("execution_mode", "sync")
+            
+            if not workflow_id:
+                return {
+                    "status": "error",
+                    "message": "workflow_id is required",
+                    "timestamp": datetime.now().isoformat()
+                }
+            
+            # 更新工作流状态
+            self.workflow_status.update({
+                "is_running": True,
+                "current_workflow_id": workflow_id,
+                "start_time": datetime.now().isoformat(),
+                "last_update_time": datetime.now().isoformat(),
+                "execution_mode": execution_mode
+            })
+            
+            # 模拟工作流执行过程
+            execution_steps = []
+            
+            # 步骤1: 初始化
+            execution_steps.append({
+                "step": "initialization",
+                "status": "completed",
+                "message": "工作流初始化完成",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 步骤2: 数据预处理
+            processed_data = self._preprocess_workflow_data(input_data)
+            execution_steps.append({
+                "step": "data_preprocessing",
+                "status": "completed",
+                "message": "数据预处理完成",
+                "data_size": len(str(processed_data)),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 步骤3: 节点执行
+            node_results = self._execute_workflow_nodes(workflow_id, processed_data)
+            execution_steps.append({
+                "step": "node_execution",
+                "status": "completed",
+                "message": f"执行了{len(node_results)}个节点",
+                "node_count": len(node_results),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 步骤4: 结果整合
+            final_result = self._integrate_workflow_results(node_results)
+            execution_steps.append({
+                "step": "result_integration",
+                "status": "completed",
+                "message": "结果整合完成",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 更新工作流状态
+            self.workflow_status.update({
+                "is_running": False,
+                "current_workflow_id": None,
+                "last_update_time": datetime.now().isoformat()
+            })
+            
+            # 触发工作流完成事件
+            self.trigger_event("workflow_completed", {
+                "workflow_id": workflow_id,
+                "execution_time": time.time(),
+                "steps_completed": len(execution_steps)
+            })
+            
+            logger.info(f"工作流执行完成: {workflow_id}")
+            
+            return {
+                "status": "success",
+                "workflow_id": workflow_id,
+                "execution_steps": execution_steps,
+                "final_result": final_result,
+                "execution_mode": execution_mode,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            # 更新错误状态
+            self.workflow_status.update({
+                "is_running": False,
+                "current_workflow_id": None,
+                "last_error": str(e),
+                "last_update_time": datetime.now().isoformat()
+            })
+            
+            logger.error(f"工作流执行失败: {e}")
+            return {
+                "status": "error",
+                "message": f"工作流执行失败: {str(e)}",
+                "timestamp": datetime.now().isoformat()
+            }
+    
+    def _validate_workflow_config(self, config: Dict[str, Any]) -> bool:
+        """验证工作流配置"""
+        try:
+            # 检查必需字段
+            if not config.get("workflow_name"):
+                logger.error("工作流名称不能为空")
+                return False
+            
+            nodes = config.get("nodes", [])
+            if not nodes:
+                logger.error("工作流必须包含至少一个节点")
+                return False
+            
+            # 验证节点配置
+            for node in nodes:
+                if not node.get("id") or not node.get("type"):
+                    logger.error("节点必须包含id和type字段")
+                    return False
+            
+            # 验证连接配置
+            connections = config.get("connections", [])
+            node_ids = {node.get("id") for node in nodes}
+            
+            for connection in connections:
+                from_id = connection.get("from")
+                to_id = connection.get("to")
+                
+                if from_id not in node_ids or to_id not in node_ids:
+                    logger.error(f"连接引用了不存在的节点: {from_id} -> {to_id}")
+                    return False
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"工作流配置验证异常: {e}")
+            return False
+    
+    def _preprocess_workflow_data(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """预处理工作流数据"""
+        processed_data = input_data.copy()
+        
+        # 添加执行上下文
+        processed_data["execution_context"] = {
+            "timestamp": datetime.now().isoformat(),
+            "engine_version": "1.0.0",
+            "execution_id": f"exec_{int(time.time())}"
+        }
+        
+        # 数据清理和标准化
+        if "user_input" in processed_data:
+            processed_data["user_input"] = str(processed_data["user_input"]).strip()
+        
+        return processed_data
+    
+    def _execute_workflow_nodes(self, workflow_id: str, data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """执行工作流节点"""
+        node_results = []
+        
+        # 模拟节点执行
+        for i, node in enumerate(self.workflow_nodes):
+            node_result = {
+                "node_id": node.get("id", f"node_{i}"),
+                "node_type": node.get("type", "action"),
+                "status": "completed",
+                "output": {
+                    "processed": True,
+                    "data_size": len(str(data)),
+                    "execution_time": 0.1
+                },
+                "timestamp": datetime.now().isoformat()
+            }
+            node_results.append(node_result)
+        
+        return node_results
+    
+    def _integrate_workflow_results(self, node_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """整合工作流结果"""
+        return {
+            "summary": {
+                "total_nodes": len(node_results),
+                "successful_nodes": len([r for r in node_results if r.get("status") == "completed"]),
+                "failed_nodes": len([r for r in node_results if r.get("status") == "failed"]),
+                "total_execution_time": sum(r.get("output", {}).get("execution_time", 0) for r in node_results)
+            },
+            "node_results": node_results,
+            "final_status": "success" if all(r.get("status") == "completed" for r in node_results) else "partial_success"
+        }
+    
+    def _add_default_nodes(self, workflow_config: Dict[str, Any]) -> Dict[str, Any]:
+        """为工作流添加默认节点配置"""
+        workflow_name = workflow_config.get("workflow_name", "默认工作流")
+        complexity = workflow_config.get("complexity", "medium")
+        automation_level = workflow_config.get("automation_level", "standard")
+        
+        # 根据复杂度和自动化级别创建默认节点
+        default_nodes = []
+        default_connections = []
+        
+        if complexity == "low":
+            # 简单工作流：开始 -> 执行 -> 结束
+            default_nodes = [
+                {"id": "start", "type": "start", "name": "开始", "description": "工作流开始节点"},
+                {"id": "execute", "type": "action", "name": "执行任务", "description": "主要执行节点"},
+                {"id": "end", "type": "end", "name": "结束", "description": "工作流结束节点"}
+            ]
+            default_connections = [
+                {"from": "start", "to": "execute", "type": "success"},
+                {"from": "execute", "to": "end", "type": "success"}
+            ]
+        elif complexity == "high" or complexity == "very_high":
+            # 复杂工作流：开始 -> 分析 -> 处理 -> 验证 -> 结束
+            default_nodes = [
+                {"id": "start", "type": "start", "name": "开始", "description": "工作流开始节点"},
+                {"id": "analyze", "type": "analysis", "name": "需求分析", "description": "分析输入需求"},
+                {"id": "process", "type": "action", "name": "处理执行", "description": "主要处理逻辑"},
+                {"id": "validate", "type": "validation", "name": "结果验证", "description": "验证处理结果"},
+                {"id": "end", "type": "end", "name": "结束", "description": "工作流结束节点"}
+            ]
+            default_connections = [
+                {"from": "start", "to": "analyze", "type": "success"},
+                {"from": "analyze", "to": "process", "type": "success"},
+                {"from": "process", "to": "validate", "type": "success"},
+                {"from": "validate", "to": "end", "type": "success"}
+            ]
+        else:
+            # 中等复杂度工作流：开始 -> 准备 -> 执行 -> 结束
+            default_nodes = [
+                {"id": "start", "type": "start", "name": "开始", "description": "工作流开始节点"},
+                {"id": "prepare", "type": "preparation", "name": "准备阶段", "description": "准备执行环境"},
+                {"id": "execute", "type": "action", "name": "执行任务", "description": "主要执行节点"},
+                {"id": "end", "type": "end", "name": "结束", "description": "工作流结束节点"}
+            ]
+            default_connections = [
+                {"from": "start", "to": "prepare", "type": "success"},
+                {"from": "prepare", "to": "execute", "type": "success"},
+                {"from": "execute", "to": "end", "type": "success"}
+            ]
+        
+        # 如果是高级自动化，添加监控节点
+        if automation_level == "advanced":
+            monitor_node = {"id": "monitor", "type": "monitor", "name": "监控", "description": "监控执行状态"}
+            default_nodes.append(monitor_node)
+            # 为所有执行节点添加监控连接
+            for node in default_nodes:
+                if node["type"] in ["action", "analysis", "validation"]:
+                    default_connections.append({"from": node["id"], "to": "monitor", "type": "monitor"})
+        
+        # 更新配置
+        updated_config = workflow_config.copy()
+        updated_config["nodes"] = default_nodes
+        updated_config["connections"] = default_connections
+        
+        return updated_config
 
 # 向后兼容的WorkflowDriver类
 class WorkflowDriver:
@@ -949,4 +1318,372 @@ class WorkflowDriver:
     def __getattr__(self, name):
         """代理所有方法调用到IntelligentWorkflowEngineMCP"""
         return getattr(self._engine, name)
+
+
+    def create_workflow(self, workflow_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        创建智能工作流
+        
+        Args:
+            workflow_config: 工作流配置字典，包含以下字段：
+                - workflow_name: 工作流名称
+                - nodes: 节点列表，每个节点包含id、type、name等
+                - connections: 连接列表，定义节点间的连接关系
+                - metadata: 元数据信息
+                
+        Returns:
+            创建结果字典，包含workflow_id和状态信息
+        """
+        try:
+            # 验证工作流配置
+            if not self._validate_workflow_config(workflow_config):
+                return {
+                    "status": "error",
+                    "message": "工作流配置验证失败",
+                    "timestamp": datetime.now().isoformat()
+                }
+            
+            # 生成工作流ID
+            workflow_id = f"workflow_{int(time.time())}_{len(self.workflow_nodes)}"
+            workflow_name = workflow_config.get("workflow_name", f"工作流_{workflow_id}")
+            
+            # 创建工作流节点
+            created_nodes = []
+            node_mapping = {}  # 原始ID到实际ID的映射
+            
+            for node_config in workflow_config.get("nodes", []):
+                node_id = self.create_workflow_node(
+                    node_type=node_config.get("type", "action"),
+                    name=node_config.get("name", "未命名节点"),
+                    description=node_config.get("description", ""),
+                    data=node_config.get("data", {})
+                )
+                
+                created_nodes.append(node_id)
+                node_mapping[node_config.get("id", "")] = node_id
+            
+            # 创建工作流连接
+            created_connections = []
+            for connection_config in workflow_config.get("connections", []):
+                from_id = node_mapping.get(connection_config.get("from", ""))
+                to_id = node_mapping.get(connection_config.get("to", ""))
+                
+                if from_id and to_id:
+                    connection_id = self.create_workflow_connection(
+                        source_id=from_id,
+                        target_id=to_id,
+                        connection_type=connection_config.get("type", "success")
+                    )
+                    created_connections.append(connection_id)
+            
+            # 保存工作流元数据
+            workflow_metadata = {
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "created_time": datetime.now().isoformat(),
+                "nodes": created_nodes,
+                "connections": created_connections,
+                "node_mapping": node_mapping,
+                "config": workflow_config,
+                "status": "created"
+            }
+            
+            # 触发工作流创建事件
+            self.trigger_event("workflow_created", {
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "node_count": len(created_nodes),
+                "connection_count": len(created_connections)
+            })
+            
+            logger.info(f"工作流创建成功: {workflow_name} (ID: {workflow_id})")
+            
+            return {
+                "status": "success",
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "nodes_created": len(created_nodes),
+                "connections_created": len(created_connections),
+                "metadata": workflow_metadata,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"创建工作流失败: {e}")
+            return {
+                "status": "error",
+                "message": f"创建工作流失败: {str(e)}",
+                "timestamp": datetime.now().isoformat()
+            }
+    
+    def execute_workflow(self, execution_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        执行工作流
+        
+        Args:
+            execution_data: 执行数据字典，包含：
+                - workflow_id: 工作流ID
+                - input_data: 输入数据
+                - execution_mode: 执行模式 (sync/async)
+                
+        Returns:
+            执行结果字典
+        """
+        try:
+            workflow_id = execution_data.get("workflow_id", "")
+            input_data = execution_data.get("input_data", {})
+            execution_mode = execution_data.get("execution_mode", "sync")
+            
+            if not workflow_id:
+                return {
+                    "status": "error",
+                    "message": "workflow_id is required",
+                    "timestamp": datetime.now().isoformat()
+                }
+            
+            # 更新工作流状态
+            self.workflow_status.update({
+                "is_running": True,
+                "current_workflow_id": workflow_id,
+                "start_time": datetime.now().isoformat(),
+                "last_update_time": datetime.now().isoformat(),
+                "execution_mode": execution_mode
+            })
+            
+            # 模拟工作流执行过程
+            execution_steps = []
+            
+            # 步骤1: 初始化
+            execution_steps.append({
+                "step": "initialization",
+                "status": "completed",
+                "message": "工作流初始化完成",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 步骤2: 数据预处理
+            processed_data = self._preprocess_workflow_data(input_data)
+            execution_steps.append({
+                "step": "data_preprocessing",
+                "status": "completed",
+                "message": "数据预处理完成",
+                "data_size": len(str(processed_data)),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 步骤3: 节点执行
+            node_results = self._execute_workflow_nodes(workflow_id, processed_data)
+            execution_steps.append({
+                "step": "node_execution",
+                "status": "completed",
+                "message": f"执行了{len(node_results)}个节点",
+                "node_count": len(node_results),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 步骤4: 结果整合
+            final_result = self._integrate_workflow_results(node_results)
+            execution_steps.append({
+                "step": "result_integration",
+                "status": "completed",
+                "message": "结果整合完成",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # 更新工作流状态
+            self.workflow_status.update({
+                "is_running": False,
+                "current_workflow_id": None,
+                "last_update_time": datetime.now().isoformat()
+            })
+            
+            # 触发工作流完成事件
+            self.trigger_event("workflow_completed", {
+                "workflow_id": workflow_id,
+                "execution_time": time.time(),
+                "steps_completed": len(execution_steps)
+            })
+            
+            logger.info(f"工作流执行完成: {workflow_id}")
+            
+            return {
+                "status": "success",
+                "workflow_id": workflow_id,
+                "execution_steps": execution_steps,
+                "final_result": final_result,
+                "execution_mode": execution_mode,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            # 更新错误状态
+            self.workflow_status.update({
+                "is_running": False,
+                "current_workflow_id": None,
+                "last_error": str(e),
+                "last_update_time": datetime.now().isoformat()
+            })
+            
+            logger.error(f"工作流执行失败: {e}")
+            return {
+                "status": "error",
+                "message": f"工作流执行失败: {str(e)}",
+                "timestamp": datetime.now().isoformat()
+            }
+    
+    def _validate_workflow_config(self, config: Dict[str, Any]) -> bool:
+        """验证工作流配置"""
+        try:
+            # 检查必需字段
+            if not config.get("workflow_name"):
+                logger.error("工作流名称不能为空")
+                return False
+            
+            nodes = config.get("nodes", [])
+            if not nodes:
+                logger.error("工作流必须包含至少一个节点")
+                return False
+            
+            # 验证节点配置
+            for node in nodes:
+                if not node.get("id") or not node.get("type"):
+                    logger.error("节点必须包含id和type字段")
+                    return False
+            
+            # 验证连接配置
+            connections = config.get("connections", [])
+            node_ids = {node.get("id") for node in nodes}
+            
+            for connection in connections:
+                from_id = connection.get("from")
+                to_id = connection.get("to")
+                
+                if from_id not in node_ids or to_id not in node_ids:
+                    logger.error(f"连接引用了不存在的节点: {from_id} -> {to_id}")
+                    return False
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"工作流配置验证异常: {e}")
+            return False
+    
+    def _preprocess_workflow_data(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """预处理工作流数据"""
+        processed_data = input_data.copy()
+        
+        # 添加执行上下文
+        processed_data["execution_context"] = {
+            "timestamp": datetime.now().isoformat(),
+            "engine_version": "1.0.0",
+            "execution_id": f"exec_{int(time.time())}"
+        }
+        
+        # 数据清理和标准化
+        if "user_input" in processed_data:
+            processed_data["user_input"] = str(processed_data["user_input"]).strip()
+        
+        return processed_data
+    
+    def _execute_workflow_nodes(self, workflow_id: str, data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """执行工作流节点"""
+        node_results = []
+        
+        # 模拟节点执行
+        for i, node in enumerate(self.workflow_nodes):
+            node_result = {
+                "node_id": node.get("id", f"node_{i}"),
+                "node_type": node.get("type", "action"),
+                "status": "completed",
+                "output": {
+                    "processed": True,
+                    "data_size": len(str(data)),
+                    "execution_time": 0.1
+                },
+                "timestamp": datetime.now().isoformat()
+            }
+            node_results.append(node_result)
+        
+        return node_results
+    
+    def _integrate_workflow_results(self, node_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """整合工作流结果"""
+        return {
+            "summary": {
+                "total_nodes": len(node_results),
+                "successful_nodes": len([r for r in node_results if r.get("status") == "completed"]),
+                "failed_nodes": len([r for r in node_results if r.get("status") == "failed"]),
+                "total_execution_time": sum(r.get("output", {}).get("execution_time", 0) for r in node_results)
+            },
+            "node_results": node_results,
+            "final_status": "success" if all(r.get("status") == "completed" for r in node_results) else "partial_success"
+        }
+
+
+    
+    def _add_default_nodes(self, workflow_config: Dict[str, Any]) -> Dict[str, Any]:
+        """为工作流添加默认节点配置"""
+        workflow_name = workflow_config.get("workflow_name", "默认工作流")
+        complexity = workflow_config.get("complexity", "medium")
+        automation_level = workflow_config.get("automation_level", "standard")
+        
+        # 根据复杂度和自动化级别创建默认节点
+        default_nodes = []
+        default_connections = []
+        
+        if complexity == "low":
+            # 简单工作流：开始 -> 执行 -> 结束
+            default_nodes = [
+                {"id": "start", "type": "start", "name": "开始", "description": "工作流开始节点"},
+                {"id": "execute", "type": "action", "name": "执行任务", "description": "主要执行节点"},
+                {"id": "end", "type": "end", "name": "结束", "description": "工作流结束节点"}
+            ]
+            default_connections = [
+                {"from": "start", "to": "execute", "type": "success"},
+                {"from": "execute", "to": "end", "type": "success"}
+            ]
+        elif complexity == "high" or complexity == "very_high":
+            # 复杂工作流：开始 -> 分析 -> 处理 -> 验证 -> 结束
+            default_nodes = [
+                {"id": "start", "type": "start", "name": "开始", "description": "工作流开始节点"},
+                {"id": "analyze", "type": "analysis", "name": "需求分析", "description": "分析输入需求"},
+                {"id": "process", "type": "action", "name": "处理执行", "description": "主要处理逻辑"},
+                {"id": "validate", "type": "validation", "name": "结果验证", "description": "验证处理结果"},
+                {"id": "end", "type": "end", "name": "结束", "description": "工作流结束节点"}
+            ]
+            default_connections = [
+                {"from": "start", "to": "analyze", "type": "success"},
+                {"from": "analyze", "to": "process", "type": "success"},
+                {"from": "process", "to": "validate", "type": "success"},
+                {"from": "validate", "to": "end", "type": "success"}
+            ]
+        else:
+            # 中等复杂度工作流：开始 -> 准备 -> 执行 -> 结束
+            default_nodes = [
+                {"id": "start", "type": "start", "name": "开始", "description": "工作流开始节点"},
+                {"id": "prepare", "type": "preparation", "name": "准备阶段", "description": "准备执行环境"},
+                {"id": "execute", "type": "action", "name": "执行任务", "description": "主要执行节点"},
+                {"id": "end", "type": "end", "name": "结束", "description": "工作流结束节点"}
+            ]
+            default_connections = [
+                {"from": "start", "to": "prepare", "type": "success"},
+                {"from": "prepare", "to": "execute", "type": "success"},
+                {"from": "execute", "to": "end", "type": "success"}
+            ]
+        
+        # 如果是高级自动化，添加监控节点
+        if automation_level == "advanced":
+            monitor_node = {"id": "monitor", "type": "monitor", "name": "监控", "description": "监控执行状态"}
+            default_nodes.append(monitor_node)
+            # 为所有执行节点添加监控连接
+            for node in default_nodes:
+                if node["type"] in ["action", "analysis", "validation"]:
+                    default_connections.append({"from": node["id"], "to": "monitor", "type": "monitor"})
+        
+        # 更新配置
+        updated_config = workflow_config.copy()
+        updated_config["nodes"] = default_nodes
+        updated_config["connections"] = default_connections
+        
+        return updated_config
 

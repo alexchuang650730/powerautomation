@@ -1,0 +1,35 @@
+{
+  "mode": "real",
+  "apis": {
+    "claude": {
+      "enabled": true,
+      "mode": "real",
+      "api_key": "test_claude_key_123",
+      "endpoint": "https://api.anthropic.com/v1/messages",
+      "model": "claude-3-sonnet-20240229"
+    },
+    "gemini": {
+      "enabled": true,
+      "mode": "real",
+      "api_key": "test_gemini_key_456",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
+      "model": "gemini-pro"
+    },
+    "openai": {
+      "enabled": false,
+      "mode": "mock",
+      "api_key": null,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "model": "gpt-4"
+    }
+  },
+  "fallback": {
+    "enabled": true,
+    "fallback_to_mock": true
+  },
+  "monitoring": {
+    "enabled": true,
+    "log_api_calls": true,
+    "track_usage": true
+  }
+}
