@@ -18,7 +18,7 @@ from typing import Dict, List, Any, Optional
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
 # 导入核心组件
-from workflow_driver.workflow_driver import get_instance as get_workflow_driver
+from mcptool.adapters.intelligent_workflow_engine_mcp import get_instance as get_workflow_driver
 from agents.general_agent.general_agent_features import get_instance as get_features
 
 # 配置日志

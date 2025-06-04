@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
 # 导入核心Agent组件
 from agents.general_agent.general_agent_features import get_instance as get_features
-from development_tools.agent_problem_solver import AgentProblemSolver
+from mcptool.adapters.development_tools.agent_problem_solver_mcp import AgentProblemSolverMCP
 from development_tools.release_manager import ReleaseManager
 
 # 配置日志
@@ -68,7 +68,7 @@ class WorkflowDriver:
         self.features = get_features()
         
         # 初始化核心组件
-        self.agent_problem_solver = AgentProblemSolver(project_root)
+        self.agent_problem_solver = AgentProblemSolverMCP(project_root)
         self.release_manager = ReleaseManager(project_root)
         
         # 初始化工作流节点和连接

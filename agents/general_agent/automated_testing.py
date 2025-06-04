@@ -483,7 +483,7 @@ class AutomatedTestingFramework:
             "agents.web",
             "agents.ppt",
             "development_tools",
-            "workflow_driver"
+            "mcptool.adapters.intelligent_workflow_engine_mcp"
         ]
         
         import random
