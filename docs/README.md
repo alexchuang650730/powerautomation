@@ -1,6 +1,8 @@
-# PowerAutomation 文档目录
+# PowerAutomation 文档中心
 
 欢迎来到PowerAutomation智能MCP工具引擎的文档中心！
+
+![文档组织结构](images/docs_structure.png)
 
 ## 📚 文档分类
 
