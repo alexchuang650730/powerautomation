@@ -69,6 +69,7 @@ class InfiniteContextAdapterMCP(BaseMCP):
         self.claude_api_key = os.getenv("CLAUDE_API_KEY")
         self.gemini_api_key = os.getenv("GEMINI_API_KEY")
         self.supermemory_api_key = os.getenv("SUPERMEMORY_API_KEY")
+        self.kilo_api_key = os.getenv("KILO_API_KEY") or os.getenv("CLAUDE_API_KEY")  # KILO使用Claude API Key
         self.github_token = os.getenv("GITHUB_TOKEN")
         
         # 验证API密钥
@@ -99,6 +100,8 @@ class InfiniteContextAdapterMCP(BaseMCP):
             missing_keys.append("GEMINI_API_KEY")
         if not self.supermemory_api_key:
             missing_keys.append("SUPERMEMORY_API_KEY")
+        if not self.kilo_api_key:
+            missing_keys.append("KILO_API_KEY (or CLAUDE_API_KEY)")
         if not self.github_token:
             missing_keys.append("GITHUB_TOKEN")
         
@@ -646,6 +649,7 @@ class InfiniteContextAdapterMCP(BaseMCP):
                 "claude": "available" if self.claude_client else "unavailable",
                 "gemini": "available" if self.gemini_client else "unavailable",
                 "supermemory": "available" if self.supermemory_api_key else "unavailable",
+                "kilo": "available" if self.kilo_api_key else "unavailable",
                 "github": "available" if self.github_token else "unavailable"
             },
             "cache_status": {
