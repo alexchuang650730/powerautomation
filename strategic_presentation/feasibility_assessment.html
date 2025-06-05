@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+        }
+        .feasibility-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .tech-fill { background: linear-gradient(90deg, #10b981, #059669); }
+        .market-fill { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .business-fill { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .execution-fill { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+        .chart-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">可行性评估</h1>
+            <p class="text-xl text-blue-100">技术、市场、商业、执行四个维度的可行性分析</p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-6 mb-8">
+            <!-- 技术可行性 -->
+            <div class="feasibility-card">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-cogs text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">技术可行性</h3>
+                        <div class="text-3xl font-bold text-green-600">85%</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill tech-fill" style="width: 85%"></div>
+                </div>
+                <div class="mt-3 text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>✓ 成熟技术基础</span>
+                        <span>✓ 高测试成功率</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 市场可行性 -->
+            <div class="feasibility-card">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">市场可行性</h3>
+                        <div class="text-3xl font-bold text-blue-600">75%</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill market-fill" style="width: 75%"></div>
+                </div>
+                <div class="mt-3 text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>✓ 企业级需求巨大</span>
+                        <span>✓ 差异化定位</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商业可行性 -->
+            <div class="feasibility-card">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-dollar-sign text-yellow-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">商业可行性</h3>
+                        <div class="text-3xl font-bold text-yellow-600">70%</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill business-fill" style="width: 70%"></div>
+                </div>
+                <div class="mt-3 text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>✓ 清晰商业模式</span>
+                        <span>⚠ 需要大量投入</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 执行可行性 -->
+            <div class="feasibility-card">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-tasks text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">执行可行性</h3>
+                        <div class="text-3xl font-bold text-purple-600">70%</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill execution-fill" style="width: 70%"></div>
+                </div>
+                <div class="mt-3 text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>✓ 清晰路线图</span>
+                        <span>⚠ 执行难度大</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="grid grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">综合可行性雷达图</h3>
+                    <div style="height: 250px;">
+                        <canvas id="feasibilityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="text-white">
+                    <h3 class="text-xl font-bold mb-4">关键风险与机会</h3>
+                    <div class="space-y-4">
+                        <div class="bg-red-500 bg-opacity-20 p-3 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-exclamation-triangle text-red-300 mr-2"></i>
+                                <span class="font-semibold">主要风险</span>
+                            </div>
+                            <ul class="text-sm space-y-1">
+                                <li>• 资金需求巨大 (11.3亿)</li>
+                                <li>• 竞争对手先发优势</li>
+                                <li>• 团队建设挑战</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-green-500 bg-opacity-20 p-3 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-lightbulb text-green-300 mr-2"></i>
+                                <span class="font-semibold">核心机会</span>
+                            </div>
+                            <ul class="text-sm space-y-1">
+                                <li>• 企业级市场空白</li>
+                                <li>• 技术真实性优势</li>
+                                <li>• 开源生态潜力</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const ctx = document.getElementById('feasibilityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['技术可行性', '市场可行性', '商业可行性', '执行可行性'],
+                datasets: [{
+                    label: 'PowerAutomation',
+                    data: [85, 75, 70, 70],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: 'white',
+                            stepSize: 20
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        pointLabels: {
+                            color: 'white',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

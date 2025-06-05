@@ -1,0 +1,154 @@
+{
+  "validation_summary": {
+    "total_endpoints": 10,
+    "successful_endpoints": 9,
+    "failed_endpoints": 1,
+    "success_rate": 90.0,
+    "average_response_time": 0.10652425554063585,
+    "timestamp": "2025-06-05T02:08:52.711733"
+  },
+  "performance_analysis": {
+    "fastest_endpoint": "httpbin_post",
+    "slowest_endpoint": "httpbin_get",
+    "min_response_time": 0.022396564483642578,
+    "max_response_time": 0.5521652698516846,
+    "median_response_time": 0.03499269485473633
+  },
+  "successful_endpoints": [
+    {
+      "name": "httpbin_post",
+      "response_time": 0.022396564483642578,
+      "status_code": 200
+    },
+    {
+      "name": "jsonplaceholder_posts",
+      "response_time": 0.033490657806396484,
+      "status_code": 200
+    },
+    {
+      "name": "jsonplaceholder_users",
+      "response_time": 0.033347368240356445,
+      "status_code": 200
+    },
+    {
+      "name": "rest_countries",
+      "response_time": 0.03242135047912598,
+      "status_code": 200
+    },
+    {
+      "name": "github_user",
+      "response_time": 0.061774253845214844,
+      "status_code": 200
+    },
+    {
+      "name": "cat_facts",
+      "response_time": 0.044443368911743164,
+      "status_code": 200
+    },
+    {
+      "name": "weather_api",
+      "response_time": 0.03499269485473633,
+      "status_code": 401
+    },
+    {
+      "name": "ip_info",
+      "response_time": 0.14368677139282227,
+      "status_code": 200
+    },
+    {
+      "name": "httpbin_get",
+      "response_time": 0.5521652698516846,
+      "status_code": 200
+    }
+  ],
+  "failed_endpoints": [
+    {
+      "name": "supermemory_list_memories",
+      "error": "HTTP 200: {\"memories\":[{\"id\":\"4FkmdyrreMvqFMfpxafKq1\",\"customId\":null,\"title\":\"undefined\",\"summary\":\"This document analyzes API performance, focusing on response time and success rate. It presents insights for ",
+      "status_code": 200,
+      "response_time": 0.22604775428771973
+    }
+  ],
+  "detailed_results": [
+    {
+      "name": "httpbin_post",
+      "success": true,
+      "response_time": 0.022396564483642578,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:50.999094"
+    },
+    {
+      "name": "jsonplaceholder_posts",
+      "success": true,
+      "response_time": 0.033490657806396484,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.010572"
+    },
+    {
+      "name": "jsonplaceholder_users",
+      "success": true,
+      "response_time": 0.033347368240356445,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.011004"
+    },
+    {
+      "name": "rest_countries",
+      "success": true,
+      "response_time": 0.03242135047912598,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.033268"
+    },
+    {
+      "name": "github_user",
+      "success": true,
+      "response_time": 0.061774253845214844,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.039593"
+    },
+    {
+      "name": "cat_facts",
+      "success": true,
+      "response_time": 0.044443368911743164,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.056701"
+    },
+    {
+      "name": "weather_api",
+      "success": true,
+      "response_time": 0.03499269485473633,
+      "status_code": 401,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.069861"
+    },
+    {
+      "name": "ip_info",
+      "success": true,
+      "response_time": 0.14368677139282227,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.157497"
+    },
+    {
+      "name": "supermemory_list_memories",
+      "success": false,
+      "response_time": 0.22604775428771973,
+      "status_code": 200,
+      "error_message": "HTTP 200: {\"memories\":[{\"id\":\"4FkmdyrreMvqFMfpxafKq1\",\"customId\":null,\"title\":\"undefined\",\"summary\":\"This document analyzes API performance, focusing on response time and success rate. It presents insights for ",
+      "timestamp": "2025-06-05T02:07:51.266847"
+    },
+    {
+      "name": "httpbin_get",
+      "success": true,
+      "response_time": 0.5521652698516846,
+      "status_code": 200,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:07:51.528357"
+    }
+  ]
+}

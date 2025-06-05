@@ -4,14 +4,14 @@
     "claude": {
       "enabled": true,
       "mode": "real",
-      "api_key": "test_claude_key_123",
+      "api_key": ""CLAUDE_API_KEY_PLACEHOLDER"",
       "endpoint": "https://api.anthropic.com/v1/messages",
       "model": "claude-3-sonnet-20240229"
     },
     "gemini": {
       "enabled": true,
       "mode": "real",
-      "api_key": "test_gemini_key_456",
+      "api_key": ""GEMINI_API_KEY_PLACEHOLDER"",
       "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
       "model": "gemini-pro"
     },

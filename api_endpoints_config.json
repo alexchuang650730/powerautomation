@@ -1,0 +1,67 @@
+{
+  "production_endpoints": {
+    "workflow_engine": {
+      "base_url": "https://api.powerautomation.com/v1",
+      "endpoints": {
+        "create_workflow": "/workflows",
+        "execute_workflow": "/workflows/{id}/execute",
+        "get_workflow_status": "/workflows/{id}/status",
+        "list_workflows": "/workflows",
+        "delete_workflow": "/workflows/{id}"
+      },
+      "auth": {
+        "type": "bearer_token",
+        "token_env": "POWERAUTOMATION_API_TOKEN"
+      }
+    },
+    "ai_engine": {
+      "base_url": "https://ai.powerautomation.com/v1",
+      "endpoints": {
+        "intent_understanding": "/ai/intent",
+        "workflow_recommendation": "/ai/recommend",
+        "performance_optimization": "/ai/optimize",
+        "anomaly_detection": "/ai/anomaly"
+      },
+      "auth": {
+        "type": "api_key",
+        "key_env": "POWERAUTOMATION_AI_KEY"
+      }
+    },
+    "monitoring": {
+      "base_url": "https://monitor.powerautomation.com/v1",
+      "endpoints": {
+        "system_metrics": "/metrics/system",
+        "performance_metrics": "/metrics/performance",
+        "user_metrics": "/metrics/users",
+        "business_metrics": "/metrics/business"
+      },
+      "auth": {
+        "type": "basic",
+        "username_env": "MONITOR_USERNAME",
+        "password_env": "MONITOR_PASSWORD"
+      }
+    }
+  },
+  "staging_endpoints": {
+    "workflow_engine": {
+      "base_url": "https://staging-api.powerautomation.com/v1",
+      "endpoints": {
+        "create_workflow": "/workflows",
+        "execute_workflow": "/workflows/{id}/execute",
+        "get_workflow_status": "/workflows/{id}/status",
+        "list_workflows": "/workflows",
+        "delete_workflow": "/workflows/{id}"
+      }
+    }
+  },
+  "mock_endpoints": {
+    "workflow_engine": {
+      "base_url": "http://localhost:8080/mock/v1",
+      "endpoints": {
+        "create_workflow": "/workflows",
+        "execute_workflow": "/workflows/{id}/execute",
+        "get_workflow_status": "/workflows/{id}/status"
+      }
+    }
+  }
+}

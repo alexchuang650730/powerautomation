@@ -267,7 +267,10 @@ class APICallManager:
         headers = self._build_headers(api_name, api_key)
         
         # 构建请求数据
-        request_data = self._build_request_data(api_name, method, model, **kwargs)
+        # 从kwargs中移除model参数以避免冲突
+        kwargs_copy = kwargs.copy()
+        kwargs_copy.pop('model', None)
+        request_data = self._build_request_data(api_name, method, model, **kwargs_copy)
         
         # 这里应该使用requests库发送HTTP请求
         # 为了演示，返回模拟响应

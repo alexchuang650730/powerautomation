@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .strength { border-left: 4px solid #10b981; }
+        .weakness { border-left: 4px solid #ef4444; }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Manus.im 竞争对手分析</h1>
+            <p class="text-xl text-gray-600">深入分析竞争对手的优势、弱点和市场地位</p>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="card metric-card p-6 text-center">
+                <i class="fas fa-users text-3xl mb-3"></i>
+                <h3 class="text-2xl font-bold">1000万+</h3>
+                <p class="text-blue-100">用户规模</p>
+            </div>
+            <div class="card metric-card p-6 text-center">
+                <i class="fas fa-dollar-sign text-3xl mb-3"></i>
+                <h3 class="text-2xl font-bold">5亿美元</h3>
+                <p class="text-blue-100">估值</p>
+            </div>
+            <div class="card metric-card p-6 text-center">
+                <i class="fas fa-calendar text-3xl mb-3"></i>
+                <h3 class="text-2xl font-bold">2025年3月</h3>
+                <p class="text-blue-100">发布时间</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-8">
+            <div class="card strength p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-thumbs-up text-2xl text-green-600 mr-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">核心优势</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                        <span><strong>先发优势:</strong> 声称全球首款通用型AI Agent</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                        <span><strong>媒体热度:</strong> 获得大量关注，被称为"GPT时刻"</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                        <span><strong>用户基础:</strong> 1000万+用户，海外市场头部</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                        <span><strong>商业模式:</strong> 清晰的订阅制模式</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card weakness p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-exclamation-triangle text-2xl text-red-600 mr-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">主要弱点</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-times-circle text-red-500 mt-1 mr-3"></i>
+                        <span><strong>技术质疑:</strong> 被质疑为"套壳"产品</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-times-circle text-red-500 mt-1 mr-3"></i>
+                        <span><strong>稳定性问题:</strong> 专业场景表现不稳定</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-times-circle text-red-500 mt-1 mr-3"></i>
+                        <span><strong>功能局限:</strong> 复杂任务需人工干预</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-times-circle text-red-500 mt-1 mr-3"></i>
+                        <span><strong>基础设施压力:</strong> 服务器容量受限</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <div class="flex items-center">
+                <i class="fas fa-lightbulb text-yellow-600 text-xl mr-3"></i>
+                <p class="text-gray-800"><strong>市场机会:</strong> 企业级市场存在空白，技术真实性需求增长，专业场景定制化需求未满足</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

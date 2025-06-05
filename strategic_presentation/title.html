@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .tech-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="50" r="3" fill="rgba(255,255,255,0.2)"/></svg>');
+            opacity: 0.3;
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container flex items-center justify-center relative">
+        <div class="tech-pattern"></div>
+        
+        <div class="text-center z-10 max-w-4xl px-8">
+            <div class="mb-8">
+                <i class="fas fa-robot text-6xl text-white mb-6 glow-text"></i>
+            </div>
+            
+            <h1 class="text-5xl font-bold text-white mb-6 glow-text">
+                PowerAutomation vs Manus.im
+            </h1>
+            
+            <h2 class="text-3xl font-light text-blue-100 mb-8">
+                战略分析报告
+            </h2>
+            
+            <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-6 mb-8">
+                <p class="text-xl text-white mb-4">
+                    深度分析AI Agent市场竞争格局
+                </p>
+                <p class="text-lg text-blue-100">
+                    评估PowerAutomation超越Manus.im的可能性与战略路径
+                </p>
+            </div>
+            
+            <div class="flex justify-center items-center space-x-8 text-white">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-2xl mr-3 text-green-300"></i>
+                    <span class="text-lg">成功概率: 65%</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-calendar-alt text-2xl mr-3 text-blue-300"></i>
+                    <span class="text-lg">时间框架: 3年</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-target text-2xl mr-3 text-yellow-300"></i>
+                    <span class="text-lg">目标: 行业领导者</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-4 right-8 text-white text-sm opacity-70">
+            <i class="fas fa-calendar mr-2"></i>2025年6月
+        </div>
+    </div>
+</body>
+</html>
+

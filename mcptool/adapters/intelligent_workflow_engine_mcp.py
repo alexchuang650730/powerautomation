@@ -1307,6 +1307,39 @@ class IntelligentWorkflowEngineMCP(BaseMCP):
         updated_config["connections"] = default_connections
         
         return updated_config
+    
+    def get_engine_capabilities(self) -> Dict[str, Any]:
+        """获取工作流引擎能力"""
+        return {
+            "status": "success",
+            "capabilities": [
+                "workflow_creation",
+                "workflow_execution", 
+                "ai_enhanced_analysis",
+                "real_time_monitoring",
+                "event_handling",
+                "node_management",
+                "connection_management",
+                "performance_optimization",
+                "error_recovery"
+            ],
+            "features": {
+                "ai_integration": True,
+                "real_time_processing": True,
+                "scalable_architecture": True,
+                "event_driven": True,
+                "monitoring_support": True,
+                "error_handling": True,
+                "performance_analytics": True,
+                "workflow_templates": True,
+                "custom_nodes": True
+            },
+            "supported_complexity_levels": ["simple", "medium", "high"],
+            "supported_automation_levels": ["basic", "intermediate", "advanced"],
+            "max_nodes_per_workflow": 100,
+            "max_connections_per_workflow": 200,
+            "engine_version": "2.0.0"
+        }
 
 # 向后兼容的WorkflowDriver类
 class WorkflowDriver:

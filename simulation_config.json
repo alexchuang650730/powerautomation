@@ -1,0 +1,32 @@
+{
+  "baseline_metrics": {
+    "test_coverage_rate": 40.0,
+    "ai_model_accuracy": 78.5,
+    "system_response_time": 156.8,
+    "system_availability": 98.2,
+    "error_rate": 2.1,
+    "throughput": 12.3,
+    "cpu_usage": 85.2,
+    "memory_usage": 78.5,
+    "user_satisfaction": 6.8,
+    "automation_level": 45.2
+  },
+  "target_metrics": {
+    "test_coverage_rate": 70.0,
+    "ai_model_accuracy": 85.0,
+    "system_response_time": 100.0,
+    "system_availability": 99.5,
+    "error_rate": 0.5,
+    "throughput": 30.0,
+    "cpu_usage": 70.0,
+    "memory_usage": 65.0,
+    "user_satisfaction": 8.5,
+    "automation_level": 75.0
+  },
+  "simulation_parameters": {
+    "data_collection_interval": 5,
+    "scenario_duration": 300,
+    "load_ramp_time": 60,
+    "cooldown_time": 30
+  }
+}

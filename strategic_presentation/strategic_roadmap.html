@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px;
+        }
+        .phase-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .phase-1 { border-top: 4px solid #10b981; }
+        .phase-2 { border-top: 4px solid #3b82f6; }
+        .phase-3 { border-top: 4px solid #8b5cf6; }
+        .timeline-connector {
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            width: 40px;
+            height: 2px;
+            background: #d1d5db;
+            z-index: 10;
+        }
+        .timeline-arrow {
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #d1d5db;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+        .phase-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            color: white;
+            font-size: 20px;
+        }
+        .icon-1 { background: linear-gradient(135deg, #10b981, #059669); }
+        .icon-2 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .icon-3 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">三阶段战略路线图</h1>
+            <p class="text-xl text-gray-600">技术建立期 → 市场突破期 → 领导地位确立期</p>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-8 relative">
+            <!-- 第一阶段 -->
+            <div class="phase-card phase-1 relative">
+                <div class="timeline-connector">
+                    <div class="timeline-arrow"></div>
+                </div>
+                <div class="phase-icon icon-1">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">第一阶段</h3>
+                <div class="text-sm text-green-600 font-semibold mb-4">技术优势建立期 (0-12个月)</div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span>完善技术架构，确保技术领先</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span>建立产品差异化优势</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span>获得技术社区认可</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span>完成初期市场验证</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-green-50 rounded-lg">
+                    <div class="text-xs text-gray-600">目标指标</div>
+                    <div class="text-sm font-semibold text-green-700">50+ POC客户 | 99.9% 稳定性</div>
+                </div>
+            </div>
+            
+            <!-- 第二阶段 -->
+            <div class="phase-card phase-2 relative">
+                <div class="timeline-connector">
+                    <div class="timeline-arrow"></div>
+                </div>
+                <div class="phase-icon icon-2">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">第二阶段</h3>
+                <div class="text-sm text-blue-600 font-semibold mb-4">市场突破期 (12-24个月)</div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                        <span>建立品牌影响力</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                        <span>实现商业化突破</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                        <span>占领企业级市场份额</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                        <span>挑战Manus.im市场地位</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <div class="text-xs text-gray-600">目标指标</div>
+                    <div class="text-sm font-semibold text-blue-700">100+ 企业客户 | 10% 市场份额</div>
+                </div>
+            </div>
+            
+            <!-- 第三阶段 -->
+            <div class="phase-card phase-3">
+                <div class="phase-icon icon-3">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">第三阶段</h3>
+                <div class="text-sm text-purple-600 font-semibold mb-4">领导地位确立期 (24-36个月)</div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span>确立技术领导地位</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span>超越Manus.im市场地位</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span>成为行业标准制定者</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                        <span>实现国际化发展</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-purple-50 rounded-lg">
+                    <div class="text-xs text-gray-600">目标指标</div>
+                    <div class="text-sm font-semibold text-purple-700">1000+ 全球客户 | 行业第一</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 rounded-lg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">资源投入总览</h3>
+                    <p class="text-sm opacity-90">3年总投入: 11.3亿人民币 | 团队规模: 30人 → 200人</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold">65%</div>
+                    <div class="text-sm opacity-90">成功概率</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

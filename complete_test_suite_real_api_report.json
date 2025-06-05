@@ -1,0 +1,301 @@
+{
+  "test_suite_summary": {
+    "total_tests": 5,
+    "successful_tests": 5,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "suite_execution_time": 29.813628435134888,
+    "average_test_time": 5.9606852531433105,
+    "total_api_calls": 13,
+    "timestamp": "2025-06-05T02:09:29.786923"
+  },
+  "test_results": [
+    {
+      "test_name": "workflow_engine_real_api_integration",
+      "success": true,
+      "execution_time": 4.62094521522522,
+      "error_message": null,
+      "key_metrics": {
+        "api_calls": 2
+      }
+    },
+    {
+      "test_name": "intelligent_test_generation_api_integration",
+      "success": true,
+      "execution_time": 2.4121201038360596,
+      "error_message": null,
+      "key_metrics": {
+        "success_rate": 100.0
+      }
+    },
+    {
+      "test_name": "ai_coordination_hub_api_integration",
+      "success": true,
+      "execution_time": 5.000957727432251,
+      "error_message": null,
+      "key_metrics": {
+        "coordination_effectiveness": 50.0,
+        "api_calls": 3
+      }
+    },
+    {
+      "test_name": "performance_optimization_api_integration",
+      "success": true,
+      "execution_time": 12.474588632583618,
+      "error_message": null,
+      "key_metrics": {
+        "api_calls": 8
+      }
+    },
+    {
+      "test_name": "error_handling_recovery_api_integration",
+      "success": true,
+      "execution_time": 5.294814586639404,
+      "error_message": null,
+      "key_metrics": {
+        "recovery_success_rate": 100.0
+      }
+    }
+  ],
+  "performance_analysis": {
+    "fastest_test": "intelligent_test_generation_api_integration",
+    "slowest_test": "performance_optimization_api_integration",
+    "api_integration_effectiveness": 82.12
+  },
+  "detailed_results": [
+    {
+      "test_name": "workflow_engine_real_api_integration",
+      "success": true,
+      "execution_time": 4.62094521522522,
+      "details": {
+        "workflow_config": {
+          "name": "AI增强数据处理工作流",
+          "nodes": [
+            {
+              "id": "data_input",
+              "type": "input",
+              "config": {
+                "source": "user_input"
+              }
+            },
+            {
+              "id": "memory_storage",
+              "type": "api_call",
+              "config": {
+                "api": "supermemory",
+                "endpoint": "memories",
+                "method": "POST"
+              }
+            },
+            {
+              "id": "memory_search",
+              "type": "api_call",
+              "config": {
+                "api": "supermemory",
+                "endpoint": "search",
+                "method": "POST"
+              }
+            },
+            {
+              "id": "result_output",
+              "type": "output",
+              "config": {
+                "format": "json"
+              }
+            }
+          ],
+          "connections": [
+            {
+              "from": "data_input",
+              "to": "memory_storage"
+            },
+            {
+              "from": "memory_storage",
+              "to": "memory_search"
+            },
+            {
+              "from": "memory_search",
+              "to": "result_output"
+            }
+          ]
+        },
+        "memory_creation": {
+          "success": true,
+          "memory_id": "dFgWGwm4P57QaBAWD5T7qK",
+          "status_code": 200
+        },
+        "memory_search": {
+          "success": true,
+          "status_code": 200,
+          "results_count": 5
+        },
+        "total_api_calls": 2,
+        "workflow_completion": true
+      },
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:04.594202"
+    },
+    {
+      "test_name": "intelligent_test_generation_api_integration",
+      "success": true,
+      "execution_time": 2.4121201038360596,
+      "details": {
+        "generated_scenarios": 3,
+        "executed_scenarios": 3,
+        "successful_scenarios": 3,
+        "success_rate": 100.0,
+        "test_results": [
+          {
+            "scenario": "API连通性测试",
+            "success": true,
+            "execution_time": 0.22614049911499023,
+            "status_code": 200,
+            "response_size": 4482
+          },
+          {
+            "scenario": "数据持久化测试",
+            "success": true,
+            "execution_time": 1.9696195125579834,
+            "status_code": 200,
+            "response_size": 49
+          },
+          {
+            "scenario": "错误处理测试",
+            "success": true,
+            "execution_time": 0.216325044631958,
+            "status_code": 400,
+            "response_size": 163
+          }
+        ],
+        "average_scenario_time": 0.8040283521016439
+      },
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:07.008284"
+    },
+    {
+      "test_name": "ai_coordination_hub_api_integration",
+      "success": true,
+      "execution_time": 5.000957727432251,
+      "details": {
+        "ai_models": [
+          {
+            "name": "memory_manager",
+            "role": "数据存储",
+            "api": "supermemory"
+          },
+          {
+            "name": "content_analyzer",
+            "role": "内容分析",
+            "api": "supermemory_search"
+          },
+          {
+            "name": "decision_maker",
+            "role": "决策制定",
+            "api": "internal"
+          }
+        ],
+        "coordination_tasks": [
+          {
+            "task": "multi_model_data_processing",
+            "success": false,
+            "execution_time": 4.3658952713012695,
+            "models_used": 3,
+            "api_calls": 2
+          },
+          {
+            "task": "error_recovery_coordination",
+            "success": true,
+            "execution_time": 0.6350548267364502,
+            "error_detected": true,
+            "recovery_attempted": true
+          }
+        ],
+        "successful_tasks": 1,
+        "total_tasks": 2,
+        "coordination_effectiveness": 50.0,
+        "total_api_calls": 3,
+        "average_task_time": 2.50047504901886
+      },
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:12.010842"
+    },
+    {
+      "test_name": "performance_optimization_api_integration",
+      "success": true,
+      "execution_time": 12.474588632583618,
+      "details": {
+        "baseline_performance": {
+          "average_time": 1.4438118934631348,
+          "max_time": 2.640821695327759,
+          "min_time": 0.4527621269226074,
+          "measurements": 5
+        },
+        "optimized_performance": {
+          "average_time": 0.6178198655446371,
+          "measurements": 3,
+          "improvement_percentage": 57.209116482429636
+        },
+        "optimization_actions": [
+          {
+            "action": "request_batching",
+            "description": "实施请求批处理以减少网络开销",
+            "expected_improvement": "20-30%"
+          },
+          {
+            "action": "connection_pooling",
+            "description": "优化HTTP连接池配置",
+            "expected_improvement": "15-25%"
+          },
+          {
+            "action": "intelligent_caching",
+            "description": "实施智能缓存策略",
+            "expected_improvement": "30-50%"
+          }
+        ],
+        "error_rate": 0,
+        "total_api_calls": 8
+      },
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:24.487342"
+    },
+    {
+      "test_name": "error_handling_recovery_api_integration",
+      "success": true,
+      "execution_time": 5.294814586639404,
+      "details": {
+        "error_scenarios": [
+          {
+            "scenario": "invalid_data_format",
+            "error_detected": true,
+            "recovery_attempted": true,
+            "recovery_success": true,
+            "execution_time": 1.6230428218841553
+          },
+          {
+            "scenario": "network_timeout",
+            "error_detected": true,
+            "recovery_attempted": true,
+            "recovery_success": false,
+            "execution_time": 0.00555109977722168
+          },
+          {
+            "scenario": "api_rate_limiting",
+            "error_detected": false,
+            "recovery_attempted": false,
+            "recovery_success": true,
+            "execution_time": 3.666203737258911
+          }
+        ],
+        "total_scenarios": 3,
+        "errors_detected": 2,
+        "recoveries_attempted": 2,
+        "recoveries_successful": 2,
+        "error_detection_rate": 66.66666666666666,
+        "recovery_success_rate": 100.0,
+        "average_scenario_time": 1.7649325529734294
+      },
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:29.784635"
+    }
+  ]
+}

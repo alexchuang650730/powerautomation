@@ -1,0 +1,168 @@
+{
+  "timestamp": "2025-06-05T02:08:56.349884",
+  "api_key_used": ""SUPERMEMORY_API_KEY_PLACEHOLDER"",
+  "summary": {
+    "total_tests": 4,
+    "successful_tests": 2,
+    "success_rate": 50.0
+  },
+  "detailed_results": {
+    "list_memories": {
+      "success": true,
+      "data": {
+        "memories": [
+          {
+            "id": "4FkmdyrreMvqFMfpxafKq1",
+            "customId": null,
+            "title": "undefined",
+            "summary": "This document analyzes API performance, focusing on response time and success rate. It presents insights for two scenarios: 'memories' and 'search'. The 'memories' scenario shows an average response time of 0.45 with a 100% success rate, recommending optimization. The 'search' scenario has an average response time of 0.25 but a 50% success rate, suggesting to maintain the current state. The document concludes by mentioning the application of dynamic timeout adjustments as an optimization strategy.",
+            "metadata": {
+              "type": "ai_learning",
+              "scenario": "API响应模式学习",
+              "learning_timestamp": "2025-06-05T01:48:58.585683"
+            },
+            "createdAt": "2025-06-05T05:49:01.314Z",
+            "updatedAt": "2025-06-05T05:49:01.314Z",
+            "status": "done"
+          },
+          {
+            "id": "g2uHLmzMc2oJ8DKtR2G2cS",
+            "customId": null,
+            "title": "undefined",
+            "summary": "The document analyzes user behavior, specifically focusing on search and storage patterns. The analysis reveals a user preference for technical content, with a 100% success rate for both searches and saves. An optimization has been applied to enhance the weight of similar queries.",
+            "metadata": {
+              "type": "ai_learning",
+              "scenario": "用户行为学习",
+              "learning_timestamp": "2025-06-05T01:48:58.169024"
+            },
+            "createdAt": "2025-06-05T05:49:00.870Z",
+            "updatedAt": "2025-06-05T05:49:00.870Z",
+            "status": "done"
+          },
+          {
+            "id": "VdWyd7GZwowNNnSQ7L88As",
+            "customId": null,
+            "title": "undefined",
+            "summary": "This document outlines common errors and their corresponding recovery strategies. It focuses on three specific error types: timeout, authentication error (auth_error), and rate limit. For timeouts, the best strategy is to retry, with a 100% success rate. Authentication errors are best handled by refreshing the token, also with a 100% success rate. Rate limits are best addressed using a backoff strategy, again with a 100% success rate. The document also mentions that an optimization has been applied: updating the error handling rule library.",
+            "metadata": {
+              "type": "ai_learning",
+              "scenario": "错误模式学习",
+              "learning_timestamp": "2025-06-05T01:48:58.973327"
+            },
+            "createdAt": "2025-06-05T05:49:00.851Z",
+            "updatedAt": "2025-06-05T05:49:00.851Z",
+            "status": "done"
+          },
+          {
+            "id": "cw37v5t1kEp868hRJuRt3U",
+            "customId": null,
+            "title": "undefined",
+            "summary": "API 响应时间通过连接池优化、请求批处理、智能缓存等策略得到了4.7%的提升。",
+            "metadata": {
+              "category": "performance",
+              "importance": "high"
+            },
+            "createdAt": "2025-06-05T05:48:54.680Z",
+            "updatedAt": "2025-06-05T05:48:54.680Z",
+            "status": "done"
+          },
+          {
+            "id": "wjSAAvgmPznh1ZFouh7wJt",
+            "customId": null,
+            "title": "undefined",
+            "summary": "The document reports the successful integration test of the supermemory API. It confirms that the test achieved real API call verification, replacing the previous simulation-based verification method.",
+            "metadata": {
+              "category": "testing",
+              "importance": "medium"
+            },
+            "createdAt": "2025-06-05T05:48:54.137Z",
+            "updatedAt": "2025-06-05T05:48:54.137Z",
+            "status": "done"
+          },
+          {
+            "id": "Z361DjKtXSwSE9krWAXRUy",
+            "customId": null,
+            "title": "undefined",
+            "summary": "PowerAutomation utilizes a microservices architecture. Key components include a workflow engine, an AI coordination hub, and an intelligent test generator.",
+            "metadata": {
+              "category": "architecture",
+              "importance": "high"
+            },
+            "createdAt": "2025-06-05T05:48:53.755Z",
+            "updatedAt": "2025-06-05T05:48:53.755Z",
+            "status": "done"
+          },
+          {
+            "id": "9x667BSurwf9otBgww6usv",
+            "customId": null,
+            "title": "undefined",
+            "summary": "用户强调数据的重要性，并希望长期保存。",
+            "metadata": {
+              "detected_intent": "save_memory",
+              "confidence": 0.9152070872322419,
+              "test_type": "intent_understanding"
+            },
+            "createdAt": "2025-06-05T05:48:50.241Z",
+            "updatedAt": "2025-06-05T05:48:50.241Z",
+            "status": "done"
+          },
+          {
+            "id": "GKpLU3vKqP7Wh6hCYXP2Qv",
+            "customId": null,
+            "title": "undefined",
+            "summary": "The document expresses the user's intention to save important meeting records.",
+            "metadata": {
+              "detected_intent": "save_memory",
+              "confidence": 0.8435708515191631,
+              "test_type": "intent_understanding"
+            },
+            "createdAt": "2025-06-05T05:48:49.524Z",
+            "updatedAt": "2025-06-05T05:48:49.524Z",
+            "status": "done"
+          },
+          {
+            "id": "ZAxL1LFBqhk7ZLJpAcQFru",
+            "customId": null,
+            "title": "undefined",
+            "summary": "The document is a test of a quick request.",
+            "metadata": {},
+            "createdAt": "2025-06-05T05:46:13.590Z",
+            "updatedAt": "2025-06-05T05:46:13.590Z",
+            "status": "done"
+          },
+          {
+            "id": "9WBueFB5aBWEU9pS9aGynV",
+            "customId": null,
+            "title": "undefined",
+            "summary": "The document is a test of a quick request.",
+            "metadata": {},
+            "createdAt": "2025-06-05T05:46:11.621Z",
+            "updatedAt": "2025-06-05T05:46:11.621Z",
+            "status": "done"
+          }
+        ],
+        "pagination": {
+          "currentPage": 1,
+          "totalPages": 3,
+          "limit": 10,
+          "totalItems": 25
+        }
+      }
+    },
+    "add_memory": {
+      "success": true,
+      "data": {
+        "id": "EQw2NDJRbafXbPB4PjLo2T",
+        "status": "queued"
+      }
+    },
+    "search_memories": {
+      "success": false,
+      "data": "{\"success\":false,\"error\":{\"issues\":[{\"code\":\"invalid_type\",\"expected\":\"string\",\"received\":\"undefined\",\"path\":[\"q\"],\"message\":\"Required\"}],\"name\":\"ZodError\"}}"
+    },
+    "model_enhancement": {
+      "success": false,
+      "data": "{\n    \"error\": {\n        \"message\": \"Incorrect API key provided: sk-test-key. You can find your API key at https://platform.openai.com/account/api-keys.\",\n        \"type\": \"invalid_request_error\",\n        \"param\": null,\n        \"code\": \"invalid_api_key\"\n    }\n}\n"
+    }
+  }
+}

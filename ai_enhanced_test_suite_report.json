@@ -1,0 +1,391 @@
+{
+  "ai_test_suite_summary": {
+    "total_ai_tests": 4,
+    "successful_ai_tests": 3,
+    "failed_ai_tests": 1,
+    "ai_success_rate": 75.0,
+    "suite_execution_time": 23.49460506439209,
+    "average_test_time": 5.871659576892853,
+    "average_performance_score": 62.57978700526509,
+    "timestamp": "2025-06-05T02:09:53.481006"
+  },
+  "ai_component_analysis": {
+    "intent_understanding_engine": {
+      "tests": 1,
+      "successes": 1,
+      "avg_score": 100.0,
+      "success_rate": 100.0
+    },
+    "memory_enhancement_engine": {
+      "tests": 1,
+      "successes": 0,
+      "avg_score": 42.0,
+      "success_rate": 0.0
+    },
+    "intelligent_search_engine": {
+      "tests": 1,
+      "successes": 1,
+      "avg_score": 36.0,
+      "success_rate": 100.0
+    },
+    "adaptive_learning_engine": {
+      "tests": 1,
+      "successes": 1,
+      "avg_score": 72.31914802106037,
+      "success_rate": 100.0
+    }
+  },
+  "ai_test_results": [
+    {
+      "test_name": "ai_intent_understanding",
+      "ai_component": "intent_understanding_engine",
+      "success": true,
+      "execution_time": 4.457148790359497,
+      "performance_score": 100.0,
+      "error_message": null
+    },
+    {
+      "test_name": "ai_memory_enhancement",
+      "ai_component": "memory_enhancement_engine",
+      "success": false,
+      "execution_time": 2.258509635925293,
+      "performance_score": 42.0,
+      "error_message": null
+    },
+    {
+      "test_name": "ai_intelligent_search",
+      "ai_component": "intelligent_search_engine",
+      "success": true,
+      "execution_time": 12.070116996765137,
+      "performance_score": 36.0,
+      "error_message": null
+    },
+    {
+      "test_name": "ai_adaptive_learning",
+      "ai_component": "adaptive_learning_engine",
+      "success": true,
+      "execution_time": 4.700862884521484,
+      "performance_score": 72.31914802106037,
+      "error_message": null
+    }
+  ],
+  "ai_performance_insights": {
+    "best_performing_component": "intent_understanding_engine",
+    "most_reliable_component": "intent_understanding_engine",
+    "fastest_ai_test": "ai_memory_enhancement",
+    "slowest_ai_test": "ai_intelligent_search"
+  },
+  "detailed_ai_results": [
+    {
+      "test_name": "ai_intent_understanding",
+      "ai_component": "intent_understanding_engine",
+      "success": true,
+      "execution_time": 4.457148790359497,
+      "ai_metrics": {
+        "total_intents_tested": 5,
+        "intent_accuracy": 100.0,
+        "confidence_accuracy": 100.0,
+        "api_success_rate": 100.0,
+        "average_processing_time": 0.8914243698120117,
+        "intent_results": [
+          {
+            "user_input": "我想保存这个重要的会议记录",
+            "expected_intent": "save_memory",
+            "detected_intent": "save_memory",
+            "expected_confidence": 0.9,
+            "actual_confidence": 0.9091017299538497,
+            "intent_correct": true,
+            "confidence_accurate": true,
+            "api_success": true,
+            "processing_time": 1.9446063041687012
+          },
+          {
+            "user_input": "帮我找一下上次关于项目的讨论",
+            "expected_intent": "search_memory",
+            "detected_intent": "search_memory",
+            "expected_confidence": 0.85,
+            "actual_confidence": 0.9089656101767366,
+            "intent_correct": true,
+            "confidence_accurate": true,
+            "api_success": true,
+            "processing_time": 1.0790629386901855
+          },
+          {
+            "user_input": "删除那个过时的信息",
+            "expected_intent": "delete_memory",
+            "detected_intent": "delete_memory",
+            "expected_confidence": 0.8,
+            "actual_confidence": 0.8279958620674952,
+            "intent_correct": true,
+            "confidence_accurate": true,
+            "api_success": true,
+            "processing_time": 8.106231689453125e-06
+          },
+          {
+            "user_input": "这个数据很重要，需要长期保存",
+            "expected_intent": "save_memory",
+            "detected_intent": "save_memory",
+            "expected_confidence": 0.88,
+            "actual_confidence": 0.9586278333819941,
+            "intent_correct": true,
+            "confidence_accurate": true,
+            "api_success": true,
+            "processing_time": 1.1823201179504395
+          },
+          {
+            "user_input": "查看我的所有记忆",
+            "expected_intent": "list_memories",
+            "detected_intent": "list_memories",
+            "expected_confidence": 0.95,
+            "actual_confidence": 0.9052983601830806,
+            "intent_correct": true,
+            "confidence_accurate": true,
+            "api_success": true,
+            "processing_time": 0.25112438201904297
+          }
+        ]
+      },
+      "performance_score": 100.0,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:34.443562"
+    },
+    {
+      "test_name": "ai_memory_enhancement",
+      "ai_component": "memory_enhancement_engine",
+      "success": false,
+      "execution_time": 2.258509635925293,
+      "ai_metrics": {
+        "total_memories_processed": 3,
+        "enhancement_success_rate": 0.0,
+        "average_content_increase": 54.666666666666664,
+        "content_enrichment_ratio": 565.5172413793103,
+        "average_metadata_fields_added": 4,
+        "average_enhancement_time": 0.7528297106424967,
+        "enhanced_memories": [
+          {
+            "original": {
+              "title": "项目会议",
+              "content": "讨论了新功能开发进度",
+              "metadata": {
+                "type": "meeting"
+              }
+            },
+            "enhanced": {
+              "title": "[AI增强] 项目会议",
+              "content": "讨论了新功能开发进度\\n\\n[AI增强信息]\\n- 会议类型: 项目讨论\\n- 重要程度: 高\\n- 后续行动: 需要跟进开发进度",
+              "metadata": {
+                "type": "meeting",
+                "ai_tags": [],
+                "ai_category": "general",
+                "ai_priority": "medium",
+                "ai_keywords": [
+                  "功能"
+                ],
+                "ai_enhanced": true,
+                "enhancement_timestamp": "2025-06-05T02:09:34.445414"
+              }
+            },
+            "storage_success": false,
+            "enhancement_time": 1.0281782150268555,
+            "content_length_increase": 55,
+            "metadata_fields_added": 4
+          },
+          {
+            "original": {
+              "title": "技术文档",
+              "content": "API接口设计规范",
+              "metadata": {
+                "type": "documentation"
+              }
+            },
+            "enhanced": {
+              "title": "[AI增强] 技术文档",
+              "content": "API接口设计规范\\n\\n[AI增强信息]\\n- 文档类型: 技术规范\\n- 适用范围: 开发团队\\n- 更新频率: 定期更新",
+              "metadata": {
+                "type": "documentation",
+                "ai_tags": [
+                  "api"
+                ],
+                "ai_category": "technical",
+                "ai_priority": "medium",
+                "ai_keywords": [
+                  "API"
+                ],
+                "ai_enhanced": true,
+                "enhancement_timestamp": "2025-06-05T02:09:35.473601"
+              }
+            },
+            "storage_success": false,
+            "enhancement_time": 1.0200681686401367,
+            "content_length_increase": 54,
+            "metadata_fields_added": 4
+          },
+          {
+            "original": {
+              "title": "用户反馈",
+              "content": "用户希望增加搜索功能",
+              "metadata": {
+                "type": "feedback"
+              }
+            },
+            "enhanced": {
+              "title": "[AI增强] 用户反馈",
+              "content": "用户希望增加搜索功能\\n\\n[AI增强信息]\\n- 反馈类型: 功能需求\\n- 优先级: 中等\\n- 实施建议: 纳入下一版本规划",
+              "metadata": {
+                "type": "feedback",
+                "ai_tags": [
+                  "user_related"
+                ],
+                "ai_category": "general",
+                "ai_priority": "medium",
+                "ai_keywords": [
+                  "功能"
+                ],
+                "ai_enhanced": true,
+                "enhancement_timestamp": "2025-06-05T02:09:36.493672"
+              }
+            },
+            "storage_success": false,
+            "enhancement_time": 0.21024274826049805,
+            "content_length_increase": 55,
+            "metadata_fields_added": 4
+          }
+        ]
+      },
+      "performance_score": 42.0,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:36.704025"
+    },
+    {
+      "test_name": "ai_intelligent_search",
+      "ai_component": "intelligent_search_engine",
+      "success": true,
+      "execution_time": 12.070116996765137,
+      "ai_metrics": {
+        "total_searches": 4,
+        "successful_searches": 4,
+        "search_success_rate": 100.0,
+        "average_search_time": 1.291898250579834,
+        "average_relevance_score": 0.0,
+        "average_precision": 0.2,
+        "stored_test_memories": 3,
+        "search_results": [
+          {
+            "query": "PowerAutomation架构",
+            "search_type": "exact_match",
+            "results_count": 5,
+            "search_time": 0.4446089267730713,
+            "relevance_score": 0.0,
+            "precision": 0.4,
+            "success": true
+          },
+          {
+            "query": "API测试",
+            "search_type": "keyword_match",
+            "results_count": 5,
+            "search_time": 1.613497257232666,
+            "relevance_score": 0.0,
+            "precision": 0.0,
+            "success": true
+          },
+          {
+            "query": "性能提升",
+            "search_type": "semantic_match",
+            "results_count": 5,
+            "search_time": 1.3137400150299072,
+            "relevance_score": 0.0,
+            "precision": 0.0,
+            "success": true
+          },
+          {
+            "query": "重要的架构信息",
+            "search_type": "attribute_filter",
+            "results_count": 5,
+            "search_time": 1.7957468032836914,
+            "relevance_score": 0.0,
+            "precision": 0.4,
+            "success": true
+          }
+        ]
+      },
+      "performance_score": 36.0,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:48.775988"
+    },
+    {
+      "test_name": "ai_adaptive_learning",
+      "ai_component": "adaptive_learning_engine",
+      "success": true,
+      "execution_time": 4.700862884521484,
+      "ai_metrics": {
+        "total_learning_scenarios": 3,
+        "successful_learning": 3,
+        "learning_success_rate": 100.0,
+        "total_data_points_processed": 11,
+        "learning_efficiency": 2.339995926326561,
+        "average_learning_time": 1.5669465859731038,
+        "learning_results": [
+          {
+            "scenario": "用户行为学习",
+            "learning_outcome": {
+              "pattern_detected": "用户偏好技术相关内容",
+              "search_success_rate": 100.0,
+              "save_success_rate": 100.0,
+              "optimization_applied": "增强相似查询的权重"
+            },
+            "storage_success": true,
+            "learning_time": 1.154970645904541,
+            "data_points_processed": 4
+          },
+          {
+            "scenario": "API响应模式学习",
+            "learning_outcome": {
+              "performance_insights": {
+                "memories": {
+                  "avg_response_time": 0.45,
+                  "success_rate": 100.0,
+                  "recommendation": "优化"
+                },
+                "search": {
+                  "avg_response_time": 0.25,
+                  "success_rate": 50.0,
+                  "recommendation": "保持"
+                }
+              },
+              "optimization_applied": "动态调整超时时间"
+            },
+            "storage_success": true,
+            "learning_time": 1.947676658630371,
+            "data_points_processed": 4
+          },
+          {
+            "scenario": "错误模式学习",
+            "learning_outcome": {
+              "recovery_strategies": {
+                "timeout": {
+                  "best_strategy": "retry",
+                  "success_rate": 100.0
+                },
+                "auth_error": {
+                  "best_strategy": "refresh_token",
+                  "success_rate": 100.0
+                },
+                "rate_limit": {
+                  "best_strategy": "backoff",
+                  "success_rate": 100.0
+                }
+              },
+              "optimization_applied": "更新错误处理规则库"
+            },
+            "storage_success": true,
+            "learning_time": 1.5981924533843994,
+            "data_points_processed": 3
+          }
+        ]
+      },
+      "performance_score": 72.31914802106037,
+      "error_message": null,
+      "timestamp": "2025-06-05T02:09:53.478559"
+    }
+  ]
+}

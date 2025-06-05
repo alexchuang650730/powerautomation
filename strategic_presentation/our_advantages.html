@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+        }
+        .advantage-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 280px;
+        }
+        .advantage-card:hover {
+            transform: translateY(-5px);
+        }
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .tech-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .enterprise-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .quality-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stats-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">PowerAutomation 核心优势</h1>
+            <p class="text-xl text-blue-100">技术创新、企业级定位、开发质量等核心竞争优势</p>
+        </div>
+        
+        <div class="stats-container">
+            <div class="grid grid-cols-4 gap-6 text-center text-white">
+                <div>
+                    <div class="text-3xl font-bold text-green-300">55,729</div>
+                    <div class="text-sm text-blue-100">行Python代码</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-blue-300">96.4%</div>
+                    <div class="text-sm text-blue-100">测试成功率</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-yellow-300">161</div>
+                    <div class="text-sm text-blue-100">个模块文件</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-purple-300">100%</div>
+                    <div class="text-sm text-blue-100">API调用成功率</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-6">
+            <div class="advantage-card">
+                <div class="icon-circle tech-icon">
+                    <i class="fas fa-cogs text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">真正的技术创新</h3>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li>• 自主开发架构，完全开源</li>
+                    <li>• 原创AI协调机制</li>
+                    <li>• 多AI模型集成能力</li>
+                    <li>• 智能API切换机制</li>
+                </ul>
+                <div class="mt-4 text-xs text-green-600 font-semibold">
+                    vs Manus.im "套壳"争议
+                </div>
+            </div>
+            
+            <div class="advantage-card">
+                <div class="icon-circle enterprise-icon">
+                    <i class="fas fa-building text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">企业级市场定位</h3>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li>• 专注企业级专业市场</li>
+                    <li>• 深度定制化能力</li>
+                    <li>• 企业级安全标准</li>
+                    <li>• 垂直行业解决方案</li>
+                </ul>
+                <div class="mt-4 text-xs text-blue-600 font-semibold">
+                    差异化竞争策略
+                </div>
+            </div>
+            
+            <div class="advantage-card">
+                <div class="icon-circle quality-icon">
+                    <i class="fas fa-award text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">卓越开发质量</h3>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li>• 企业级代码标准</li>
+                    <li>• 完整开发生命周期</li>
+                    <li>• 模块化架构设计</li>
+                    <li>• 100%测试覆盖</li>
+                </ul>
+                <div class="mt-4 text-xs text-purple-600 font-semibold">
+                    大型项目级别
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+            <div class="flex items-center justify-between text-white">
+                <div class="flex items-center">
+                    <i class="fas fa-trophy text-2xl text-yellow-300 mr-3"></i>
+                    <span class="text-lg font-semibold">核心竞争优势总结</span>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-green-300">技术真实性 + 企业级定位 + 开发质量</div>
+                    <div class="text-sm text-blue-100">= 可持续竞争优势</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

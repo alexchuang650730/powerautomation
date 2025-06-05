@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px;
+        }
+        .probability-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(#10b981 0deg 234deg, #e5e7eb 234deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .probability-inner {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .factor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid #10b981;
+        }
+        .path-step {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 3px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">成功概率分析</h1>
+            <p class="text-xl text-gray-600">65%成功概率的详细分析和关键成功因素</p>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-8">
+            <!-- 成功概率展示 -->
+            <div class="text-center">
+                <div class="probability-circle mx-auto mb-6">
+                    <div class="probability-inner">
+                        <div class="text-4xl font-bold text-green-600">65%</div>
+                        <div class="text-sm text-gray-600">成功概率</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-lg">
+                    <h3 class="font-bold text-gray-800 mb-2">3年内超越Manus.im</h3>
+                    <p class="text-sm text-gray-600">成为AI Agent领域领导者</p>
+                </div>
+            </div>
+            
+            <!-- 关键成功因素 -->
+            <div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">关键成功因素</h3>
+                <div class="space-y-4">
+                    <div class="factor-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-cogs text-green-600 mr-3"></i>
+                            <span class="font-semibold">技术持续创新</span>
+                        </div>
+                        <p class="text-sm text-gray-600">保持技术领先优势，持续研发投入</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-users text-green-600 mr-3"></i>
+                            <span class="font-semibold">团队建设</span>
+                        </div>
+                        <p class="text-sm text-gray-600">吸引和留住顶尖人才</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-dollar-sign text-green-600 mr-3"></i>
+                            <span class="font-semibold">资金支持</span>
+                        </div>
+                        <p class="text-sm text-gray-600">获得充足的资金支持</p>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-rocket text-green-600 mr-3"></i>
+                            <span class="font-semibold">执行力</span>
+                        </div>
+                        <p class="text-sm text-gray-600">强大的战略执行能力</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 成功路径 -->
+            <div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">最可能的成功路径</h3>
+                <div class="space-y-3">
+                    <div class="path-step">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3">1</div>
+                            <span class="font-semibold text-sm">技术差异化</span>
+                        </div>
+                        <p class="text-xs text-gray-600 ml-9">通过真正技术创新建立竞争优势</p>
+                    </div>
+                    
+                    <div class="path-step">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3">2</div>
+                            <span class="font-semibold text-sm">市场细分</span>
+                        </div>
+                        <p class="text-xs text-gray-600 ml-9">专注企业级市场，避免直接竞争</p>
+                    </div>
+                    
+                    <div class="path-step">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3">3</div>
+                            <span class="font-semibold text-sm">客户成功</span>
+                        </div>
+                        <p class="text-xs text-gray-600 ml-9">通过客户成功建立口碑和品牌影响力</p>
+                    </div>
+                    
+                    <div class="path-step">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3">4</div>
+                            <span class="font-semibold text-sm">生态建设</span>
+                        </div>
+                        <p class="text-xs text-gray-600 ml-9">建立开放生态，形成网络效应</p>
+                    </div>
+                    
+                    <div class="path-step">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-3">5</div>
+                            <span class="font-semibold text-sm">国际化</span>
+                        </div>
+                        <p class="text-xs text-gray-600 ml-9">通过国际化扩大市场规模</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-6 text-white">
+            <div class="grid grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-2xl font-bold mb-2">技术优势</div>
+                    <div class="text-sm opacity-90">真正创新 vs "套壳"争议</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold mb-2">市场机会</div>
+                    <div class="text-sm opacity-90">企业级市场空白巨大</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold mb-2">执行能力</div>
+                    <div class="text-sm opacity-90">清晰路线图 + 强大团队</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <div class="flex items-center">
+                <i class="fas fa-lightbulb text-yellow-600 text-xl mr-3"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">提升成功概率的关键</p>
+                    <p class="text-sm text-gray-600">加大技术研发投入 + 尽早启动市场推广 + 建立战略合作伙伴关系 + 完善团队建设</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

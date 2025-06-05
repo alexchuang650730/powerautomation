@@ -1,0 +1,65 @@
+{
+  "validation_summary": {
+    "total_endpoints": 6,
+    "successful_endpoints": 4,
+    "success_rate": 66.66666666666666,
+    "average_response_time": 0.35554033517837524,
+    "timestamp": "2025-06-05T02:07:50.774720"
+  },
+  "endpoint_results": [
+    {
+      "name": "supermemory_search",
+      "success": false,
+      "response_time": 1.0719084739685059,
+      "status_code": 400,
+      "error_message": "HTTP 400: {\"success\":false,\"error\":{\"issues\":[{\"code\":\"invalid_type\",\"expected\":\"string\",\"received\":\"undefined\",\"path\":[\"q\"],\"message\":\"Required\"}],\"name\":\"ZodError\"}}"
+    },
+    {
+      "name": "httpbin_get",
+      "success": true,
+      "response_time": 0.009266138076782227,
+      "status_code": 200,
+      "error_message": null
+    },
+    {
+      "name": "httpbin_post",
+      "success": true,
+      "response_time": 0.016992807388305664,
+      "status_code": 200,
+      "error_message": null
+    },
+    {
+      "name": "jsonplaceholder_posts",
+      "success": true,
+      "response_time": 0.023749589920043945,
+      "status_code": 200,
+      "error_message": null
+    },
+    {
+      "name": "supermemory_list_memories",
+      "success": true,
+      "response_time": 1.3721528053283691,
+      "status_code": 200,
+      "error_message": null
+    },
+    {
+      "name": "supermemory_openai_chat",
+      "success": false,
+      "response_time": 1.3729088306427002,
+      "status_code": 401,
+      "error_message": "HTTP 401: {\n    \"error\": {\n        \"message\": \"Incorrect API key provided: test-key. You can find your API key at https://platform.openai.com/account/api-keys.\",\n        \"type\": \"invalid_request_error\",\n       "
+    }
+  ],
+  "failed_endpoints": [
+    {
+      "name": "supermemory_search",
+      "error": "HTTP 400: {\"success\":false,\"error\":{\"issues\":[{\"code\":\"invalid_type\",\"expected\":\"string\",\"received\":\"undefined\",\"path\":[\"q\"],\"message\":\"Required\"}],\"name\":\"ZodError\"}}",
+      "status_code": 400
+    },
+    {
+      "name": "supermemory_openai_chat",
+      "error": "HTTP 401: {\n    \"error\": {\n        \"message\": \"Incorrect API key provided: test-key. You can find your API key at https://platform.openai.com/account/api-keys.\",\n        \"type\": \"invalid_request_error\",\n       ",
+      "status_code": 401
+    }
+  ]
+}
